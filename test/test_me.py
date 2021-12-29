@@ -1,4 +1,5 @@
 from .setup import TestCase
+from gatk_pipeline.annotation import SnpEff
 from gatk_pipeline.variant_calling import Mutect2
 from gatk_pipeline.mapping import BwaIndex, BwaMem
 
@@ -8,8 +9,8 @@ class MyTest(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def __test_mapping(self):
         index = BwaIndex(self.settings).main(
@@ -23,9 +24,15 @@ class MyTest(TestCase):
                 sample_name=sample_name
             )
 
-    def test_mutect2(self):
+    def __test_mutect2(self):
         Mutect2(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa',
             tumor_bam=f'{self.indir}/tumor_sorted.bam',
             normal_bam=f'{self.indir}/normal_sorted.bam'
         )
+
+    def test_annotation(self):
+        annotated_vcf = SnpEff(self.settings).main(
+            vcf=f'{self.indir}/raw.vcf'
+        )
+        self.assertFileExists(f'{self.outdir}/annotated.vcf', annotated_vcf)
