@@ -73,7 +73,6 @@ class BwaMem(Processor):
         self.sorted_bam = f'{self.outdir}/{self.sample_name}_sorted.bam'
 
     def mapping(self):
-        stdout = f'{self.workdir}/bwa_mem_{self.sample_name}_stdout.log'
         stderr = f'{self.workdir}/bwa_mem_{self.sample_name}_stderr.log'
 
         cmd = CMD_LINEBREAK.join([
@@ -83,7 +82,6 @@ class BwaMem(Processor):
             self.index,
             self.fq1,
             self.fq2,
-            f'1> {stdout}',
             f'2> {stderr}',
         ])
 
