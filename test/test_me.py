@@ -9,8 +9,8 @@ class MyTest(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    # def tearDown(self):
-    #     self.tear_down()
+    def tearDown(self):
+        self.tear_down()
 
     def __test_mapping(self):
         index = BwaIndex(self.settings).main(
@@ -31,7 +31,7 @@ class MyTest(TestCase):
             normal_bam=f'{self.indir}/normal_sorted.bam'
         )
 
-    def test_annotation(self):
+    def __test_snpeff(self):
         annotated_vcf = SnpEff(self.settings).main(
             vcf=f'{self.indir}/raw.vcf'
         )
