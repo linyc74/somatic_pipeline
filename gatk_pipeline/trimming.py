@@ -35,7 +35,7 @@ class TrimGalore(Processor):
             '--paired',
             f'--quality {self.QUALITY}',
             '--phred33',
-            '--fastqc',
+            f'--fastqc_args "--threads {self.threads}"',
             '--illumina',
             f'--length {self.LENGTH}',
             f'--max_n {self.MAX_N}',
