@@ -44,6 +44,7 @@ class TrimGalore(Processor):
             f'--output_dir {self.workdir}',
             self.fq1,
             self.fq2,
+            f'&> {self.outdir}/trim_galore.log'
         ])
         self.call(cmd)
 

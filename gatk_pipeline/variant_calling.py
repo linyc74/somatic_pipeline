@@ -1,12 +1,10 @@
 from os.path import basename
 from .constant import CMD_LINEBREAK
 from .template import Processor, Settings
+from .constant import TUMOR, NORMAL
 
 
 class Mutect2(Processor):
-
-    TUMOR_NAME = 'tumor'
-    NORMAL_NAME = 'normal'
 
     ref_fa: str
     tumor_bam: str
@@ -49,16 +47,21 @@ class Mutect2(Processor):
     def __index_ref_fa(self):
         cmd = f'samtools faidx {self.copied_ref_fa}'
         self.call(cmd)
-        cmd = f'gatk CreateSequenceDictionary -R {self.copied_ref_fa}'
+
+        cmd = CMD_LINEBREAK.join([
+            'gatk CreateSequenceDictionary',
+            f'-R {self.copied_ref_fa}',
+            f'&> {self.outdir}/gatk_CreateSequenceDictionary.log',
+        ])
         self.call(cmd)
 
     def tag_read_group(self):
-        self.normal_tagged_bam = f'{self.workdir}/{self.NORMAL_NAME}_read_group_tagged.bam'
-        self.tumor_tagged_bam = f'{self.workdir}/{self.TUMOR_NAME}_read_group_tagged.bam'
+        self.normal_tagged_bam = f'{self.workdir}/{NORMAL}_read_group_tagged.bam'
+        self.tumor_tagged_bam = f'{self.workdir}/{TUMOR}_read_group_tagged.bam'
 
         for bam_in, bam_out, name in [
-            (self.normal_bam, self.normal_tagged_bam, self.NORMAL_NAME),
-            (self.tumor_bam, self.tumor_tagged_bam, self.TUMOR_NAME),
+            (self.normal_bam, self.normal_tagged_bam, NORMAL),
+            (self.tumor_bam, self.tumor_tagged_bam, TUMOR),
         ]:
             cmd = CMD_LINEBREAK.join([
                 'gatk AddOrReplaceReadGroups',
@@ -67,7 +70,8 @@ class Mutect2(Processor):
                 f'--RGLB lib1',
                 '--RGPL ILLUMINA',
                 '--RGPU unit1',
-                f'--RGSM {name}'
+                f'--RGSM {name}',
+                f'&> {self.outdir}/gatk_AddOrReplaceReadGroups.log',
             ])
             self.call(cmd)
 
@@ -83,7 +87,8 @@ class Mutect2(Processor):
             f'--reference {self.copied_ref_fa}',
             f'--input {self.tumor_tagged_bam}',
             f'--input {self.normal_tagged_bam}',
-            f'--normal-sample {self.NORMAL_NAME}',
+            f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
+            f'&> {self.outdir}/gatk_Mutect2.log',
         ])
         self.call(cmd)

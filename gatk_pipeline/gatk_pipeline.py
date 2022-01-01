@@ -4,6 +4,7 @@ from .variant_calling import Mutect2
 from .mapping import BwaIndex, BwaMem
 from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
+from .constant import TUMOR, NORMAL
 
 
 class GATKPipeline(Processor):
@@ -57,12 +58,12 @@ class GATKPipeline(Processor):
             index=index,
             fq1=self.tumor_fq1,
             fq2=self.tumor_fq2,
-            sample_name='tumor')
+            sample_name=TUMOR)
         self.normal_bam = BwaMem(self.settings).main(
             index=index,
             fq1=self.normal_fq1,
             fq2=self.normal_fq2,
-            sample_name='normal')
+            sample_name=NORMAL)
 
     def variant_calling(self):
         self.raw_vcf = Mutect2(self.settings).main(

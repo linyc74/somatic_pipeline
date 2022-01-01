@@ -22,7 +22,7 @@ class SnpEff(Processor):
     def execute(self):
         self.annotated_vcf = f'{self.outdir}/annotated.vcf'
         html = f'{self.outdir}/snpEff_summary.html'
-        stderr = f'{self.workdir}/snpEff_stderr.log'
+        stderr = f'{self.outdir}/snpEff.log'
 
         cmd = CMD_LINEBREAK.join([
             'snpeff',

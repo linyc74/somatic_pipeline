@@ -22,7 +22,7 @@ class BwaIndex(Processor):
         self.index = f'{self.workdir}/bwa_index'
 
     def execute(self):
-        stderr = f'{self.workdir}/bwa_index_stderr.log'
+        stderr = f'{self.outdir}/bwa_index.log'
 
         cmd = CMD_LINEBREAK.join([
             'bwa index',
@@ -73,7 +73,7 @@ class BwaMem(Processor):
         self.sorted_bam = f'{self.outdir}/{self.sample_name}_sorted.bam'
 
     def mapping(self):
-        stderr = f'{self.workdir}/bwa_mem_{self.sample_name}_stderr.log'
+        stderr = f'{self.outdir}/bwa_mem_{self.sample_name}.log'
 
         cmd = CMD_LINEBREAK.join([
             'bwa mem',
