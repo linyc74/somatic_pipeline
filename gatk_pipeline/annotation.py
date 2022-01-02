@@ -30,7 +30,7 @@ class SnpEff(Processor):
             f'-htmlStats {html}',
             self.GENOME_ID,
             self.vcf,
-            f'1> {self.annotated_vcf}',
+            f'> {self.annotated_vcf}',
             f'2> {stderr}',
         ])
 

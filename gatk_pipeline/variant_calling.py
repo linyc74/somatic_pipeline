@@ -1,7 +1,7 @@
 from os.path import basename
 from .constant import CMD_LINEBREAK
-from .template import Processor, Settings
 from .constant import TUMOR, NORMAL
+from .template import Processor, Settings
 
 
 class Mutect2(Processor):
@@ -89,6 +89,7 @@ class Mutect2(Processor):
             f'--input {self.normal_tagged_bam}',
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
+            f'--native-pair-hmm-threads {self.threads}',
             f'&> {self.outdir}/gatk_Mutect2.log',
         ])
         self.call(cmd)
