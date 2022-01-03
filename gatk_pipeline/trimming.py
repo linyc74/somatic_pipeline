@@ -9,6 +9,8 @@ class TrimGalore(Processor):
     QUALITY = 20
     LENGTH = 20
     MAX_N = 0
+    CUTADAPT_TOTAL_CORES = 2
+    # According to the help message of trim_galore, 2 cores for cutadapt -> actually up to 9 cores
 
     fq1: str
     fq2: str
@@ -35,6 +37,7 @@ class TrimGalore(Processor):
             '--paired',
             f'--quality {self.QUALITY}',
             '--phred33',
+            f'--cores {self.CUTADAPT_TOTAL_CORES}',
             f'--fastqc_args "--threads {self.threads}"',
             '--illumina',
             f'--length {self.LENGTH}',
@@ -44,7 +47,7 @@ class TrimGalore(Processor):
             f'--output_dir {self.workdir}',
             self.fq1,
             self.fq2,
-            f'&> {self.outdir}/trim_galore.log'
+            f'2> {self.outdir}/trim_galore.log'
         ])
         self.call(cmd)
 
