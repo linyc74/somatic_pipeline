@@ -7,12 +7,12 @@ class TestGATKPipeline(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    # def tearDown(self):
-    #     self.tear_down()
+    def tearDown(self):
+        self.tear_down()
 
     def test_main(self):
         GATKPipeline(self.settings).main(
-            ref_fa=f'{self.indir}/chr9_1_10000000.fa',
+            ref_fa=f'{self.indir}/chr9.fa',
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=f'{self.indir}/normal.1.fq.gz',

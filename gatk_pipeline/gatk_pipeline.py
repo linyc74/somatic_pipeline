@@ -1,10 +1,11 @@
+from .clean_up import CleanUp
 from .annotation import SnpEff
 from .trimming import TrimGalore
+from .constant import TUMOR, NORMAL
 from .variant_calling import Mutect2
 from .mapping import BwaIndex, BwaMem
 from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
-from .constant import TUMOR, NORMAL
 
 
 class GATKPipeline(Processor):
@@ -42,6 +43,7 @@ class GATKPipeline(Processor):
         self.variant_calling()
         self.annotation()
         self.parse_vcf()
+        self.clean_up()
 
     def trimming(self):
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
@@ -78,3 +80,6 @@ class GATKPipeline(Processor):
     def parse_vcf(self):
         ParseMutect2SnpEffVcf(self.settings).main(
             vcf=self.annotated_vcf)
+
+    def clean_up(self):
+        CleanUp(self.settings).main()
