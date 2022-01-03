@@ -48,10 +48,11 @@ class Mutect2(Processor):
         cmd = f'samtools faidx {self.copied_ref_fa}'
         self.call(cmd)
 
+        log = f'{self.outdir}/gatk_CreateSequenceDictionary.log'
         cmd = CMD_LINEBREAK.join([
             'gatk CreateSequenceDictionary',
             f'-R {self.copied_ref_fa}',
-            f'&> {self.outdir}/gatk_CreateSequenceDictionary.log',
+            f'1> {log} 2> {log}'
         ])
         self.call(cmd)
 
@@ -59,6 +60,7 @@ class Mutect2(Processor):
         self.normal_tagged_bam = f'{self.workdir}/{NORMAL}_read_group_tagged.bam'
         self.tumor_tagged_bam = f'{self.workdir}/{TUMOR}_read_group_tagged.bam'
 
+        log = f'{self.outdir}/gatk_AddOrReplaceReadGroups.log'
         for bam_in, bam_out, name in [
             (self.normal_bam, self.normal_tagged_bam, NORMAL),
             (self.tumor_bam, self.tumor_tagged_bam, TUMOR),
@@ -71,7 +73,7 @@ class Mutect2(Processor):
                 '--RGPL ILLUMINA',
                 '--RGPU unit1',
                 f'--RGSM {name}',
-                f'&> {self.outdir}/gatk_AddOrReplaceReadGroups.log',
+                f'1> {log} 2> {log}',
             ])
             self.call(cmd)
 
@@ -82,6 +84,7 @@ class Mutect2(Processor):
 
     def mutect2(self):
         self.vcf = f'{self.outdir}/raw.vcf'
+        log = f'{self.outdir}/gatk_Mutect2.log'
         cmd = CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.copied_ref_fa}',
@@ -90,6 +93,6 @@ class Mutect2(Processor):
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
-            f'&> {self.outdir}/gatk_Mutect2.log',
+            f'1> {log} 2> {log}',
         ])
         self.call(cmd)
