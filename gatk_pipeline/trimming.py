@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 from os.path import basename
 from .constant import CMD_LINEBREAK
@@ -26,6 +27,7 @@ class TrimGalore(Processor):
         self.fq2 = fq2
 
         self.execute()
+        self.move_fastqc_report()
         self.set_out_fq1()
         self.set_out_fq2()
 
@@ -51,6 +53,16 @@ class TrimGalore(Processor):
             f'1> {log} 2> {log}'
         ])
         self.call(cmd)
+
+    def move_fastqc_report(self):
+        dstdir = f'{self.outdir}/fastqc'
+        os.makedirs(dstdir, exist_ok=True)
+        for suffix in [
+            'fastqc.html',
+            'fastqc.zip',
+            'trimming_report.txt'
+        ]:
+            self.call(f'mv {self.workdir}/*{suffix} {dstdir}/')
 
     def set_out_fq1(self):
         f = basename(self.fq1)
