@@ -5,6 +5,8 @@ from .template import Processor, Settings
 
 class ParseMutect2SnpEffVcf(Processor):
 
+    LOG_INTERVAL = 10000  # variants
+
     vcf: str
 
     vcf_header: str
@@ -13,10 +15,12 @@ class ParseMutect2SnpEffVcf(Processor):
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
+        self.vcf_line_to_row = Mutect2SnpEffVcfLineToRow(self.settings).main
 
     def main(self, vcf: str):
         self.vcf = vcf
 
+        self.logger.info(msg='Start parsing annotated VCF')
         self.set_vcf_header()
         self.set_info_id_to_description()
         self.process_vcf_data()
@@ -35,18 +39,21 @@ class ParseMutect2SnpEffVcf(Processor):
 
     def process_vcf_data(self):
         self.df = pd.DataFrame()
-        line_to_row = Mutect2SnpEffVcfLineToRow(self.settings).main
 
-        with open(self.vcf) as fh:
-            for line in fh:
-                if line.startswith('#'):
-                    continue
+        fh = open(self.vcf)
+        n = 0
+        for line in fh:
+            if line.startswith('#'):
+                continue
+            n += 1
+            if n % self.LOG_INTERVAL == 0:
+                self.logger.debug(msg=f'{n} variants parsed')
 
-                row = line_to_row(
-                    vcf_line=line,
-                    info_id_to_description=self.info_id_to_description)
-
-                self.df = self.df.append(row, ignore_index=True)
+            row = self.vcf_line_to_row(
+                vcf_line=line,
+                info_id_to_description=self.info_id_to_description)
+            self.df = self.df.append(row, ignore_index=True)
+        fh.close()
 
     def save_csv(self):
         self.df.to_csv(f'{self.outdir}/variants.csv', index=False)
