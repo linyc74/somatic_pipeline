@@ -2,11 +2,11 @@ import argparse
 import gatk_pipeline
 
 
-__version__ = '1.1.0-beta'
+__VERSION__ = '1.1.0-beta'
 
 
 PROG = 'python gatk_pipeline'
-DESCRIPTION = f'Custom-built GATK pipeline (version {__version__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
+DESCRIPTION = f'Custom-built GATK pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
 REQUIRED = [
     {
         'keys': ['-r', '--ref-fa'],
@@ -88,7 +88,7 @@ OPTIONAL = [
         'keys': ['-v', '--version'],
         'properties': {
             'action': 'version',
-            'version': __version__,
+            'version': __VERSION__,
             'help': 'show version',
         }
     },
@@ -124,6 +124,7 @@ class EntryPoint:
 
     def run(self):
         args = self.parser.parse_args()
+        print(f'Start running GATK Pipeline version {__VERSION__}\n', flush=True)
         gatk_pipeline.Main().main(
             ref_fa=args.ref_fa,
             tumor_fq1=args.tumor_fq1,
