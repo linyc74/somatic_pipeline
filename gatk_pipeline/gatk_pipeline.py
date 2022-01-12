@@ -3,10 +3,10 @@ from .clean_up import CleanUp
 from .annotation import SnpEff
 from .trimming import TrimGalore
 from .constant import TUMOR, NORMAL
-from .variant_calling import Mutect2TumorNormalPaired
 from .mapping import BwaIndex, BwaMem
 from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
+from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
 
 
 class GATKPipeline(Processor):
@@ -50,6 +50,7 @@ class GATKPipeline(Processor):
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
             fq1=self.tumor_fq1,
             fq2=self.tumor_fq2)
+
         if self.normal_fq1 is None:
             return
         self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
@@ -77,7 +78,9 @@ class GATKPipeline(Processor):
 
     def variant_calling(self):
         if self.normal_bam is None:
-            pass
+            self.raw_vcf = Mutect2TumorOnly(self.settings).main(
+                ref_fa=self.ref_fa,
+                tumor_bam=self.tumor_bam)
         else:
             self.raw_vcf = Mutect2TumorNormalPaired(self.settings).main(
                 ref_fa=self.ref_fa,
