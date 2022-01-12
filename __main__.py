@@ -32,24 +32,26 @@ REQUIRED = [
             'help': 'path to the tumor read 2 fastq file',
         }
     },
+]
+OPTIONAL = [
     {
         'keys': ['-3', '--normal-fq1'],
         'properties': {
             'type': str,
-            'required': True,
-            'help': 'path to the normal read 1 fastq file',
+            'required': False,
+            'default': 'None',
+            'help': 'path to the normal read 1 fastq file (default: %(default)s)',
         }
     },
     {
         'keys': ['-4', '--normal-fq2'],
         'properties': {
             'type': str,
-            'required': True,
-            'help': 'path to the normal read 2 fastq file',
+            'required': False,
+            'default': 'None',
+            'help': 'path to the normal read 2 fastq file (default: %(default)s)',
         }
     },
-]
-OPTIONAL = [
     {
         'keys': ['-o', '--outdir'],
         'properties': {

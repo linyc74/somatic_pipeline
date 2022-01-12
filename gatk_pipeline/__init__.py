@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from .template import Settings
 from .gatk_pipeline import GATKPipeline
 
@@ -8,8 +9,8 @@ class Main:
     ref_fa: str
     tumor_fq1: str
     tumor_fq2: str
-    normal_fq1: str
-    normal_fq2: str
+    normal_fq1: Optional[str]
+    normal_fq2: Optional[str]
 
     settings: Settings
 
@@ -27,8 +28,8 @@ class Main:
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
-        self.normal_fq1 = normal_fq1
-        self.normal_fq2 = normal_fq2
+        self.normal_fq1 = None if normal_fq1 == 'None' else normal_fq1
+        self.normal_fq2 = None if normal_fq2 == 'None' else normal_fq2
 
         self.settings = Settings(
             workdir='./gatk_pipeline_workdir',
