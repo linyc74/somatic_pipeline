@@ -96,7 +96,7 @@ class Mutect2TumorNormalPaired(Mutect2):
             self.index_bam(bam=bam)
 
     def mutect2(self):
-        self.vcf = f'{self.outdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/raw.vcf'
         log = f'{self.outdir}/gatk_Mutect2.log'
         cmd = CMD_LINEBREAK.join([
             'gatk Mutect2',
@@ -142,7 +142,7 @@ class Mutect2TumorOnly(Mutect2):
         self.index_bam(bam=self.tumor_tagged_bam)
 
     def mutect2(self):
-        self.vcf = f'{self.outdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/raw.vcf'
         log = f'{self.outdir}/gatk_Mutect2.log'
         cmd = CMD_LINEBREAK.join([
             'gatk Mutect2',
