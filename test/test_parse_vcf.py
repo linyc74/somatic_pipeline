@@ -1,6 +1,7 @@
 from .setup import TestCase
 import pandas as pd
-from gatk_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetSnpEffAnnotationKeys, GetMutect2InfoKeyToName
+from gatk_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetInfoIDToDescription, \
+    Mutect2SnpEffVcfLineToRow, UnrollSnpEffAnnotation
 
 
 class TestParseMutect2SnpEffVcf(TestCase):
@@ -21,7 +22,7 @@ class TestParseMutect2SnpEffVcf(TestCase):
         )
 
 
-class TestGetMutect2InfoKeyToName(TestCase):
+class TestGetInfoIDToDescription(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -36,22 +37,25 @@ class TestGetMutect2InfoKeyToName(TestCase):
 ##INFO=<ID=AS_UNIQ_ALT_READ_COUNT,Number=A,Type=Integer,Description="Number of reads with unique start and mate end positions for each alt at a variant site">
 ##INFO=<ID=GERMQ,Number=1,Type=Integer,Description="Phred-scaled quality that alt alleles are not germline variants">
 ##INFO=<ID=MBQ,Number=R,Type=Integer,Description="median base quality by allele">
-##MutectVersion=2.2'''
-
+##MutectVersion=2.2
+##SnpEffVersion="5.0e (build 2021-03-09 06:01), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  -htmlStats test/outdir/snpEff_summary.html GRCh38.99 test/test_me/raw.vcf "
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	normal	tumor'''
         expected = {
-            'AS_SB_TABLE': 'Mutect2 Allele-specific forward/reverse read counts for strand bias tests. Includes the reference and alleles separated by |.',
-            'AS_UNIQ_ALT_READ_COUNT': 'Mutect2 Number of reads with unique start and mate end positions for each alt at a variant site',
-            'GERMQ': 'Mutect2 Phred-scaled quality that alt alleles are not germline variants',
-            'MBQ': 'Mutect2 median base quality by allele',
-
+            'AS_SB_TABLE': 'Allele-specific forward/reverse read counts for strand bias tests. Includes the reference and alleles separated by |.',
+            'AS_UNIQ_ALT_READ_COUNT': 'Number of reads with unique start and mate end positions for each alt at a variant site',
+            'GERMQ': 'Phred-scaled quality that alt alleles are not germline variants',
+            'MBQ': 'median base quality by allele',
+            'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
         }
-        actual = GetMutect2InfoKeyToName(self.settings).main(
+        actual = GetInfoIDToDescription(self.settings).main(
             vcf_header=vcf_header
         )
         self.assertDictEqual(expected, actual)
 
 
-class TestGetSnpEffAnnotationKeys(TestCase):
+class TestMutect2SnpEffVcfLineToRow(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -60,33 +64,74 @@ class TestGetSnpEffAnnotationKeys(TestCase):
         self.tear_down()
 
     def test_main(self):
-        vcf_header = '''\
-##SnpEffVersion="5.0e (build 2021-03-09 06:01), by Pablo Cingolani"
-##SnpEffCmd="SnpEff  -htmlStats test/outdir/snpEff_summary.html GRCh38.99 test/test_me/raw.vcf "
-##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
-##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
-##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	normal	tumor'''
-
-        actual = GetSnpEffAnnotationKeys(self.settings).main(
-            vcf_header=vcf_header
+        vcf_line = 'chr9\t12303\t.\tA\tT\t.\t.\tMBQ=20,20;ANN=T|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|transcript|ENST00000442898.5|protein_coding||c.*2504T>A|||||2172|,T|non_coding_transcript_exon_variant|MODIFIER|DDX11L5|ENSG00000236875|transcript|ENST00000421620.2|unprocessed_pseudogene|2/6|n.70A>T||||||'
+        info_id_to_description = {
+            'MBQ': 'median base quality by allele',
+            'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
+        }
+        actual = Mutect2SnpEffVcfLineToRow(self.settings).main(
+            vcf_line=vcf_line,
+            info_id_to_description=info_id_to_description
         )
-        expected = [
-            'SnpEff Allele',
-            'SnpEff Annotation',
-            'SnpEff Annotation_Impact',
-            'SnpEff Gene_Name',
-            'SnpEff Gene_ID',
-            'SnpEff Feature_Type',
-            'SnpEff Feature_ID',
-            'SnpEff Transcript_BioType',
-            'SnpEff Rank',
-            'SnpEff HGVS.c',
-            'SnpEff HGVS.p',
-            'SnpEff cDNA.pos / cDNA.length',
-            'SnpEff CDS.pos / CDS.length',
-            'SnpEff AA.pos / AA.length',
-            'SnpEff Distance',
-            'SnpEff ERRORS / WARNINGS / INFO',
-        ]
-        self.assertListEqual(expected, actual)
+        expected = {
+            'Chromosome': 'chr9',
+            'Position': '12303',
+            'ID': '.',
+            'Ref Allele': 'A',
+            'Alt Allele': 'T',
+            'Quality': '.',
+            'Filter': '.',
+            'median base quality by allele': '20,20',
+            'Allele': 'T',
+            'Annotation': 'downstream_gene_variant',
+            'Annotation_Impact': 'MODIFIER',
+            'Gene_Name': 'WASHC1',
+            'Gene_ID': 'ENSG00000181404',
+            'Feature_Type': 'transcript',
+            'Feature_ID': 'ENST00000442898.5',
+            'Transcript_BioType': 'protein_coding',
+            'Rank': '',
+            'HGVS.c': 'c.*2504T>A',
+            'HGVS.p': '',
+            'cDNA.pos / cDNA.length': '',
+            'CDS.pos / CDS.length': '',
+            'AA.pos / AA.length': '',
+            'Distance': '2172',
+            'ERRORS / WARNINGS / INFO': ',T'
+        }
+        self.assertDictEqual(expected, actual)
+
+
+class TestUnrollSnpEffAnnotation(TestCase):
+
+    def setUp(self):
+        self.set_up(py_path=__file__)
+
+    def tearDown(self):
+        self.tear_down()
+
+    def test_main(self):
+        d = {
+            "Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ":
+                'T|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|transcript|ENST00000442898.5|protein_coding||c.*2504T>A|||||2172|,T|non_coding_transcript_exon_variant|MODIFIER|DDX11L5|ENSG00000236875|transcript|ENST00000421620.2|unprocessed_pseudogene|2/6|n.70A>T||||||',
+        }
+        actual = UnrollSnpEffAnnotation(self.settings).main(d=d)
+        expected = {
+            'Allele': 'T',
+            'Annotation': 'downstream_gene_variant',
+            'Annotation_Impact': 'MODIFIER',
+            'Gene_Name': 'WASHC1',
+            'Gene_ID': 'ENSG00000181404',
+            'Feature_Type': 'transcript',
+            'Feature_ID': 'ENST00000442898.5',
+            'Transcript_BioType': 'protein_coding',
+            'Rank': '',
+            'HGVS.c': 'c.*2504T>A',
+            'HGVS.p': '',
+            'cDNA.pos / cDNA.length': '',
+            'CDS.pos / CDS.length': '',
+            'AA.pos / AA.length': '',
+            'Distance': '2172',
+            'ERRORS / WARNINGS / INFO': ',T',
+        }
+        self.assertDictEqual(expected, actual)

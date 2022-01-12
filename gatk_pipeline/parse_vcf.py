@@ -8,8 +8,7 @@ class ParseMutect2SnpEffVcf(Processor):
     vcf: str
 
     vcf_header: str
-    mutect2_info_key_to_name: Dict[str, str]
-    snpeff_annotation_keys: List[str]
+    info_id_to_description: Dict[str, str]
     df: pd.DataFrame
 
     def __init__(self, settings: Settings):
@@ -19,8 +18,7 @@ class ParseMutect2SnpEffVcf(Processor):
         self.vcf = vcf
 
         self.set_vcf_header()
-        self.set_mutect2_info_key_to_name()
-        self.set_snpeff_annotation_keys()
+        self.set_info_id_to_description()
         self.process_vcf_data()
         self.save_csv()
 
@@ -31,12 +29,8 @@ class ParseMutect2SnpEffVcf(Processor):
                 if line.startswith('##'):
                     self.vcf_header += line
 
-    def set_mutect2_info_key_to_name(self):
-        self.mutect2_info_key_to_name = GetMutect2InfoKeyToName(self.settings).main(
-            vcf_header=self.vcf_header)
-
-    def set_snpeff_annotation_keys(self):
-        self.snpeff_annotation_keys = GetSnpEffAnnotationKeys(self.settings).main(
+    def set_info_id_to_description(self):
+        self.info_id_to_description = GetInfoIDToDescription(self.settings).main(
             vcf_header=self.vcf_header)
 
     def process_vcf_data(self):
@@ -50,8 +44,7 @@ class ParseMutect2SnpEffVcf(Processor):
 
                 row = line_to_row(
                     vcf_line=line,
-                    mutect2_info_key_to_name=self.mutect2_info_key_to_name,
-                    snpeff_annotation_keys=self.snpeff_annotation_keys)
+                    info_id_to_description=self.info_id_to_description)
 
                 self.df = self.df.append(row, ignore_index=True)
 
@@ -59,14 +52,12 @@ class ParseMutect2SnpEffVcf(Processor):
         self.df.to_csv(f'{self.outdir}/variants.csv', index=False)
 
 
-class GetMutect2InfoKeyToName(Processor):
-
-    NAME_PREFIX = 'Mutect2 '
+class GetInfoIDToDescription(Processor):
 
     vcf_header: str
 
-    mutect2_info_section: str
-    key_to_name: Dict[str, str]
+    info_lines: List[str]
+    id_to_description: Dict[str, str]
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
@@ -74,126 +65,62 @@ class GetMutect2InfoKeyToName(Processor):
     def main(self, vcf_header: str) -> Dict[str, str]:
         self.vcf_header = vcf_header
 
-        self.set_mutect2_info_section()
-        self.set_key_to_name()
+        self.set_info_lines()
+        self.set_id_to_description()
 
-        return self.key_to_name
+        return self.id_to_description
 
-    def set_mutect2_info_section(self):
-        section = ''
-        collect_line = False
+    def set_info_lines(self):
+        self.info_lines = []
         for line in self.vcf_header.splitlines():
+            if line.startswith('##INFO'):
+                self.info_lines.append(line)
 
-            if line.startswith('##GATKCommandLine'):
-                collect_line = True
-                continue
+    def set_id_to_description(self):
+        self.id_to_description = {}
+        for line in self.info_lines:
+            self.process_one(info_line=line)
 
-            if line.startswith('##MutectVersion'):
-                break
-
-            if collect_line:
-                section += line + '\n'
-
-        self.mutect2_info_section = section.rstrip()
-
-    def set_key_to_name(self):
-        self.key_to_name = {}
-        for line in self.mutect2_info_section.splitlines():
-            self.process_(line=line)
-
-    def process_(self, line: str):
+    def process_one(self, info_line: str):
         """
         ##INFO=<ID=MBQ,Number=R,Type=Integer,Description="median base quality by allele">
 
-        key = 'MBQ'
-        name = 'median base quality by allele'
+        id_ = 'MBQ'
+        description = 'median base quality by allele'
         """
-        key = line.split('INFO=<ID=')[1].split(',')[0]
-        name = line.split(',Description="')[1].split('">')[0]
-        self.key_to_name[key] = f'{self.NAME_PREFIX}{name}'
-
-
-class GetSnpEffAnnotationKeys(Processor):
-
-    KEY_PREFIX = 'SnpEff '
-
-    vcf_header: str
-    keys: List[str]
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
-
-    def main(self, vcf_header: str):
-        self.vcf_header = vcf_header
-
-        self.keys = []
-
-        for line in self.vcf_header.splitlines():
-            if line.startswith('##INFO=<ID=ANN'):
-                self.process_(annotation_line=line)
-
-        self.add_prefix()
-
-        return self.keys
-
-    def process_(self, annotation_line: str):
-        """
-        ##INFO=<ID=ANN,...,Description="Functional annotations: 'Allele | Annotation | ... | Distance | ERRORS / WARNINGS / INFO' ">
-        """
-        after_this = 'Description="Functional annotations:'
-        before_this = '">'
-
-        line = annotation_line
-        middle = line.split(after_this)[1].split(before_this)[0].strip()
-        middle = middle[1:-1]  # Remove ' and ' at the beginning and end
-
-        self.keys += middle.split(' | ')
-
-    def add_prefix(self):
-        for i, key in enumerate(self.keys):
-            self.keys[i] = self.KEY_PREFIX + key
+        id_ = info_line.split('INFO=<ID=')[1].split(',')[0]
+        description = info_line.split(',Description="')[1].split('">')[0]
+        self.id_to_description[id_] = description
 
 
 class Mutect2SnpEffVcfLineToRow(Processor):
 
     vcf_line: str
-    mutect2_info_key_to_name: Dict[str, str]
-    snpeff_annotation_keys: List[str]
+    info_id_to_description: Dict[str, str]
 
     vcf_info: str
     row: Dict[str, Any]
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
+        self.unroll_snpeff_annotation = UnrollSnpEffAnnotation(self.settings).main
 
     def main(
             self,
             vcf_line: str,
-            mutect2_info_key_to_name: Dict[str, str],
-            snpeff_annotation_keys: List[str]) -> Dict[str, Any]:
+            info_id_to_description: Dict[str, str]) -> Dict[str, Any]:
 
         self.vcf_line = vcf_line
-        self.mutect2_info_key_to_name = mutect2_info_key_to_name
-        self.snpeff_annotation_keys = snpeff_annotation_keys
+        self.info_id_to_description = info_id_to_description
 
-        self.unpack_line()
-        self.parse_snpeff_annotation_from_vcf_info()
-
-        for key_val in self.vcf_info.split(';'):
-
-            if '=' not in key_val:
-                continue
-
-            key, val = key_val.split('=')
-            if key in self.mutect2_info_key_to_name:
-                name = self.mutect2_info_key_to_name[key]
-                self.row[name] = val
+        self.unpack_line_and_set_vcf_info()
+        self.parse_vcf_info()
+        self.row = self.unroll_snpeff_annotation(self.row)
 
         return self.row
 
-    def unpack_line(self):
-        chromosome, position, id_, ref_allele, \
-        alt_allele, quality, filter_, info = \
+    def unpack_line_and_set_vcf_info(self):
+        chromosome, position, id_, ref_allele, alt_allele, quality, filter_, info = \
             self.vcf_line.strip().split('\t')[:8]
 
         self.row = {
@@ -207,21 +134,43 @@ class Mutect2SnpEffVcfLineToRow(Processor):
         }
         self.vcf_info = info
 
-    def parse_snpeff_annotation_from_vcf_info(self):
-        ann_str = None
+    def parse_vcf_info(self):
         items = self.vcf_info.split(';')
         for item in items:
-            if item.startswith('ANN='):
-                ann_str = item[len('ANN='):]
+            if '=' not in item:
+                continue
 
-        if ann_str is None:
-            return
+            id_, val = item.split('=')
+            description = self.info_id_to_description.get(id_, None)
+            if description is not None:
+                self.row[description] = val
 
-        ann_values = ann_str.split('|')
 
-        ann_dict = {
-            k: v for k, v in
-            zip(self.snpeff_annotation_keys, ann_values)
+class UnrollSnpEffAnnotation(Processor):
+
+    LEFT_STRIP = "Functional annotations: '"
+    RIGHT_STRIP = "' "
+
+    d: Dict[str, str]
+
+    def __init__(self, settings: Settings):
+        super().__init__(settings=settings)
+
+    def main(self, d: Dict[str, str]) -> Dict[str, str]:
+        self.d = d.copy()
+
+        keys = list(self.d.keys())
+        for key in keys:
+            if key.startswith(self.LEFT_STRIP):
+                val = self.d.pop(key)
+                self.unroll(key, val)
+
+        return self.d
+
+    def unroll(self, key: str, val: str):
+        keys = key[len(self.LEFT_STRIP):-len(self.RIGHT_STRIP)].split(' | ')
+        vals = val.split('|')
+        new_dict = {
+            k: v for k, v in zip(keys, vals)
         }
-
-        self.row.update(ann_dict)
+        self.d.update(new_dict)
