@@ -10,10 +10,18 @@ class TestGATKPipeline(TestCase):
     def tearDown(self):
         self.tear_down()
 
-    def test_main(self):
+    def __test_tumor_normal_paired(self):
         GATKPipeline(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa',
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
             normal_fq2=f'{self.indir}/normal.2.fq.gz')
+
+    def test_tumor_only(self):
+        GATKPipeline(self.settings).main(
+            ref_fa=f'{self.indir}/chr9.fa',
+            tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
+            tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
+            normal_fq1=None,
+            normal_fq2=None)
