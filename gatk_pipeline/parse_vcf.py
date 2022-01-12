@@ -8,6 +8,7 @@ class ParseMutect2SnpEffVcf(Processor):
     vcf: str
 
     vcf_header: str
+    mutect2_info_key_to_name: Dict[str, str]
     snpeff_annotation_keys: List[str]
     df: pd.DataFrame
 
@@ -18,6 +19,7 @@ class ParseMutect2SnpEffVcf(Processor):
         self.vcf = vcf
 
         self.set_vcf_header()
+        self.set_mutect2_info_key_to_name()
         self.set_snpeff_annotation_keys()
         self.process_vcf_data()
         self.save_csv()
@@ -29,8 +31,12 @@ class ParseMutect2SnpEffVcf(Processor):
                 if line.startswith('##'):
                     self.vcf_header += line
 
+    def set_mutect2_info_key_to_name(self):
+        self.mutect2_info_key_to_name = GetMutect2InfoKeyToName(self.settings).main(
+            vcf_header=self.vcf_header)
+
     def set_snpeff_annotation_keys(self):
-        self.snpeff_annotation_keys = GetSnpEffAnnotationKeysFromVcfHeader(self.settings).main(
+        self.snpeff_annotation_keys = GetSnpEffAnnotationKeys(self.settings).main(
             vcf_header=self.vcf_header)
 
     def process_vcf_data(self):
@@ -44,6 +50,7 @@ class ParseMutect2SnpEffVcf(Processor):
 
                 row = line_to_row(
                     vcf_line=line,
+                    mutect2_info_key_to_name=self.mutect2_info_key_to_name,
                     snpeff_annotation_keys=self.snpeff_annotation_keys)
 
                 self.df = self.df.append(row, ignore_index=True)
@@ -52,7 +59,61 @@ class ParseMutect2SnpEffVcf(Processor):
         self.df.to_csv(f'{self.outdir}/variants.csv', index=False)
 
 
-class GetSnpEffAnnotationKeysFromVcfHeader(Processor):
+class GetMutect2InfoKeyToName(Processor):
+
+    NAME_PREFIX = 'Mutect2 '
+
+    vcf_header: str
+
+    mutect2_info_section: str
+    key_to_name: Dict[str, str]
+
+    def __init__(self, settings: Settings):
+        super().__init__(settings=settings)
+
+    def main(self, vcf_header: str) -> Dict[str, str]:
+        self.vcf_header = vcf_header
+
+        self.set_mutect2_info_section()
+        self.set_key_to_name()
+
+        return self.key_to_name
+
+    def set_mutect2_info_section(self):
+        section = ''
+        collect_line = False
+        for line in self.vcf_header.splitlines():
+
+            if line.startswith('##GATKCommandLine'):
+                collect_line = True
+                continue
+
+            if line.startswith('##MutectVersion'):
+                break
+
+            if collect_line:
+                section += line + '\n'
+
+        self.mutect2_info_section = section.rstrip()
+
+    def set_key_to_name(self):
+        self.key_to_name = {}
+        for line in self.mutect2_info_section.splitlines():
+            self.process_(line=line)
+
+    def process_(self, line: str):
+        """
+        ##INFO=<ID=MBQ,Number=R,Type=Integer,Description="median base quality by allele">
+
+        key = 'MBQ'
+        name = 'median base quality by allele'
+        """
+        key = line.split('INFO=<ID=')[1].split(',')[0]
+        name = line.split(',Description="')[1].split('">')[0]
+        self.key_to_name[key] = f'{self.NAME_PREFIX}{name}'
+
+
+class GetSnpEffAnnotationKeys(Processor):
 
     KEY_PREFIX = 'SnpEff '
 
@@ -96,6 +157,7 @@ class GetSnpEffAnnotationKeysFromVcfHeader(Processor):
 class Mutect2SnpEffVcfLineToRow(Processor):
 
     vcf_line: str
+    mutect2_info_key_to_name: Dict[str, str]
     snpeff_annotation_keys: List[str]
 
     vcf_info: str
@@ -107,13 +169,25 @@ class Mutect2SnpEffVcfLineToRow(Processor):
     def main(
             self,
             vcf_line: str,
+            mutect2_info_key_to_name: Dict[str, str],
             snpeff_annotation_keys: List[str]) -> Dict[str, Any]:
 
         self.vcf_line = vcf_line
+        self.mutect2_info_key_to_name = mutect2_info_key_to_name
         self.snpeff_annotation_keys = snpeff_annotation_keys
 
         self.unpack_line()
         self.parse_snpeff_annotation_from_vcf_info()
+
+        for key_val in self.vcf_info.split(';'):
+
+            if '=' not in key_val:
+                continue
+
+            key, val = key_val.split('=')
+            if key in self.mutect2_info_key_to_name:
+                name = self.mutect2_info_key_to_name[key]
+                self.row[name] = val
 
         return self.row
 

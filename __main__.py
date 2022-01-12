@@ -2,7 +2,7 @@ import argparse
 import gatk_pipeline
 
 
-__version__ = '1.0.1-beta'
+__version__ = '1.1.0-beta'
 
 
 PROG = 'python gatk_pipeline'
