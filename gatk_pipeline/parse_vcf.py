@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any, List
+from typing import Dict, Any, List, IO
 from .template import Processor, Settings
 
 
@@ -11,7 +11,8 @@ class ParseMutect2SnpEffVcf(Processor):
 
     vcf_header: str
     info_id_to_description: Dict[str, str]
-    df: pd.DataFrame
+    vcf_fh: IO
+    data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
@@ -24,27 +25,27 @@ class ParseMutect2SnpEffVcf(Processor):
         self.set_vcf_header()
         self.set_info_id_to_description()
         self.process_vcf_data()
-        self.save_csv()
 
     def set_vcf_header(self):
         self.vcf_header = ''
         with open(self.vcf) as fh:
             for line in fh:
-                if line.startswith('##'):
-                    self.vcf_header += line
+                if not line.startswith('#'):
+                    break
+                self.vcf_header += line
 
     def set_info_id_to_description(self):
         self.info_id_to_description = GetInfoIDToDescription(self.settings).main(
             vcf_header=self.vcf_header)
 
     def process_vcf_data(self):
-        self.df = pd.DataFrame()
+        self.__open()
 
-        fh = open(self.vcf)
         n = 0
-        for line in fh:
+        for line in self.vcf_fh:
             if line.startswith('#'):
                 continue
+
             n += 1
             if n % self.LOG_INTERVAL == 0:
                 self.logger.debug(msg=f'{n} variants parsed')
@@ -52,11 +53,18 @@ class ParseMutect2SnpEffVcf(Processor):
             row = self.vcf_line_to_row(
                 vcf_line=line,
                 info_id_to_description=self.info_id_to_description)
-            self.df = self.df.append(row, ignore_index=True)
-        fh.close()
 
-    def save_csv(self):
-        self.df.to_csv(f'{self.outdir}/variants.csv', index=False)
+            self.data.append(row)
+
+        self.__close_and_save()
+
+    def __open(self):
+        self.vcf_fh = open(self.vcf)
+        self.data = []
+
+    def __close_and_save(self):
+        self.vcf_fh.close()
+        pd.DataFrame(self.data).to_csv(f'{self.outdir}/variants.csv', index=False)
 
 
 class GetInfoIDToDescription(Processor):

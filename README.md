@@ -5,7 +5,7 @@
 ## Usage
 
 ```bash
-git clone https://github.com/linyc74/covid_variant.git
+git clone https://github.com/linyc74/gatk_pipeline.git
 ```
 
 Tumor-normal paired mode

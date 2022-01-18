@@ -1,4 +1,5 @@
 from .setup import TestCase
+import numpy as np
 import pandas as pd
 from gatk_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetInfoIDToDescription, \
     Mutect2SnpEffVcfLineToRow, UnrollSnpEffAnnotation
@@ -135,3 +136,28 @@ class TestUnrollSnpEffAnnotation(TestCase):
             'ERRORS / WARNINGS / INFO': ',T',
         }
         self.assertDictEqual(expected, actual)
+
+
+class TestPandasDataStructure(TestCase):
+    """
+    To understand how to append rows without using df.append(), which is extremely slow
+    """
+
+    def test_list_of_dict(self):
+        df1 = pd.DataFrame([
+            {'A': 1, 'B': 1},  # row 1
+            {'A': 2, 'C': 2},  # row 2
+            {'D': 3},          # row 3
+            {'A': 4},          # row 4
+        ])
+
+        df2 = pd.DataFrame(columns=[
+            'A', 'B', 'C', 'D'
+        ], data=[
+            [1, 1, np.nan, np.nan],
+            [2, np.nan, 2, np.nan],
+            [np.nan, np.nan, np.nan, 3],
+            [4, np.nan, np.nan, np.nan]
+        ])
+
+        self.assertDataFrameEqual(df1, df2)

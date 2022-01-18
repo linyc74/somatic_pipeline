@@ -18,7 +18,7 @@ class TestGATKPipeline(TestCase):
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
             normal_fq2=f'{self.indir}/normal.2.fq.gz')
 
-    def test_tumor_only(self):
+    def __test_tumor_only(self):
         GATKPipeline(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa',
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',

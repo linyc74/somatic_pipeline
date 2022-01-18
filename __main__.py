@@ -21,7 +21,7 @@ REQUIRED = [
         'properties': {
             'type': str,
             'required': True,
-            'help': 'path to the tumor read 1 fastq file',
+            'help': 'path to the tumor read 1 fastq(.gz) file',
         }
     },
     {
@@ -29,7 +29,7 @@ REQUIRED = [
         'properties': {
             'type': str,
             'required': True,
-            'help': 'path to the tumor read 2 fastq file',
+            'help': 'path to the tumor read 2 fastq(.gz) file',
         }
     },
 ]
@@ -40,7 +40,7 @@ OPTIONAL = [
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'path to the normal read 1 fastq file (default: %(default)s)',
+            'help': 'path to the normal read 1 fastq(.gz) file (default: %(default)s)',
         }
     },
     {
@@ -49,7 +49,7 @@ OPTIONAL = [
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'path to the normal read 2 fastq file (default: %(default)s)',
+            'help': 'path to the normal read 2 fastq(.gz) file (default: %(default)s)',
         }
     },
     {
