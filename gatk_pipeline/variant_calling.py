@@ -1,35 +1,25 @@
-from os.path import basename
 from .constant import CMD_LINEBREAK
 from .constant import TUMOR, NORMAL
 from .template import Processor, Settings
+from os.path import dirname, abspath, basename
 
 
 class Mutect2(Processor):
 
     ref_fa: str
-    copied_ref_fa: str
     vcf: str
 
     def __init__(self, settings: Settings):
         super().__init__(settings=settings)
 
-    def prepare_ref_fa(self):
-        self.copy_ref_fa()
-        self.index_ref_fa()
-
-    def copy_ref_fa(self):
-        self.copied_ref_fa = f'{self.workdir}/{basename(self.ref_fa)}'
-        cmd = f'cp {self.ref_fa} {self.copied_ref_fa}'
-        self.call(cmd)
-
     def index_ref_fa(self):
-        cmd = f'samtools faidx {self.copied_ref_fa}'
+        cmd = f'samtools faidx {self.ref_fa}'
         self.call(cmd)
 
         log = f'{self.outdir}/gatk_CreateSequenceDictionary.log'
         cmd = CMD_LINEBREAK.join([
             'gatk CreateSequenceDictionary',
-            f'-R {self.copied_ref_fa}',
+            f'-R {self.ref_fa}',
             f'1> {log} 2> {log}'
         ])
         self.call(cmd)
@@ -74,7 +64,7 @@ class Mutect2TumorNormalPaired(Mutect2):
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
 
-        self.prepare_ref_fa()
+        self.index_ref_fa()
         self.tag_tumor_and_normal_read_groups()
         self.index_tumor_normal_bams()
         self.mutect2()
@@ -100,7 +90,7 @@ class Mutect2TumorNormalPaired(Mutect2):
         log = f'{self.outdir}/gatk_Mutect2.log'
         cmd = CMD_LINEBREAK.join([
             'gatk Mutect2',
-            f'--reference {self.copied_ref_fa}',
+            f'--reference {self.ref_fa}',
             f'--input {self.tumor_tagged_bam}',
             f'--input {self.normal_tagged_bam}',
             f'--normal-sample {NORMAL}',
@@ -124,7 +114,7 @@ class Mutect2TumorOnly(Mutect2):
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
 
-        self.prepare_ref_fa()
+        self.index_ref_fa()
         self.tag_tumor_read_group()
         self.index_tumor_bam()
         self.mutect2()
@@ -146,7 +136,7 @@ class Mutect2TumorOnly(Mutect2):
         log = f'{self.outdir}/gatk_Mutect2.log'
         cmd = CMD_LINEBREAK.join([
             'gatk Mutect2',
-            f'--reference {self.copied_ref_fa}',
+            f'--reference {self.ref_fa}',
             f'--input {self.tumor_tagged_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',

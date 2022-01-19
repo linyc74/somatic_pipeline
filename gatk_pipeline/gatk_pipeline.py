@@ -2,6 +2,7 @@ from typing import Optional
 from .clean_up import CleanUp
 from .annotation import SnpEff
 from .trimming import TrimGalore
+from .copy_ref_fa import CopyRefFa
 from .constant import TUMOR, NORMAL
 from .mapping import BwaIndex, BwaMem
 from .template import Processor, Settings
@@ -39,12 +40,17 @@ class GATKPipeline(Processor):
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
 
+        self.copy_ref_fa()
         self.trimming()
         self.mapping()
         self.variant_calling()
         self.annotation()
         self.parse_vcf()
         self.clean_up()
+
+    def copy_ref_fa(self):
+        self.ref_fa = CopyRefFa(self.settings).main(
+            ref_fa=self.ref_fa)
 
     def trimming(self):
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(

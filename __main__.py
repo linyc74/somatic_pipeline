@@ -13,7 +13,7 @@ REQUIRED = [
         'properties': {
             'type': str,
             'required': True,
-            'help': 'path to the reference genome fasta file',
+            'help': 'path to the reference genome fasta(.gz) file',
         }
     },
     {

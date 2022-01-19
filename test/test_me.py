@@ -1,8 +1,10 @@
-from .setup import TestCase
+import shutil
 from gatk_pipeline.annotation import SnpEff
 from gatk_pipeline.trimming import TrimGalore
+from gatk_pipeline.gatk_pipeline import CopyRefFa
 from gatk_pipeline.mapping import BwaIndex, BwaMem
 from gatk_pipeline.variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
+from .setup import TestCase
 
 
 class MyTest(TestCase):
@@ -12,6 +14,11 @@ class MyTest(TestCase):
 
     def tearDown(self):
         self.tear_down()
+
+    def __test_copy_ref_fa(self):
+        actual = CopyRefFa(self.settings).main(ref_fa=f'{self.indir}/chr9.fa.gz')
+        expected = f'{self.workdir}/chr9.fa'
+        self.assertFileExists(expected, actual)
 
     def __test_trim_galore(self):
         trimmed_fq1, trimmed_fq2 = TrimGalore(self.settings).main(
@@ -38,8 +45,11 @@ class MyTest(TestCase):
         self.assertFileExists(expected, actual)
 
     def __test_mutect2_tumor_normal_paired(self):
+        shutil.copy(
+            f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa'  # ref_fa should be in workdir in runtime
+        )
         actual = Mutect2TumorNormalPaired(self.settings).main(
-            ref_fa=f'{self.indir}/chr9.fa',
+            ref_fa=f'{self.workdir}/chr9.fa',
             tumor_bam=f'{self.indir}/tumor_sorted.bam',
             normal_bam=f'{self.indir}/normal_sorted.bam'
         )
@@ -47,8 +57,11 @@ class MyTest(TestCase):
         self.assertFileExists(expected, actual)
 
     def __test_mutect2_tumor_only(self):
+        shutil.copy(
+            f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa'  # ref_fa should be in workdir in runtime
+        )
         actual = Mutect2TumorOnly(self.settings).main(
-            ref_fa=f'{self.indir}/chr9.fa',
+            ref_fa=f'{self.workdir}/chr9.fa',
             tumor_bam=f'{self.indir}/tumor_sorted.bam',
         )
         expected = f'{self.outdir}/raw.vcf'

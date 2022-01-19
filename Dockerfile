@@ -6,12 +6,11 @@ RUN conda create -n gatk \
     bwa=0.7.17 \
     samtools=1.11 \
     gatk4=4.2.4.1 \
- && conda install -c conda-forge \
+ && conda install -c conda-forge -n gatk \
     unzip=6.0 \
+ && conda install -c anaconda -n gatk \
+    pandas=1.3.5 \
  && conda clean --all --yes
-
-RUN pip install --no-cache-dir \
-    pandas==1.3.4
 
 RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
  && unzip snpEff_latest_core.zip \
