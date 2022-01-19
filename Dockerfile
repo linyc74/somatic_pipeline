@@ -6,17 +6,18 @@ RUN conda create -n gatk \
     bwa=0.7.17 \
     samtools=1.11 \
     gatk4=4.2.4.1 \
- && conda install -c conda-forge -n gatk \
-    unzip=6.0 \
  && conda install -c anaconda -n gatk \
     pandas=1.3.5 \
  && conda clean --all --yes
 
-RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
+ENV PATH /opt/conda/envs/gatk/bin:$PATH
+
+RUN conda install -c conda-forge unzip=6.0 \
+ && wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
  && unzip snpEff_latest_core.zip \
  && rm snpEff_latest_core.zip
 
-ENV PATH /opt/conda/envs/gatk/bin:/snpEff/exec:$PATH
+ENV PATH /snpEff/exec:$PATH
 
 RUN snpeff download GRCh38.99
 
