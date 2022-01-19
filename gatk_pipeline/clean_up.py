@@ -9,7 +9,7 @@ class CleanUp(Processor):
 
     def main(self):
         self.collect_log_files()
-
+        self.remove_workdir()
 
     def collect_log_files(self):
         os.makedirs(f'{self.outdir}/log')
