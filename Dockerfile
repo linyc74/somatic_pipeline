@@ -19,7 +19,7 @@ RUN conda install -c conda-forge unzip=6.0 \
 
 ENV PATH /snpEff/exec:$PATH
 
-RUN snpeff download GRCh38.99
+RUN snpeff download -verbose GRCh38.99
 
 COPY ./gatk_pipeline/* /gatk_pipeline/gatk_pipeline/
 COPY ./__main__.py /gatk_pipeline/
