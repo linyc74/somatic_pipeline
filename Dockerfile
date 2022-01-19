@@ -1,6 +1,7 @@
 FROM continuumio/miniconda3:4.10.3
 
-RUN conda install -c bioconda \
+RUN conda create -n gatk \
+ && conda install -c bioconda -n gatk \
     trim-galore=0.6.6 \
     bwa=0.7.17 \
     samtools=1.11 \
@@ -14,10 +15,11 @@ RUN pip install --no-cache-dir \
 
 RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
  && unzip snpEff_latest_core.zip \
- && rm snpEff_latest_core.zip \
- && snpeff download GRCh38.99
+ && rm snpEff_latest_core.zip
 
-ENV PATH /snpEff/exec:$PATH
+ENV PATH /opt/conda/envs/gatk/bin:/snpEff/exec:$PATH
+
+RUN snpeff download GRCh38.99
 
 COPY ./gatk_pipeline/* /gatk_pipeline/gatk_pipeline/
 COPY ./__main__.py /gatk_pipeline/
