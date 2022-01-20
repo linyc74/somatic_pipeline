@@ -1,7 +1,6 @@
 import os
 from typing import Tuple
 from os.path import basename
-from .constant import CMD_LINEBREAK
 from .template import Processor, Settings
 
 
@@ -35,7 +34,7 @@ class TrimGalore(Processor):
 
     def execute(self):
         log = f'{self.outdir}/trim_galore.log'
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'trim_galore',
             '--paired',
             f'--quality {self.QUALITY}',

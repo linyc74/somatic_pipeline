@@ -1,4 +1,3 @@
-from .constant import CMD_LINEBREAK
 from .template import Processor, Settings
 
 
@@ -24,7 +23,7 @@ class SnpEff(Processor):
         html = f'{self.outdir}/snpEff_summary.html'
         stderr = f'{self.outdir}/snpEff.log'
 
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'snpeff',
             '-verbose',
             f'-htmlStats {html}',

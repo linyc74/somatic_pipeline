@@ -1,7 +1,5 @@
-from .constant import CMD_LINEBREAK
 from .constant import TUMOR, NORMAL
 from .template import Processor, Settings
-from os.path import dirname, abspath, basename
 
 
 class Mutect2(Processor):
@@ -17,7 +15,7 @@ class Mutect2(Processor):
         self.call(cmd)
 
         log = f'{self.outdir}/gatk_CreateSequenceDictionary.log'
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'gatk CreateSequenceDictionary',
             f'-R {self.ref_fa}',
             f'1> {log} 2> {log}'
@@ -30,7 +28,7 @@ class Mutect2(Processor):
             bam_out: str,
             name: str):
         log = f'{self.outdir}/gatk_AddOrReplaceReadGroups_{name}.log'
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'gatk AddOrReplaceReadGroups',
             f'--INPUT {bam_in}',
             f'--OUTPUT {bam_out}',
@@ -88,7 +86,7 @@ class Mutect2TumorNormalPaired(Mutect2):
     def mutect2(self):
         self.vcf = f'{self.workdir}/raw.vcf'
         log = f'{self.outdir}/gatk_Mutect2.log'
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
             f'--input {self.tumor_tagged_bam}',
@@ -134,7 +132,7 @@ class Mutect2TumorOnly(Mutect2):
     def mutect2(self):
         self.vcf = f'{self.workdir}/raw.vcf'
         log = f'{self.outdir}/gatk_Mutect2.log'
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
             f'--input {self.tumor_tagged_bam}',

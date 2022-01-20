@@ -1,4 +1,3 @@
-from .constant import CMD_LINEBREAK
 from .template import Processor, Settings
 
 
@@ -24,7 +23,7 @@ class BwaIndex(Processor):
     def execute(self):
         stderr = f'{self.outdir}/bwa_index.log'
 
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'bwa index',
             f'-p {self.index}',
             self.fna,
@@ -75,7 +74,7 @@ class BwaMem(Processor):
     def mapping(self):
         stderr = f'{self.outdir}/bwa_mem_{self.sample_name}.log'
 
-        cmd = CMD_LINEBREAK.join([
+        cmd = self.CMD_LINEBREAK.join([
             'bwa mem',
             f'-t {self.threads}',
             f'-o {self.sam}',
