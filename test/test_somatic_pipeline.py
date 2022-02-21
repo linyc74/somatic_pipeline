@@ -16,7 +16,9 @@ class TestGATKPipeline(TestCase):
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
-            normal_fq2=f'{self.indir}/normal.2.fq.gz')
+            normal_fq2=f'{self.indir}/normal.2.fq.gz',
+            read_aligner='bwa',
+            variant_caller='mutect2')
 
     def __test_tumor_only(self):
         SomaticPipeline(self.settings).main(
@@ -24,4 +26,6 @@ class TestGATKPipeline(TestCase):
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=None,
-            normal_fq2=None)
+            normal_fq2=None,
+            read_aligner='bwa',
+            variant_caller='mutect2')

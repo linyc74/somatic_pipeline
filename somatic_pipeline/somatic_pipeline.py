@@ -17,6 +17,8 @@ class SomaticPipeline(Processor):
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    read_aligner: str
+    variant_caller: str
 
     tumor_bam: str
     normal_bam: Optional[str]
@@ -32,13 +34,17 @@ class SomaticPipeline(Processor):
             tumor_fq1: str,
             tumor_fq2: str,
             normal_fq1: Optional[str],
-            normal_fq2: Optional[str]):
+            normal_fq2: Optional[str],
+            read_aligner: str,
+            variant_caller: str):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.read_aligner = read_aligner
+        self.variant_caller = variant_caller
 
         self.copy_ref_fa()
         self.trimming()

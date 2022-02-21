@@ -6,7 +6,7 @@ __VERSION__ = '1.3.0-beta'
 
 
 PROG = 'python somatic_pipeline'
-DESCRIPTION = f'Custom-built GATK pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
+DESCRIPTION = f'Custom-built somatic pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
 REQUIRED = [
     {
         'keys': ['-r', '--ref-fa'],
@@ -53,11 +53,31 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--read-aligner'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'choices': ['bwa', 'bowtie2'],
+            'default': 'bwa',
+            'help': 'read aligner (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--variant-caller'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'choices': ['mutect2', 'muse'],
+            'default': 'mutect2',
+            'help': 'variant caller (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['-o', '--outdir'],
         'properties': {
             'type': str,
             'required': False,
-            'default': 'gatk_pipeline_outdir',
+            'default': 'somatic_pipeline_outdir',
             'help': 'path to the output directory (default: %(default)s)',
         }
     },
@@ -131,6 +151,8 @@ class EntryPoint:
             tumor_fq2=args.tumor_fq2,
             normal_fq1=args.normal_fq1,
             normal_fq2=args.normal_fq2,
+            read_aligner=args.read_aligner,
+            variant_caller=args.variant_caller,
             outdir=args.outdir,
             threads=args.threads,
             debug=args.debug)
