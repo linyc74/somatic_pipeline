@@ -6,6 +6,7 @@ RUN conda create -n somatic \
     bwa=0.7.17 \
     samtools=1.11 \
     gatk4=4.2.4.1 \
+    bowtie2=2.3.5 \
  && conda install -c anaconda -n somatic \
     pandas=1.3.5 \
  && conda clean --all --yes

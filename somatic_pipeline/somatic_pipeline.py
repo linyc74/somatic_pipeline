@@ -2,9 +2,8 @@ from typing import Optional
 from .clean_up import CleanUp
 from .annotation import SnpEff
 from .trimming import TrimGalore
+from .alignment import Alignment
 from .copy_ref_fa import CopyRefFa
-from .constant import TUMOR, NORMAL
-from .mapping import BwaIndex, BwaMem
 from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
 from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
@@ -48,7 +47,7 @@ class SomaticPipeline(Processor):
 
         self.copy_ref_fa()
         self.trimming()
-        self.mapping()
+        self.alignment()
         self.variant_calling()
         self.annotation()
         self.parse_vcf()
@@ -69,24 +68,14 @@ class SomaticPipeline(Processor):
             fq1=self.normal_fq1,
             fq2=self.normal_fq2)
 
-    def mapping(self):
-        index = BwaIndex(self.settings).main(
-            fna=self.ref_fa)
-
-        self.tumor_bam = BwaMem(self.settings).main(
-            index=index,
-            fq1=self.tumor_fq1,
-            fq2=self.tumor_fq2,
-            sample_name=TUMOR)
-
-        if self.normal_fq1 is None:
-            self.normal_bam = None
-        else:
-            self.normal_bam = BwaMem(self.settings).main(
-                index=index,
-                fq1=self.normal_fq1,
-                fq2=self.normal_fq2,
-                sample_name=NORMAL)
+    def alignment(self):
+        self.tumor_bam, self.normal_bam = Alignment(self.settings).main(
+            read_aligner=self.read_aligner,
+            ref_fa=self.ref_fa,
+            tumor_fq1=self.tumor_fq1,
+            tumor_fq2=self.tumor_fq2,
+            normal_fq1=self.normal_fq1,
+            normal_fq2=self.normal_fq2)
 
     def variant_calling(self):
         if self.normal_bam is None:

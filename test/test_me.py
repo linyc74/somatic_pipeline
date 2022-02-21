@@ -2,7 +2,6 @@ import shutil
 from somatic_pipeline.annotation import SnpEff
 from somatic_pipeline.trimming import TrimGalore
 from somatic_pipeline.somatic_pipeline import CopyRefFa
-from somatic_pipeline.mapping import BwaIndex, BwaMem
 from somatic_pipeline.variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
 from .setup import TestCase
 
@@ -30,19 +29,6 @@ class MyTest(TestCase):
             (f'{self.workdir}/tumor.2_val_2.fq.gz', trimmed_fq2),
         ]:
             self.assertFileExists(expected, actual)
-
-    def __test_mapping(self):
-        index = BwaIndex(self.settings).main(
-            fna=f'{self.indir}/chr9.fa'
-        )
-        actual = BwaMem(self.settings).main(
-            index=index,
-            fq1=f'{self.indir}/tumor.1.fq.gz',
-            fq2=f'{self.indir}/tumor.2.fq.gz',
-            sample_name='tumor'
-        )
-        expected = f'{self.outdir}/tumor_sorted.bam'
-        self.assertFileExists(expected, actual)
 
     def __test_mutect2_tumor_normal_paired(self):
         shutil.copy(
