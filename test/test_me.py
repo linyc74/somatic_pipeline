@@ -1,9 +1,9 @@
 import shutil
-from gatk_pipeline.annotation import SnpEff
-from gatk_pipeline.trimming import TrimGalore
-from gatk_pipeline.gatk_pipeline import CopyRefFa
-from gatk_pipeline.mapping import BwaIndex, BwaMem
-from gatk_pipeline.variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
+from somatic_pipeline.annotation import SnpEff
+from somatic_pipeline.trimming import TrimGalore
+from somatic_pipeline.somatic_pipeline import CopyRefFa
+from somatic_pipeline.mapping import BwaIndex, BwaMem
+from somatic_pipeline.variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
 from .setup import TestCase
 
 

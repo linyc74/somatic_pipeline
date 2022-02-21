@@ -1,7 +1,7 @@
 from .setup import TestCase
 import numpy as np
 import pandas as pd
-from gatk_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetInfoIDToDescription, \
+from somatic_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetInfoIDToDescription, \
     Mutect2SnpEffVcfLineToRow, UnrollSnpEffAnnotation
 
 

@@ -3,7 +3,7 @@ import shutil
 import unittest
 import pandas as pd
 from typing import Tuple
-from gatk_pipeline.template import Settings
+from somatic_pipeline.template import Settings
 
 
 def get_dirs(py_path: str) -> Tuple[str, str, str]:

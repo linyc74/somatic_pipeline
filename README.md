@@ -1,17 +1,15 @@
-# GATK Pipeline
-
-**Custom-built GATK pipeline**
+# Somatic Variant Calling Pipeline
 
 ## Usage
 
 ```bash
-git clone https://github.com/linyc74/gatk_pipeline.git
+git clone https://github.com/linyc74/somatic_pipeline.git
 ```
 
 Tumor-normal paired mode
 
 ```bash
-python gatk_pipeline \
+python somatic_pipeline \
   -r reference_genome.fa \
   -1 tumor.1.fq.gz \
   -2 tumor.2.fq.gz \
@@ -22,7 +20,7 @@ python gatk_pipeline \
 Tumor-only mode
 
 ```bash
-python gatk_pipeline \
+python somatic_pipeline \
   -r reference_genome.fa \
   -1 tumor.1.fq.gz \
   -2 tumor.2.fq.gz
@@ -30,11 +28,11 @@ python gatk_pipeline \
 
 ## Environment
 
-Create a conda environment and install the following packages:
+Create a conda environment `somatic` and install the following packages:
 
 ```bash
-conda create --name gatk
-conda activate gatk
+conda create --name somatic
+conda activate somatic
 conda install -c bioconda trim-galore bwa samtools gatk4
 pip install pandas
 ```

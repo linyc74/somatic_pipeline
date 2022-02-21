@@ -1,11 +1,11 @@
 import argparse
-import gatk_pipeline
+import somatic_pipeline
 
 
-__VERSION__ = '1.2.1-beta'
+__VERSION__ = '1.3.0-beta'
 
 
-PROG = 'python gatk_pipeline'
+PROG = 'python somatic_pipeline'
 DESCRIPTION = f'Custom-built GATK pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
 REQUIRED = [
     {
@@ -124,8 +124,8 @@ class EntryPoint:
 
     def run(self):
         args = self.parser.parse_args()
-        print(f'Start running GATK Pipeline version {__VERSION__}\n', flush=True)
-        gatk_pipeline.Main().main(
+        print(f'Start running Somatic Pipeline version {__VERSION__}\n', flush=True)
+        somatic_pipeline.Main().main(
             ref_fa=args.ref_fa,
             tumor_fq1=args.tumor_fq1,
             tumor_fq2=args.tumor_fq2,

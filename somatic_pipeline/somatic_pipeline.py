@@ -10,7 +10,7 @@ from .parse_vcf import ParseMutect2SnpEffVcf
 from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
 
 
-class GATKPipeline(Processor):
+class SomaticPipeline(Processor):
 
     ref_fa: str
     tumor_fq1: str

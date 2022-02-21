@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 from .template import Settings
-from .gatk_pipeline import GATKPipeline
+from .somatic_pipeline import SomaticPipeline
 
 
 class Main:
@@ -41,7 +41,7 @@ class Main:
         for d in [self.settings.workdir, self.settings.outdir]:
             os.makedirs(d, exist_ok=True)
 
-        GATKPipeline(self.settings).main(
+        SomaticPipeline(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
