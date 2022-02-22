@@ -1,28 +1,27 @@
 from typing import Optional, Tuple
+from abc import ABC, abstractmethod
 from .constant import TUMOR, NORMAL
 from .template import Processor, Settings
 
 
-class Indexer(Processor):
+class TemplateIndexer(Processor, ABC):
 
     fna: str
     index: str
 
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
-
     def main(self, fna: str) -> str:
         self.fna = fna
-        self.execute()
+        self.run_indexing()
         return self.index
 
-    def execute(self):
-        pass
+    @abstractmethod
+    def run_indexing(self):
+        return
 
 
-class BwaIndexer(Indexer):
+class BwaIndexer(TemplateIndexer):
 
-    def execute(self):
+    def run_indexing(self):
         self.index = f'{self.workdir}/bwa-index'
         log = f'{self.outdir}/bwa-index.log'
         cmd = self.CMD_LINEBREAK.join([
@@ -34,9 +33,9 @@ class BwaIndexer(Indexer):
         self.call(cmd)
 
 
-class Bowtei2Indexer(Indexer):
+class Bowtie2Indexer(TemplateIndexer):
 
-    def execute(self):
+    def run_indexing(self):
         self.index = f'{self.workdir}/bowtie2-index'
         log = f'{self.outdir}/bowtie2-build.log'
         cmd = self.CMD_LINEBREAK.join([
@@ -49,7 +48,7 @@ class Bowtei2Indexer(Indexer):
         self.call(cmd)
 
 
-class Aligner(Processor):
+class TemplateAligner(Processor, ABC):
 
     index: str
     fq1: str
@@ -59,9 +58,6 @@ class Aligner(Processor):
     sam: str
     bam: str
     sorted_bam: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(
             self,
@@ -81,8 +77,9 @@ class Aligner(Processor):
 
         return self.sorted_bam
 
+    @abstractmethod
     def align(self):
-        pass
+        return
 
     def sam_to_bam(self):
         self.bam = f'{self.workdir}/{self.sample_name}.bam'
@@ -95,7 +92,7 @@ class Aligner(Processor):
         self.call(cmd)
 
 
-class BwaAligner(Aligner):
+class BwaAligner(TemplateAligner):
 
     def align(self):
         self.sam = f'{self.workdir}/{self.sample_name}.sam'
@@ -112,7 +109,7 @@ class BwaAligner(Aligner):
         self.call(cmd)
 
 
-class Bowtie2Aligner(Aligner):
+class Bowtie2Aligner(TemplateAligner):
 
     def align(self):
         self.sam = f'{self.workdir}/{self.sample_name}.sam'
@@ -129,18 +126,11 @@ class Bowtie2Aligner(Aligner):
         self.call(cmd)
 
 
-class Alignment(Processor):
+class StrategyIndexAndAlignTumorNormal:
 
-    INDEXER_DICT = {
-        'bwa': BwaIndexer,
-        'bowtie2': Bowtei2Indexer,
-    }
-    ALIGNER_DICT = {
-        'bwa': BwaAligner,
-        'bowtie2': Bowtie2Aligner,
-    }
+    indexer: TemplateIndexer
+    aligner: TemplateAligner
 
-    read_aligner: str
     ref_fa: str
     tumor_fq1: str
     tumor_fq2: str
@@ -148,23 +138,21 @@ class Alignment(Processor):
     normal_fq2: Optional[str]
 
     index: str
-    aligner: Aligner
     tumor_bam: str
     normal_bam: Optional[str]
 
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
+    def __init__(self, indexer: TemplateIndexer, aligner: TemplateAligner):
+        self.indexer = indexer
+        self.aligner = aligner
 
     def main(
             self,
-            read_aligner: str,
             ref_fa: str,
             tumor_fq1: str,
             tumor_fq2: str,
             normal_fq1: Optional[str],
             normal_fq2: Optional[str]) -> Tuple[str, Optional[str]]:
 
-        self.read_aligner = read_aligner
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
@@ -172,19 +160,13 @@ class Alignment(Processor):
         self.normal_fq2 = normal_fq2
 
         self.index_genome()
-        self.set_aligner()
         self.align_tumor()
         self.align_normal()
 
         return self.tumor_bam, self.normal_bam
 
     def index_genome(self):
-        indexer = self.INDEXER_DICT[self.read_aligner](self.settings)
-        self.index = indexer.main(
-            fna=self.ref_fa)
-
-    def set_aligner(self):
-        self.aligner = self.ALIGNER_DICT[self.read_aligner](self.settings)
+        self.index = self.indexer.main(fna=self.ref_fa)
 
     def align_tumor(self):
         self.tumor_bam = self.aligner.main(
@@ -194,11 +176,34 @@ class Alignment(Processor):
             sample_name=TUMOR)
 
     def align_normal(self):
-        if self.normal_fq1 is None:
-            self.normal_bam = None
-        else:
-            self.normal_bam = self.aligner.main(
+        self.normal_bam = None if self.normal_fq1 is None \
+            else self.aligner.main(
                 index=self.index,
                 fq1=self.normal_fq1,
                 fq2=self.normal_fq2,
                 sample_name=NORMAL)
+
+
+class FactoryIndexAndAlignTumorNormal:
+
+    INDEXER_DICT = {
+        'bwa': BwaIndexer,
+        'bowtie2': Bowtie2Indexer,
+    }
+    ALIGNER_DICT = {
+        'bwa': BwaAligner,
+        'bowtie2': Bowtie2Aligner,
+    }
+
+    def get_callable(
+            self,
+            settings: Settings,
+            read_aligner: str) -> StrategyIndexAndAlignTumorNormal.main:
+
+        indexer_class = self.INDEXER_DICT[read_aligner]
+        aligner_class = self.ALIGNER_DICT[read_aligner]
+
+        return StrategyIndexAndAlignTumorNormal(
+            indexer=indexer_class(settings),
+            aligner=aligner_class(settings)
+        ).main

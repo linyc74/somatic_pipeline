@@ -2,10 +2,10 @@ from typing import Optional
 from .clean_up import CleanUp
 from .annotation import SnpEff
 from .trimming import TrimGalore
-from .alignment import Alignment
 from .copy_ref_fa import CopyRefFa
 from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
+from .alignment import FactoryIndexAndAlignTumorNormal
 from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
 
 
@@ -62,15 +62,17 @@ class SomaticPipeline(Processor):
             fq1=self.tumor_fq1,
             fq2=self.tumor_fq2)
 
-        if self.normal_fq1 is None:
-            return
-        self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
-            fq1=self.normal_fq1,
-            fq2=self.normal_fq2)
+        if self.normal_fq1 is not None:
+            self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
+                fq1=self.normal_fq1,
+                fq2=self.normal_fq2)
 
     def alignment(self):
-        self.tumor_bam, self.normal_bam = Alignment(self.settings).main(
-            read_aligner=self.read_aligner,
+        f = FactoryIndexAndAlignTumorNormal().get_callable(
+            settings=self.settings,
+            read_aligner=self.read_aligner)
+
+        self.tumor_bam, self.normal_bam = f(
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,

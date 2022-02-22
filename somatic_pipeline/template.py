@@ -1,4 +1,5 @@
 import subprocess
+from abc import ABC
 from datetime import datetime
 
 
@@ -49,7 +50,7 @@ class Logger:
         print(msg + '\n', flush=True)
 
 
-class Processor:
+class Processor(ABC):
 
     CMD_LINEBREAK = ' \\\n  '
 

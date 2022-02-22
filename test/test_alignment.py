@@ -1,4 +1,4 @@
-from somatic_pipeline.alignment import BwaIndexer, BwaAligner, Bowtei2Indexer, Bowtie2Aligner
+from somatic_pipeline.alignment import BwaIndexer, BwaAligner, Bowtie2Indexer, Bowtie2Aligner
 from .setup import TestCase
 
 
@@ -33,7 +33,7 @@ class TestBowtie2(TestCase):
         self.tear_down()
 
     def test_main(self):
-        index = Bowtei2Indexer(self.settings).main(
+        index = Bowtie2Indexer(self.settings).main(
             fna=f'{self.indir}/chr9.fa'
         )
         actual = Bowtie2Aligner(self.settings).main(
