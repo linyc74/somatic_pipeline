@@ -1,14 +1,11 @@
+from .template import Processor
 from .constant import TUMOR, NORMAL
-from .template import Processor, Settings
 
 
 class Mutect2(Processor):
 
     ref_fa: str
     vcf: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def index_ref_fa(self):
         cmd = f'samtools faidx {self.ref_fa}'
@@ -22,7 +19,7 @@ class Mutect2(Processor):
         ])
         self.call(cmd)
 
-    def tag_read_group(
+    def __tag_read_group(
             self,
             bam_in: str,
             bam_out: str,
@@ -77,7 +74,7 @@ class Mutect2TumorNormalPaired(Mutect2):
             (self.normal_bam, self.normal_tagged_bam, NORMAL),
             (self.tumor_bam, self.tumor_tagged_bam, TUMOR),
         ]:
-            self.tag_read_group(bam_in=bam_in, bam_out=bam_out, name=name)
+            self.__tag_read_group(bam_in=bam_in, bam_out=bam_out, name=name)
 
     def index_tumor_normal_bams(self):
         for bam in [self.normal_tagged_bam, self.tumor_tagged_bam]:
@@ -121,7 +118,7 @@ class Mutect2TumorOnly(Mutect2):
 
     def tag_tumor_read_group(self):
         self.tumor_tagged_bam = f'{self.workdir}/{TUMOR}_read_group_tagged.bam'
-        self.tag_read_group(
+        self.__tag_read_group(
             bam_in=self.tumor_bam,
             bam_out=self.tumor_tagged_bam,
             name=TUMOR)

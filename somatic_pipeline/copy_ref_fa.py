@@ -1,14 +1,11 @@
 from os.path import basename
-from .template import Processor, Settings
+from .template import Processor
 
 
 class CopyRefFa(Processor):
 
     ref_fa: str
     copied_ref_fa: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(self, ref_fa: str) -> str:
         self.ref_fa = ref_fa

@@ -1,7 +1,7 @@
 import os
 from typing import Tuple
 from os.path import basename
-from .template import Processor, Settings
+from .template import Processor
 
 
 class TrimGalore(Processor):
@@ -17,9 +17,6 @@ class TrimGalore(Processor):
 
     out_fq1: str
     out_fq2: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(self, fq1: str, fq2: str) -> Tuple[str, str]:
         self.fq1 = fq1

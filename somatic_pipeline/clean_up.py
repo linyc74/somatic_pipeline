@@ -1,11 +1,8 @@
 import os
-from .template import Processor, Settings
+from .template import Processor
 
 
 class CleanUp(Processor):
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(self):
         self.collect_log_files()

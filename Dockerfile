@@ -7,6 +7,8 @@ RUN conda create -n somatic \
     samtools=1.11 \
     gatk4=4.2.4.1 \
     bowtie2=2.3.5 \
+    muse=1.0 \
+    varscan=2.3.7 \
  && conda install -c anaconda -n somatic \
     pandas=1.3.5 \
  && conda clean --all --yes

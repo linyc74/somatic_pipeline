@@ -1,4 +1,4 @@
-from .template import Processor, Settings
+from .template import Processor
 
 
 class SnpEff(Processor):
@@ -7,9 +7,6 @@ class SnpEff(Processor):
 
     vcf: str
     annotated_vcf: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(self, vcf: str) -> str:
         self.vcf = vcf

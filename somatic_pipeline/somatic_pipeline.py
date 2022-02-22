@@ -1,9 +1,9 @@
 from typing import Optional
 from .clean_up import CleanUp
 from .annotation import SnpEff
+from .template import Processor
 from .trimming import TrimGalore
 from .copy_ref_fa import CopyRefFa
-from .template import Processor, Settings
 from .parse_vcf import ParseMutect2SnpEffVcf
 from .alignment import FactoryIndexAndAlignTumorNormal
 from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
@@ -23,9 +23,6 @@ class SomaticPipeline(Processor):
     normal_bam: Optional[str]
     raw_vcf: str
     annotated_vcf: str
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(
             self,

@@ -15,7 +15,7 @@ class ParseMutect2SnpEffVcf(Processor):
     data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
 
     def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
+        super().__init__(settings)
         self.vcf_line_to_row = Mutect2SnpEffVcfLineToRow(self.settings).main
 
     def main(self, vcf: str):
@@ -74,9 +74,6 @@ class GetInfoIDToDescription(Processor):
     info_lines: List[str]
     id_to_description: Dict[str, str]
 
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
-
     def main(self, vcf_header: str) -> Dict[str, str]:
         self.vcf_header = vcf_header
 
@@ -117,7 +114,7 @@ class Mutect2SnpEffVcfLineToRow(Processor):
     row: Dict[str, Any]
 
     def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
+        super().__init__(settings)
         self.unroll_snpeff_annotation = UnrollSnpEffAnnotation(self.settings).main
 
     def main(
@@ -167,9 +164,6 @@ class UnrollSnpEffAnnotation(Processor):
     RIGHT_STRIP = "' "
 
     d: Dict[str, str]
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings=settings)
 
     def main(self, d: Dict[str, str]) -> Dict[str, str]:
         self.d = d.copy()
