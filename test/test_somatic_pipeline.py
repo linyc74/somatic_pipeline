@@ -10,7 +10,7 @@ class TestSomaticPipeline(TestCase):
     def tearDown(self):
         self.tear_down()
 
-    def __test_tumor_normal_paired(self):
+    def test_tumor_normal_paired(self):
         SomaticPipeline(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa.gz',
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
@@ -20,7 +20,7 @@ class TestSomaticPipeline(TestCase):
             read_aligner='bwa',
             variant_caller='mutect2')
 
-    def test_tumor_only(self):
+    def __test_tumor_only(self):
         SomaticPipeline(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa.gz',
             tumor_fq1=f'{self.indir}/tumor.1.fq.gz',
