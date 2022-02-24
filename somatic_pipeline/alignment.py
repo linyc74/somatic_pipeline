@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 from abc import ABC, abstractmethod
+from .template import Processor
 from .constant import TUMOR, NORMAL
-from .template import Processor, Settings
 
 
 class TemplateIndexer(Processor, ABC):
@@ -184,7 +184,7 @@ class StrategyIndexAndAlignTumorNormal:
                 sample_name=NORMAL)
 
 
-class FactoryIndexAndAlignTumorNormal:
+class FactoryIndexAndAlignTumorNormal(Processor):
 
     INDEXER_DICT = {
         'bwa': BwaIndexer,
@@ -195,15 +195,55 @@ class FactoryIndexAndAlignTumorNormal:
         'bowtie2': Bowtie2Aligner,
     }
 
-    def get_callable(
+    def get_strategy(
             self,
-            settings: Settings,
-            read_aligner: str) -> StrategyIndexAndAlignTumorNormal.main:
+            read_aligner: str) -> StrategyIndexAndAlignTumorNormal:
 
         indexer_class = self.INDEXER_DICT[read_aligner]
         aligner_class = self.ALIGNER_DICT[read_aligner]
 
         return StrategyIndexAndAlignTumorNormal(
-            indexer=indexer_class(settings),
-            aligner=aligner_class(settings)
-        ).main
+            indexer=indexer_class(self.settings),
+            aligner=aligner_class(self.settings)
+        )
+
+
+class Alignment(Processor):
+
+    read_aligner: str
+    ref_fa: str
+    tumor_fq1: str
+    tumor_fq2: str
+    normal_fq1: Optional[str]
+    normal_fq2: Optional[str]
+
+    tumor_bam: str
+    normal_bam: str
+
+    def main(
+            self,
+            read_aligner: str,
+            ref_fa: str,
+            tumor_fq1: str,
+            tumor_fq2: str,
+            normal_fq1: Optional[str],
+            normal_fq2: Optional[str]) -> Tuple[str, str]:
+
+        self.read_aligner = read_aligner
+        self.ref_fa = ref_fa
+        self.tumor_fq1 = tumor_fq1
+        self.tumor_fq2 = tumor_fq2
+        self.normal_fq1 = normal_fq1
+        self.normal_fq2 = normal_fq2
+
+        strategy = FactoryIndexAndAlignTumorNormal(self.settings).get_strategy(
+            read_aligner=self.read_aligner)
+
+        self.tumor_bam, self.normal_bam = strategy.main(
+            ref_fa=self.ref_fa,
+            tumor_fq1=self.tumor_fq1,
+            tumor_fq2=self.tumor_fq2,
+            normal_fq1=self.normal_fq1,
+            normal_fq2=self.normal_fq2)
+
+        return self.tumor_bam, self.normal_bam

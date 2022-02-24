@@ -17,8 +17,8 @@ class TestSomaticPipeline(TestCase):
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
             normal_fq2=f'{self.indir}/normal.2.fq.gz',
-            read_aligner='bowtie2',
-            variant_caller='mutect2')
+            read_aligner='bwa',
+            variant_caller='muse')
 
     def __test_tumor_only(self):
         SomaticPipeline(self.settings).main(

@@ -1,44 +1,69 @@
 import shutil
-from somatic_pipeline.variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
+from somatic_pipeline.variant_calling import VariantCalling
 from .setup import TestCase
 
 
-class TestMutect2TumorNormalPaired(TestCase):
+class TestVariantCalling(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
+        self.copy_and_set_files()
 
-    def tearDown(self):
-        self.tear_down()
+    def copy_and_set_files(self):
+        shutil.copy(f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa')
+        self.ref_fa = f'{self.workdir}/chr9.fa'
+        self.tumor_bam = f'{self.indir}/tumor-sorted.bam'
+        self.normal_bam = f'{self.indir}/normal-sorted.bam'
 
-    def test_main(self):
-        shutil.copy(
-            f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa'  # ref_fa should be in workdir during runtime
+    # def tearDown(self):
+    #     self.tear_down()
+
+    def test_mutect2_tn_paired(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='mutect2',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam
         )
-        actual = Mutect2TumorNormalPaired(self.settings).main(
-            ref_fa=f'{self.workdir}/chr9.fa',
-            tumor_bam=f'{self.indir}/tumor-sorted.bam',
-            normal_bam=f'{self.indir}/normal-sorted.bam'
-        )
-        expected = f'{self.outdir}/raw.vcf'
+        expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
 
-
-class TestMutect2TumorOnly(TestCase):
-
-    def setUp(self):
-        self.set_up(py_path=__file__)
-
-    def tearDown(self):
-        self.tear_down()
-
-    def test_main(self):
-        shutil.copy(
-            f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa'  # ref_fa should be in workdir during runtime
+    def test_mutect2_tumor_only(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='mutect2',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=None
         )
-        actual = Mutect2TumorOnly(self.settings).main(
-            ref_fa=f'{self.workdir}/chr9.fa',
-            tumor_bam=f'{self.indir}/tumor-sorted.bam',
-        )
-        expected = f'{self.outdir}/raw.vcf'
+        expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
+
+    def test_muse(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='muse',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_varscan(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='varscan',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_assert_no_tumor_only_mode(self):
+        for caller in ['muse', 'varscan']:
+            with self.assertRaises(AssertionError):
+                VariantCalling(self.settings).main(
+                    variant_caller=caller,
+                    ref_fa=self.ref_fa,
+                    tumor_bam=self.tumor_bam,
+                    normal_bam=None
+                )

@@ -3,7 +3,7 @@ from typing import Dict, Any, List, IO
 from .template import Processor, Settings
 
 
-class ParseMutect2SnpEffVcf(Processor):
+class ParseSnpEffVcf(Processor):
 
     LOG_INTERVAL = 10000  # variants
 
@@ -16,7 +16,7 @@ class ParseMutect2SnpEffVcf(Processor):
 
     def __init__(self, settings: Settings):
         super().__init__(settings)
-        self.vcf_line_to_row = Mutect2SnpEffVcfLineToRow(self.settings).main
+        self.vcf_line_to_row = SnpEffVcfLineToRow(self.settings).main
 
     def main(self, vcf: str):
         self.vcf = vcf
@@ -105,7 +105,7 @@ class GetInfoIDToDescription(Processor):
         self.id_to_description[id_] = description
 
 
-class Mutect2SnpEffVcfLineToRow(Processor):
+class SnpEffVcfLineToRow(Processor):
 
     vcf_line: str
     info_id_to_description: Dict[str, str]

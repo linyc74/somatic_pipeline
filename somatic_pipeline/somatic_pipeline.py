@@ -3,10 +3,10 @@ from .clean_up import CleanUp
 from .annotation import SnpEff
 from .template import Processor
 from .trimming import TrimGalore
+from .alignment import Alignment
 from .copy_ref_fa import CopyRefFa
-from .parse_vcf import ParseMutect2SnpEffVcf
-from .alignment import FactoryIndexAndAlignTumorNormal
-from .variant_calling import Mutect2TumorNormalPaired, Mutect2TumorOnly
+from .variant_calling import VariantCalling
+from .parse_vcf import ParseSnpEffVcf
 
 
 class SomaticPipeline(Processor):
@@ -65,11 +65,8 @@ class SomaticPipeline(Processor):
                 fq2=self.normal_fq2)
 
     def alignment(self):
-        f = FactoryIndexAndAlignTumorNormal().get_callable(
-            settings=self.settings,
-            read_aligner=self.read_aligner)
-
-        self.tumor_bam, self.normal_bam = f(
+        self.tumor_bam, self.normal_bam = Alignment(self.settings).main(
+            read_aligner=self.read_aligner,
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
@@ -77,22 +74,18 @@ class SomaticPipeline(Processor):
             normal_fq2=self.normal_fq2)
 
     def variant_calling(self):
-        if self.normal_bam is None:
-            self.raw_vcf = Mutect2TumorOnly(self.settings).main(
-                ref_fa=self.ref_fa,
-                tumor_bam=self.tumor_bam)
-        else:
-            self.raw_vcf = Mutect2TumorNormalPaired(self.settings).main(
-                ref_fa=self.ref_fa,
-                tumor_bam=self.tumor_bam,
-                normal_bam=self.normal_bam)
+        self.raw_vcf = VariantCalling(self.settings).main(
+            variant_caller=self.variant_caller,
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
 
     def annotation(self):
         self.annotated_vcf = SnpEff(self.settings).main(
             vcf=self.raw_vcf)
 
     def parse_vcf(self):
-        ParseMutect2SnpEffVcf(self.settings).main(
+        ParseSnpEffVcf(self.settings).main(
             vcf=self.annotated_vcf)
 
     def clean_up(self):

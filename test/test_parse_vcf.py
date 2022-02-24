@@ -1,11 +1,11 @@
 from .setup import TestCase
 import numpy as np
 import pandas as pd
-from somatic_pipeline.parse_vcf import ParseMutect2SnpEffVcf, GetInfoIDToDescription, \
-    Mutect2SnpEffVcfLineToRow, UnrollSnpEffAnnotation
+from somatic_pipeline.parse_vcf import ParseSnpEffVcf, GetInfoIDToDescription, \
+    SnpEffVcfLineToRow, UnrollSnpEffAnnotation
 
 
-class TestParseMutect2SnpEffVcf(TestCase):
+class TestParseSnpEffVcf(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -14,7 +14,7 @@ class TestParseMutect2SnpEffVcf(TestCase):
         self.tear_down()
 
     def test_main(self):
-        ParseMutect2SnpEffVcf(self.settings).main(
+        ParseSnpEffVcf(self.settings).main(
             vcf=f'{self.indir}/annotated.vcf'
         )
         self.assertDataFrameEqual(
@@ -56,7 +56,7 @@ class TestGetInfoIDToDescription(TestCase):
         self.assertDictEqual(expected, actual)
 
 
-class TestMutect2SnpEffVcfLineToRow(TestCase):
+class TestSnpEffVcfLineToRow(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -70,7 +70,7 @@ class TestMutect2SnpEffVcfLineToRow(TestCase):
             'MBQ': 'median base quality by allele',
             'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
         }
-        actual = Mutect2SnpEffVcfLineToRow(self.settings).main(
+        actual = SnpEffVcfLineToRow(self.settings).main(
             vcf_line=vcf_line,
             info_id_to_description=info_id_to_description
         )

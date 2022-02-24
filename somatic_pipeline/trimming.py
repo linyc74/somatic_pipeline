@@ -30,7 +30,7 @@ class TrimGalore(Processor):
         return self.out_fq1, self.out_fq2
 
     def execute(self):
-        log = f'{self.outdir}/trim_galore.log'
+        log = f'{self.outdir}/trim-galore.log'
         cmd = self.CMD_LINEBREAK.join([
             'trim_galore',
             '--paired',
