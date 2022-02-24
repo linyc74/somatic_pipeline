@@ -67,7 +67,7 @@ OPTIONAL = [
         'properties': {
             'type': str,
             'required': False,
-            'choices': ['mutect2', 'muse'],
+            'choices': ['mutect2', 'muse', 'varscan'],
             'default': 'mutect2',
             'help': 'variant caller (default: %(default)s)',
         }

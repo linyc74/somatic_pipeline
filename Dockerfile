@@ -1,6 +1,8 @@
 FROM continuumio/miniconda3:4.10.3
 
 RUN conda create -n somatic \
+ && conda install -c conda-forge -n somatic \
+    tbb=2020.2 \
  && conda install -c bioconda -n somatic \
     trim-galore=0.6.6 \
     bwa=0.7.17 \
