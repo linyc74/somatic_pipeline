@@ -28,12 +28,24 @@ python somatic_pipeline \
 
 ## Environment
 
-Create a conda environment `somatic` and install the following packages:
+Required packages:
+- `trim-galore`
+- `bwa`
+- `bowtie2`
+- `samtools`
+- `bcftools`
+- `GATK`
+- `MuSE`
+- `VarScan`
+- `SnpEff`
+- `pandas`
+
+Create a conda environment `somatic` and install packages:
 
 ```bash
 conda create --name somatic
 conda activate somatic
-conda install -c bioconda trim-galore bwa samtools gatk4
+conda install -c bioconda trim-galore bwa bowtie2 samtools bcftools gatk4 muse varscan
 pip install pandas
 ```
 

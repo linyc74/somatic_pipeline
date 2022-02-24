@@ -38,7 +38,7 @@ class Main:
         self.variant_caller = variant_caller
 
         self.settings = Settings(
-            workdir='./gatk_pipeline_workdir',
+            workdir='./somatic_pipeline_workdir',
             outdir=outdir,
             threads=int(threads),
             debug=debug,
