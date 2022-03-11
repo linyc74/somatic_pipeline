@@ -17,8 +17,12 @@ RUN conda create -n somatic \
     pandas=1.3.5 \
  && conda clean --all --yes
 
-# make conda env available to environment PATH
+# for identical commands (e.g. pip), somatic overrides default environment
 ENV PATH /opt/conda/envs/somatic/bin:$PATH
+
+# bcftools dependency issue
+ARG d=/opt/conda/envs/somatic/lib/
+RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
 
 # download and unzip snpeff
 RUN conda install -c conda-forge unzip=6.0 \
@@ -32,9 +36,8 @@ ENV PATH /snpEff/exec:$PATH
 # download pre-build snpeff database
 RUN snpeff download -verbose GRCh38.99
 
-# bcftools dependency issue
-ARG d=/opt/conda/envs/somatic/lib/
-RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
+# pip install
+RUN pip install cnvkit==0.9.9
 
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
