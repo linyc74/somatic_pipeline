@@ -36,8 +36,10 @@ ENV PATH /snpEff/exec:$PATH
 # download pre-build snpeff database
 RUN snpeff download -verbose GRCh38.99
 
-# pip install
-RUN pip install cnvkit==0.9.9
+# install cnvkit, the pip used is in 'somatic' env
+RUN conda install -c anaconda -n somatic pomegranate \
+ && pip install --upgrade pip \
+ && pip install --no-cache-dir cnvkit==0.9.9
 
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
