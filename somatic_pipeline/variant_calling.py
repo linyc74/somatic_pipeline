@@ -11,7 +11,7 @@ class ProcessInterface(Processor, ABC):
     normal_bam: Optional[str]
 
     tumor_tagged_bam: str
-    normal_tagged_bam: str
+    normal_tagged_bam: Optional[str]
     vcf: str
 
     def main(
@@ -51,6 +51,8 @@ class ProcessInterface(Processor, ABC):
                 bam_in=self.normal_bam,
                 bam_out=self.normal_tagged_bam,
                 name=NORMAL)
+        else:
+            self.normal_tagged_bam = None
 
     def __tag_read_group(
             self,
@@ -71,8 +73,9 @@ class ProcessInterface(Processor, ABC):
         self.call(cmd)
 
     def index_bams(self):
-        for bam in [self.normal_tagged_bam, self.tumor_tagged_bam]:
-            self.call(f'samtools index {bam}')
+        self.call(f'samtools index {self.tumor_tagged_bam}')
+        if self.normal_tagged_bam is not None:
+            self.call(f'samtools index {self.normal_tagged_bam}')
 
     def set_vcf(self):
         self.vcf = f'{self.workdir}/raw.vcf'
