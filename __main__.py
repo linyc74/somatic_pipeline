@@ -73,6 +73,15 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--exome-target-bed'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'BED file of exome target probes to compute CNV (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['-o', '--outdir'],
         'properties': {
             'type': str,

@@ -3,7 +3,37 @@ from typing import List, Optional
 from .template import Processor
 
 
-class CNVkit(Processor):
+class ComputeCNV(Processor):
+
+    ref_fa: str
+    tumor_bam: str
+    normal_bam: Optional[str]
+    exome_target_bed: Optional[str]
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: Optional[str],
+            exome_target_bed: Optional[str]):
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.exome_target_bed = exome_target_bed
+
+        if self.normal_bam is None:
+            self.logger.info(f'Normal sample not provided, skip CNV calculation')
+            return
+
+        CNVkitBatch(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            exome_target_bed=self.exome_target_bed)
+
+
+class CNVkitBatch(Processor):
 
     DSTDIR_NAME = 'cnvkit'
 
@@ -14,7 +44,7 @@ class CNVkit(Processor):
     ref_fa: str
     tumor_bam: str
     normal_bam: str
-    exome_target_bed: str
+    exome_target_bed: Optional[str]
 
     dstdir: str
     mode_args: List[str]

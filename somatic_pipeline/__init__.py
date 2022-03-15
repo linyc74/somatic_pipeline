@@ -13,6 +13,7 @@ class Main:
     normal_fq2: Optional[str]
     read_aligner: str
     variant_caller: str
+    exome_target_bed: Optional[str]
 
     settings: Settings
 
@@ -25,6 +26,7 @@ class Main:
             normal_fq2: str,
             read_aligner: str,
             variant_caller: str,
+            exome_target_bed: str,
             outdir: str,
             threads: str,
             debug: bool):
@@ -36,6 +38,7 @@ class Main:
         self.normal_fq2 = None if normal_fq2 == 'None' else normal_fq2
         self.read_aligner = read_aligner
         self.variant_caller = variant_caller
+        self.exome_target_bed = None if exome_target_bed == 'None' else exome_target_bed
 
         self.settings = Settings(
             workdir='./somatic_pipeline_workdir',
@@ -54,4 +57,5 @@ class Main:
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
             read_aligner=self.read_aligner,
-            variant_caller=self.variant_caller)
+            variant_caller=self.variant_caller,
+            exome_target_bed=self.exome_target_bed)
