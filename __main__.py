@@ -162,6 +162,7 @@ class EntryPoint:
             normal_fq2=args.normal_fq2,
             read_aligner=args.read_aligner,
             variant_caller=args.variant_caller,
+            exome_target_bed=args.exome_target_bed,
             outdir=args.outdir,
             threads=args.threads,
             debug=args.debug)
