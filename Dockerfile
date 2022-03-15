@@ -37,7 +37,8 @@ ENV PATH /snpEff/exec:$PATH
 RUN snpeff download -verbose GRCh38.99
 
 # install cnvkit, the pip used is in 'somatic' env
-RUN conda install -c anaconda -n somatic pomegranate \
+RUN conda install -c anaconda -n somatic pomegranate=0.14.4 \
+ && conda clean --all --yes \
  && pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
 

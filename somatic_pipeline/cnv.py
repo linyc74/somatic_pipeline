@@ -5,11 +5,16 @@ from .template import Processor
 
 class CNVkit(Processor):
 
+    DSTDIR_NAME = 'cnvkit'
+
+    # the default segment method 'cbs' requires R package DNAcopy, which was hard to install
+    # thus the 'hmm-tumor' (which depends on 'pomegranate') was chosen
+    SEGMENT_METHOD = 'hmm-tumor'
+
     ref_fa: str
     tumor_bam: str
     normal_bam: str
     exome_target_bed: str
-    gene_annotation_gff: str
 
     dstdir: str
     mode_args: List[str]
@@ -19,13 +24,11 @@ class CNVkit(Processor):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: str,
-            gene_annotation_gff: str,
             exome_target_bed: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
-        self.gene_annotation_gff = gene_annotation_gff
         self.exome_target_bed = exome_target_bed
 
         self.make_dstdir()
@@ -33,7 +36,7 @@ class CNVkit(Processor):
         self.execute()
 
     def make_dstdir(self):
-        self.dstdir = f'{self.outdir}/cnvkit'
+        self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
         os.makedirs(self.dstdir, exist_ok=True)
 
     def set_mode_args(self):
@@ -51,17 +54,17 @@ class CNVkit(Processor):
         log = f'{self.outdir}/cnvkit-batch.log'
         args = [
             'cnvkit.py batch',
-            self.tumor_bam,
             f'--normal {self.normal_bam}',
             f'--fasta {self.ref_fa}',
-            f'--annotate {self.gene_annotation_gff}'
+            # f'--annotate {self.gene_annotation_gff}'  # to be added in the future
         ] + self.mode_args + [
-            '--segment-method cbs',
+            f'--segment-method {self.SEGMENT_METHOD}',
             f'--output-dir {self.dstdir}',
             f'--processes {self.threads}',
             '--scatter',
-            '--diagram',
-            f'1> {log} 2> {log}',
+            self.tumor_bam,
+            f'1> {log}',
+            f'2> {log}',
         ]
         cmd = self.CMD_LINEBREAK.join(args)
         self.call(cmd)

@@ -3,7 +3,7 @@ from somatic_pipeline.cnv import CNVkit
 from .setup import TestCase
 
 
-class TestCNVkit(TestCase):
+class TestCNVkitBatch(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -24,6 +24,5 @@ class TestCNVkit(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            gene_annotation_gff=f'{self.indir}/chr9.gff3',
-            exome_target_bed=None
+            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed'
         )
