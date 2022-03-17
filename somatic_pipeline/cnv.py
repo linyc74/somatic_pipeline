@@ -1,5 +1,6 @@
 import os
 from typing import List, Optional
+from .tools import edit_fpath
 from .template import Processor
 
 
@@ -26,11 +27,47 @@ class ComputeCNV(Processor):
             self.logger.info(f'Normal sample not provided, skip CNV calculation')
             return
 
+        self.clean_up_bed()
+        self.run_cnvkit()
+
+    def clean_up_bed(self):
+        self.exome_target_bed = CleanUpBed(self.settings).main(
+            bed=self.exome_target_bed)
+
+    def run_cnvkit(self):
         CNVkitBatch(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             exome_target_bed=self.exome_target_bed)
+
+
+class CleanUpBed(Processor):
+
+    bed: str
+
+    output_bed: str
+
+    def main(self, bed: str) -> str:
+        self.bed = bed
+        self.set_output_bed()
+        self.clean_up()
+        return self.output_bed
+
+    def set_output_bed(self):
+        self.output_bed = edit_fpath(
+            fpath=self.bed,
+            old_suffix='.bed',
+            new_suffix='-clean.bed',
+            dstdir=self.workdir)
+
+    def clean_up(self):
+        with open(self.bed) as reader:
+            with open(self.output_bed, 'w') as writer:
+                for line in reader:
+                    fields = len(line.strip().split('\t'))
+                    if fields >= 3:
+                        writer.write(line)
 
 
 class CNVkitBatch(Processor):

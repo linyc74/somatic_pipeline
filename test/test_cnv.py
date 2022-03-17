@@ -1,5 +1,5 @@
 import shutil
-from somatic_pipeline.cnv import CNVkitBatch
+from somatic_pipeline.cnv import ComputeCNV
 from .setup import TestCase
 
 
@@ -20,7 +20,7 @@ class TestCNVkitBatch(TestCase):
         self.tear_down()
 
     def test_main(self):
-        CNVkitBatch(self.settings).main(
+        ComputeCNV(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
