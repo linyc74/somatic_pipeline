@@ -82,6 +82,13 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--discard-bam'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'do not save sorted BAM files in outdir',
+        }
+    },
+    {
         'keys': ['-o', '--outdir'],
         'properties': {
             'type': str,
@@ -163,6 +170,7 @@ class EntryPoint:
             read_aligner=args.read_aligner,
             variant_caller=args.variant_caller,
             exome_target_bed=args.exome_target_bed,
+            discard_bam=args.discard_bam,
             outdir=args.outdir,
             threads=args.threads,
             debug=args.debug)

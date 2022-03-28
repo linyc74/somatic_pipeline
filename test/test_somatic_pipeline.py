@@ -19,7 +19,8 @@ class TestSomaticPipeline(TestCase):
             normal_fq2=f'{self.indir}/normal.2.fq.gz',
             read_aligner='bwa',
             variant_caller='muse',
-            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed'
+            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed',
+            discard_bam=True
         )
 
     def __test_tumor_only(self):
@@ -31,5 +32,6 @@ class TestSomaticPipeline(TestCase):
             normal_fq2=None,
             read_aligner='bowtie2',
             variant_caller='mutect2',
-            exome_target_bed=None
+            exome_target_bed=None,
+            discard_bam=True
         )

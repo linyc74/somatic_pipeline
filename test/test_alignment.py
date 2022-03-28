@@ -18,7 +18,8 @@ class TestBWA(TestCase):
             index=index,
             fq1=f'{self.indir}/tumor.1.fq.gz',
             fq2=f'{self.indir}/tumor.2.fq.gz',
-            sample_name='tumor'
+            sample_name='tumor',
+            discard_bam=False
         )
         expected = f'{self.outdir}/tumor-sorted.bam'
         self.assertFileExists(expected, actual)
@@ -40,7 +41,8 @@ class TestBowtie2(TestCase):
             index=index,
             fq1=f'{self.indir}/tumor.1.fq.gz',
             fq2=f'{self.indir}/tumor.2.fq.gz',
-            sample_name='tumor'
+            sample_name='tumor',
+            discard_bam=True
         )
-        expected = f'{self.outdir}/tumor-sorted.bam'
+        expected = f'{self.workdir}/tumor-sorted.bam'
         self.assertFileExists(expected, actual)

@@ -20,6 +20,7 @@ class SomaticPipeline(Processor):
     read_aligner: str
     variant_caller: str
     exome_target_bed: Optional[str]
+    discard_bam: bool
 
     tumor_bam: str
     normal_bam: Optional[str]
@@ -35,7 +36,8 @@ class SomaticPipeline(Processor):
             normal_fq2: Optional[str],
             read_aligner: str,
             variant_caller: str,
-            exome_target_bed: Optional[str]):
+            exome_target_bed: Optional[str],
+            discard_bam: bool):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -45,6 +47,7 @@ class SomaticPipeline(Processor):
         self.read_aligner = read_aligner
         self.variant_caller = variant_caller
         self.exome_target_bed = exome_target_bed
+        self.discard_bam = discard_bam
 
         self.copy_ref_fa()
         self.trimming()
@@ -76,7 +79,8 @@ class SomaticPipeline(Processor):
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
             normal_fq1=self.normal_fq1,
-            normal_fq2=self.normal_fq2)
+            normal_fq2=self.normal_fq2,
+            discard_bam=self.discard_bam)
 
     def variant_calling(self):
         self.raw_vcf = VariantCalling(self.settings).main(

@@ -54,6 +54,7 @@ class TemplateAligner(Processor, ABC):
     fq1: str
     fq2: str
     sample_name: str
+    discard_bam: bool
 
     sam: str
     bam: str
@@ -64,12 +65,14 @@ class TemplateAligner(Processor, ABC):
             index: str,
             fq1: str,
             fq2: str,
-            sample_name: str) -> str:
+            sample_name: str,
+            discard_bam: bool) -> str:
 
         self.index = index
         self.fq1 = fq1
         self.fq2 = fq2
         self.sample_name = sample_name
+        self.discard_bam = discard_bam
 
         self.align()
         self.sam_to_bam()
@@ -87,7 +90,8 @@ class TemplateAligner(Processor, ABC):
         self.call(cmd)
 
     def sort_bam(self):
-        self.sorted_bam = f'{self.outdir}/{self.sample_name}-sorted.bam'
+        dstdir = self.workdir if self.discard_bam else self.outdir
+        self.sorted_bam = f'{dstdir}/{self.sample_name}-sorted.bam'
         cmd = f'samtools sort {self.bam} > {self.sorted_bam}'
         self.call(cmd)
 
@@ -136,6 +140,7 @@ class StrategyIndexAndAlignTumorNormal:
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    discard_bam: bool
 
     index: str
     tumor_bam: str
@@ -151,13 +156,15 @@ class StrategyIndexAndAlignTumorNormal:
             tumor_fq1: str,
             tumor_fq2: str,
             normal_fq1: Optional[str],
-            normal_fq2: Optional[str]) -> Tuple[str, Optional[str]]:
+            normal_fq2: Optional[str],
+            discard_bam: bool) -> Tuple[str, Optional[str]]:
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.discard_bam = discard_bam
 
         self.index_genome()
         self.align_tumor()
@@ -173,7 +180,8 @@ class StrategyIndexAndAlignTumorNormal:
             index=self.index,
             fq1=self.tumor_fq1,
             fq2=self.tumor_fq2,
-            sample_name=TUMOR)
+            sample_name=TUMOR,
+            discard_bam=self.discard_bam)
 
     def align_normal(self):
         self.normal_bam = None if self.normal_fq1 is None \
@@ -181,16 +189,17 @@ class StrategyIndexAndAlignTumorNormal:
                 index=self.index,
                 fq1=self.normal_fq1,
                 fq2=self.normal_fq2,
-                sample_name=NORMAL)
+                sample_name=NORMAL,
+                discard_bam=self.discard_bam)
 
 
 class FactoryIndexAndAlignTumorNormal(Processor):
 
-    INDEXER_DICT = {
+    TO_INDEXER_CLASS = {
         'bwa': BwaIndexer,
         'bowtie2': Bowtie2Indexer,
     }
-    ALIGNER_DICT = {
+    TO_ALIGNER_CLASS = {
         'bwa': BwaAligner,
         'bowtie2': Bowtie2Aligner,
     }
@@ -199,8 +208,8 @@ class FactoryIndexAndAlignTumorNormal(Processor):
             self,
             read_aligner: str) -> StrategyIndexAndAlignTumorNormal:
 
-        indexer_class = self.INDEXER_DICT[read_aligner]
-        aligner_class = self.ALIGNER_DICT[read_aligner]
+        indexer_class = self.TO_INDEXER_CLASS[read_aligner]
+        aligner_class = self.TO_ALIGNER_CLASS[read_aligner]
 
         return StrategyIndexAndAlignTumorNormal(
             indexer=indexer_class(self.settings),
@@ -216,6 +225,7 @@ class Alignment(Processor):
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    discard_bam: bool
 
     tumor_bam: str
     normal_bam: str
@@ -227,7 +237,8 @@ class Alignment(Processor):
             tumor_fq1: str,
             tumor_fq2: str,
             normal_fq1: Optional[str],
-            normal_fq2: Optional[str]) -> Tuple[str, str]:
+            normal_fq2: Optional[str],
+            discard_bam: bool) -> Tuple[str, str]:
 
         self.read_aligner = read_aligner
         self.ref_fa = ref_fa
@@ -235,6 +246,7 @@ class Alignment(Processor):
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.discard_bam = discard_bam
 
         strategy = FactoryIndexAndAlignTumorNormal(self.settings).get_strategy(
             read_aligner=self.read_aligner)
@@ -244,6 +256,7 @@ class Alignment(Processor):
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
             normal_fq1=self.normal_fq1,
-            normal_fq2=self.normal_fq2)
+            normal_fq2=self.normal_fq2,
+            discard_bam=self.discard_bam)
 
         return self.tumor_bam, self.normal_bam
