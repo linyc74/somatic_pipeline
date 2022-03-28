@@ -8,6 +8,7 @@ from .alignment import Alignment
 from .copy_ref_fa import CopyRefFa
 from .parse_vcf import ParseSnpEffVcf
 from .variant_calling import VariantCalling
+from .mark_duplicates import MarkDuplicates
 
 
 class SomaticPipeline(Processor):
@@ -52,6 +53,7 @@ class SomaticPipeline(Processor):
         self.copy_ref_fa()
         self.trimming()
         self.alignment()
+        self.mark_duplicates()
         self.variant_calling()
         self.annotation()
         self.parse_vcf()
@@ -81,6 +83,11 @@ class SomaticPipeline(Processor):
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
             discard_bam=self.discard_bam)
+
+    def mark_duplicates(self):
+        self.tumor_bam, self.normal_bam = MarkDuplicates(self.settings).main(
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
 
     def variant_calling(self):
         self.raw_vcf = VariantCalling(self.settings).main(
