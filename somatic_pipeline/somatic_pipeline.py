@@ -21,6 +21,7 @@ class SomaticPipeline(Processor):
     read_aligner: str
     variant_caller: str
     exome_target_bed: Optional[str]
+    cnvkit_annotate_txt: Optional[str]
     discard_bam: bool
 
     tumor_bam: str
@@ -38,6 +39,7 @@ class SomaticPipeline(Processor):
             read_aligner: str,
             variant_caller: str,
             exome_target_bed: Optional[str],
+            cnvkit_annotate_txt: Optional[str],
             discard_bam: bool):
 
         self.ref_fa = ref_fa
@@ -48,6 +50,7 @@ class SomaticPipeline(Processor):
         self.read_aligner = read_aligner
         self.variant_caller = variant_caller
         self.exome_target_bed = exome_target_bed
+        self.cnvkit_annotate_txt = cnvkit_annotate_txt
         self.discard_bam = discard_bam
 
         self.copy_ref_fa()
@@ -109,7 +112,8 @@ class SomaticPipeline(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            exome_target_bed=self.exome_target_bed)
+            exome_target_bed=self.exome_target_bed,
+            annotate_txt=self.cnvkit_annotate_txt)
 
     def clean_up(self):
         CleanUp(self.settings).main()

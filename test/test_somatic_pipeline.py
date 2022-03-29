@@ -20,6 +20,7 @@ class TestSomaticPipeline(TestCase):
             read_aligner='bwa',
             variant_caller='muse',
             exome_target_bed=f'{self.indir}/chr9-exome-probes.bed',
+            cnvkit_annotate_txt=f'{self.indir}/chr9-refFlat.txt',
             discard_bam=True
         )
 
@@ -33,5 +34,6 @@ class TestSomaticPipeline(TestCase):
             read_aligner='bowtie2',
             variant_caller='varscan',
             exome_target_bed=None,
+            cnvkit_annotate_txt=None,
             discard_bam=True
         )

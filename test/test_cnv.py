@@ -24,5 +24,6 @@ class TestCNVkitBatch(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed'
+            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed',
+            annotate_txt=f'{self.indir}/chr9-refFlat.txt'
         )

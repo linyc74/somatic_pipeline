@@ -82,6 +82,15 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--cnvkit-annotate-txt'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'CNVkit annotation file, usually UCSC refFlat.txt (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--discard-bam'],
         'properties': {
             'action': 'store_true',
@@ -170,6 +179,7 @@ class EntryPoint:
             read_aligner=args.read_aligner,
             variant_caller=args.variant_caller,
             exome_target_bed=args.exome_target_bed,
+            cnvkit_annotate_txt=args.cnvkit_annotate_txt,
             discard_bam=args.discard_bam,
             outdir=args.outdir,
             threads=args.threads,

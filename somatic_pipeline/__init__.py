@@ -14,6 +14,7 @@ class Main:
     read_aligner: str
     variant_caller: str
     exome_target_bed: Optional[str]
+    cnvkit_annotate_txt: Optional[str]
     discard_bam: bool
 
     settings: Settings
@@ -28,6 +29,7 @@ class Main:
             read_aligner: str,
             variant_caller: str,
             exome_target_bed: str,
+            cnvkit_annotate_txt: str,
             discard_bam: bool,
             outdir: str,
             threads: str,
@@ -41,6 +43,7 @@ class Main:
         self.read_aligner = read_aligner
         self.variant_caller = variant_caller
         self.exome_target_bed = None if exome_target_bed == 'None' else exome_target_bed
+        self.cnvkit_annotate_txt = None if cnvkit_annotate_txt == 'None' else cnvkit_annotate_txt
         self.discard_bam = discard_bam
 
         self.settings = Settings(
@@ -62,4 +65,5 @@ class Main:
             read_aligner=self.read_aligner,
             variant_caller=self.variant_caller,
             exome_target_bed=self.exome_target_bed,
+            cnvkit_annotate_txt=self.cnvkit_annotate_txt,
             discard_bam=self.discard_bam)

@@ -10,18 +10,21 @@ class ComputeCNV(Processor):
     tumor_bam: str
     normal_bam: Optional[str]
     exome_target_bed: Optional[str]
+    annotate_txt: Optional[str]
 
     def main(
             self,
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
-            exome_target_bed: Optional[str]):
+            exome_target_bed: Optional[str],
+            annotate_txt: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.exome_target_bed = exome_target_bed
+        self.annotate_txt = annotate_txt
 
         if self.normal_bam is None:
             self.logger.info(f'Normal sample not provided, skip CNV calculation')
@@ -39,7 +42,8 @@ class ComputeCNV(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            exome_target_bed=self.exome_target_bed)
+            exome_target_bed=self.exome_target_bed,
+            annotate_txt=self.annotate_txt)
 
 
 class CleanUpBed(Processor):
@@ -82,24 +86,29 @@ class CNVkitBatch(Processor):
     tumor_bam: str
     normal_bam: str
     exome_target_bed: Optional[str]
+    annotate_txt: Optional[str]
 
     dstdir: str
     mode_args: List[str]
+    annotate_args: List[str]
 
     def main(
             self,
             ref_fa: str,
             tumor_bam: str,
             normal_bam: str,
-            exome_target_bed: Optional[str]):
+            exome_target_bed: Optional[str],
+            annotate_txt: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.exome_target_bed = exome_target_bed
+        self.annotate_txt = annotate_txt
 
         self.make_dstdir()
         self.set_mode_args()
+        self.set_annotate_args()
         self.execute()
 
     def make_dstdir(self):
@@ -117,14 +126,18 @@ class CNVkitBatch(Processor):
                 f'--targets {self.exome_target_bed}'
             ]
 
+    def set_annotate_args(self):
+        self.annotate_args = [] \
+            if self.annotate_txt is None \
+            else [f'--annotate {self.annotate_txt}']
+
     def execute(self):
         log = f'{self.outdir}/cnvkit-batch.log'
         args = [
             'cnvkit.py batch',
             f'--normal {self.normal_bam}',
             f'--fasta {self.ref_fa}',
-            # f'--annotate {self.gene_annotation_gff}'  # to be added in the future
-        ] + self.mode_args + [
+        ] + self.annotate_args + self.mode_args + [
             f'--segment-method {self.SEGMENT_METHOD}',
             f'--output-dir {self.dstdir}',
             f'--processes {self.threads}',
