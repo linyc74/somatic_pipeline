@@ -1,2 +1,2 @@
-TUMOR = 'tumor'
-NORMAL = 'normal'
+TUMOR = 'TUMOR'
+NORMAL = 'NORMAL'
