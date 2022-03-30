@@ -34,8 +34,9 @@ class ComputeCNV(Processor):
         self.run_cnvkit()
 
     def clean_up_bed(self):
-        self.exome_target_bed = CleanUpBed(self.settings).main(
-            bed=self.exome_target_bed)
+        if self.exome_target_bed is not None:
+            self.exome_target_bed = CleanUpBed(self.settings).main(
+                bed=self.exome_target_bed)
 
     def run_cnvkit(self):
         CNVkitBatch(self.settings).main(
