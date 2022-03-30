@@ -31,8 +31,8 @@ class TestSomaticPipeline(TestCase):
             tumor_fq2=f'{self.indir}/tumor.2.fq.gz',
             normal_fq1=None,
             normal_fq2=None,
-            read_aligner='bowtie2',
-            variant_caller='varscan',
+            read_aligner='bwa',
+            variant_caller='mutect2',
             exome_target_bed=None,
             cnvkit_annotate_txt=None,
             discard_bam=True

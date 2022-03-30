@@ -68,7 +68,8 @@ class ProcessInterface(Processor, ABC):
             '--RGPL ILLUMINA',
             '--RGPU unit1',
             f'--RGSM {name}',
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -95,7 +96,8 @@ class Mutect2Base(ProcessInterface):
         cmd = self.CMD_LINEBREAK.join([
             'gatk CreateSequenceDictionary',
             f'-R {self.ref_fa}',
-            f'1> {log} 2> {log}'
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -113,10 +115,12 @@ class Mutect2TNPaired(Mutect2Base):
             f'--reference {self.ref_fa}',
             f'--input {self.tumor_tagged_bam}',
             f'--input {self.normal_tagged_bam}',
+            f'--tumor-sample {TUMOR}',
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -136,7 +140,8 @@ class Mutect2TumorOnly(Mutect2Base):
             f'--input {self.tumor_tagged_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -160,7 +165,8 @@ class Muse(ProcessInterface):
             f'-O {output}',
             self.tumor_tagged_bam,
             self.normal_tagged_bam,
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
         self.call_result_txt = output + '.MuSE.txt'
@@ -172,7 +178,8 @@ class Muse(ProcessInterface):
             f'-I {self.call_result_txt}',
             self.WES_OR_WGS,
             f'-O {self.vcf}',
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -223,7 +230,8 @@ class Varscan(ProcessInterface):
             f'--output-indel {self.indel_vcf}',
             '--strand-filter 1',  # removes variants with >90% strand bias
             '--output-vcf 1',  # output VCF instead of VarScan native format
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 
@@ -247,7 +255,8 @@ class Varscan(ProcessInterface):
             f'--output {self.vcf}',
             self.snp_vcf,
             self.indel_vcf,
-            f'1> {log} 2> {log}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)
 

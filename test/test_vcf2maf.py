@@ -20,7 +20,8 @@ class TestVcf2Maf(TestCase):
     def test_main(self):
         actual = Vcf2Maf(self.settings).main(
             annotated_vcf=self.annotated_vcf,
-            ref_fa=self.ref_fa
+            ref_fa=self.ref_fa,
+            variant_caller='mutect2',
         )
         expected = f'{self.indir}/variants.maf'
         self.assertFileEqual(expected, actual)

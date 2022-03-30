@@ -1,5 +1,6 @@
 from typing import Optional
 from .cnv import ComputeCNV
+from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
 from .annotation import SnpEff
 from .template import Processor
@@ -28,6 +29,7 @@ class SomaticPipeline(Processor):
     normal_bam: Optional[str]
     raw_vcf: str
     annotated_vcf: str
+    maf: str
 
     def main(
             self,
@@ -60,6 +62,7 @@ class SomaticPipeline(Processor):
         self.variant_calling()
         self.annotation()
         self.parse_vcf()
+        self.vcf_2_maf()
         self.compute_cnv()
         self.clean_up()
 
@@ -106,6 +109,12 @@ class SomaticPipeline(Processor):
     def parse_vcf(self):
         ParseSnpEffVcf(self.settings).main(
             vcf=self.annotated_vcf)
+
+    def vcf_2_maf(self):
+        self.maf = Vcf2Maf(self.settings).main(
+            annotated_vcf=self.annotated_vcf,
+            ref_fa=self.ref_fa,
+            variant_caller=self.variant_caller)
 
     def compute_cnv(self):
         ComputeCNV(self.settings).main(
