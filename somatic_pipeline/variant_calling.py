@@ -10,8 +10,6 @@ class ProcessInterface(Processor, ABC):
     tumor_bam: str
     normal_bam: Optional[str]
 
-    tumor_tagged_bam: str
-    normal_tagged_bam: Optional[str]
     vcf: str
 
     def main(
@@ -25,10 +23,7 @@ class ProcessInterface(Processor, ABC):
         self.normal_bam = normal_bam
 
         self.index_ref_fa()
-
-        self.tag_read_groups()
         self.index_bams()
-
         self.set_vcf()
         self.execute()
 
@@ -38,45 +33,10 @@ class ProcessInterface(Processor, ABC):
         cmd = f'samtools faidx {self.ref_fa}'
         self.call(cmd)
 
-    def tag_read_groups(self):
-        self.tumor_tagged_bam = f'{self.workdir}/{TUMOR}-tagged.bam'
-        self.__tag_read_group(
-            bam_in=self.tumor_bam,
-            bam_out=self.tumor_tagged_bam,
-            name=TUMOR)
-
-        if self.normal_bam is not None:
-            self.normal_tagged_bam = f'{self.workdir}/{NORMAL}-tagged.bam'
-            self.__tag_read_group(
-                bam_in=self.normal_bam,
-                bam_out=self.normal_tagged_bam,
-                name=NORMAL)
-        else:
-            self.normal_tagged_bam = None
-
-    def __tag_read_group(
-            self,
-            bam_in: str,
-            bam_out: str,
-            name: str):
-        log = f'{self.outdir}/gatk-AddOrReplaceReadGroups-{name}.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'gatk AddOrReplaceReadGroups',
-            f'--INPUT {bam_in}',
-            f'--OUTPUT {bam_out}',
-            f'--RGLB lib1',
-            '--RGPL ILLUMINA',
-            '--RGPU unit1',
-            f'--RGSM {name}',
-            f'1> {log}',
-            f'2> {log}',
-        ])
-        self.call(cmd)
-
     def index_bams(self):
-        self.call(f'samtools index {self.tumor_tagged_bam}')
-        if self.normal_tagged_bam is not None:
-            self.call(f'samtools index {self.normal_tagged_bam}')
+        self.call(f'samtools index {self.tumor_bam}')
+        if self.normal_bam is not None:
+            self.call(f'samtools index {self.normal_bam}')
 
     def set_vcf(self):
         self.vcf = f'{self.workdir}/raw.vcf'
@@ -113,8 +73,8 @@ class Mutect2TNPaired(Mutect2Base):
         cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
-            f'--input {self.tumor_tagged_bam}',
-            f'--input {self.normal_tagged_bam}',
+            f'--input {self.tumor_bam}',
+            f'--input {self.normal_bam}',
             f'--tumor-sample {TUMOR}',
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
@@ -137,7 +97,7 @@ class Mutect2TumorOnly(Mutect2Base):
         cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
-            f'--input {self.tumor_tagged_bam}',
+            f'--input {self.tumor_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
             f'1> {log}',
@@ -163,8 +123,8 @@ class Muse(ProcessInterface):
             'MuSE call',
             f'-f {self.ref_fa}',
             f'-O {output}',
-            self.tumor_tagged_bam,
-            self.normal_tagged_bam,
+            self.tumor_bam,
+            self.normal_bam,
             f'1> {log}',
             f'2> {log}',
         ])
@@ -202,8 +162,8 @@ class Varscan(ProcessInterface):
         self.tumor_pileup = f'{self.workdir}/{TUMOR}-pileup'
         self.normal_pileup = f'{self.workdir}/{NORMAL}-pileup'
         for bam, output, name in [
-            (self.tumor_tagged_bam, self.tumor_pileup, TUMOR),
-            (self.normal_tagged_bam, self.normal_pileup, NORMAL),
+            (self.tumor_bam, self.tumor_pileup, TUMOR),
+            (self.normal_bam, self.normal_pileup, NORMAL),
         ]:
             self.__mpileup(bam=bam, output=output, name=name)
 
