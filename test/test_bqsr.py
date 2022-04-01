@@ -1,9 +1,9 @@
 import shutil
-from somatic_pipeline.bqsr import BQSR
+from somatic_pipeline.bqsr import RunBQSR
 from .setup import TestCase
 
 
-class TestBQSR(TestCase):
+class TestRunBQSR(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -18,7 +18,7 @@ class TestBQSR(TestCase):
         self.tear_down()
 
     def test_main(self):
-        BQSR(self.settings).main(
+        RunBQSR(self.settings).main(
             bam=self.tumor_bam,
             ref_fa=self.ref_fa,
             known_variant_vcf=f'{self.indir}/known-variants.vcf'

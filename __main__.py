@@ -116,6 +116,20 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--skip-variant-calling'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'do not perform variant calling',
+        }
+    },
+    {
+        'keys': ['--skip-cnv'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'do not compute copy number variation',
+        }
+    },
+    {
         'keys': ['-o', '--outdir'],
         'properties': {
             'type': str,
@@ -201,6 +215,8 @@ class EntryPoint:
             panel_of_normal_vcf=args.panel_of_normal_vcf,
             bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,
             discard_bam=args.discard_bam,
+            skip_variant_calling=args.skip_variant_calling,
+            skip_cnv=args.skip_cnv,
             outdir=args.outdir,
             threads=args.threads,
             debug=args.debug)

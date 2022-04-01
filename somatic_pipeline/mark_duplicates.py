@@ -30,7 +30,7 @@ class MarkDuplicates(Processor):
 
 class GATKMarkDuplicates(Processor):
 
-    REMOVE_DUPLICATES = 'true'
+    REMOVE_DUPLICATES = 'false'
 
     bam: str
 

@@ -9,7 +9,7 @@ class CleanUp(Processor):
         self.remove_workdir()
 
     def collect_log_files(self):
-        os.makedirs(f'{self.outdir}/log')
+        os.makedirs(f'{self.outdir}/log', exist_ok=True)
         cmd = f'mv {self.outdir}/*.log {self.outdir}/log/'
         self.call(cmd)
 

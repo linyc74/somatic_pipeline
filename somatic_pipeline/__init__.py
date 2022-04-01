@@ -18,6 +18,8 @@ class Main:
     panel_of_normal_vcf: Optional[str]
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
+    skip_variant_calling: bool
+    skip_cnv: bool
 
     settings: Settings
 
@@ -35,6 +37,8 @@ class Main:
             panel_of_normal_vcf: str,
             bqsr_known_variant_vcf: str,
             discard_bam: bool,
+            skip_variant_calling: bool,
+            skip_cnv: bool,
             outdir: str,
             threads: str,
             debug: bool):
@@ -51,6 +55,8 @@ class Main:
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.bqsr_known_variant_vcf = None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf
         self.discard_bam = discard_bam
+        self.skip_variant_calling = skip_variant_calling
+        self.skip_cnv = skip_cnv
 
         self.settings = Settings(
             workdir='./somatic_pipeline_workdir',
@@ -72,6 +78,8 @@ class Main:
             variant_caller=self.variant_caller,
             exome_target_bed=self.exome_target_bed,
             cnvkit_annotate_txt=self.cnvkit_annotate_txt,
+            panel_of_normal_vcf=self.panel_of_normal_vcf,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
             discard_bam=self.discard_bam,
-            panel_of_normal_vcf=self.panel_of_normal_vcf)
+            skip_variant_calling=self.skip_variant_calling,
+            skip_cnv=self.skip_cnv)

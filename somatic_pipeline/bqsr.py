@@ -1,9 +1,44 @@
+from typing import Optional, Tuple
 from .tools import edit_fpath
 from .template import Processor
 from .index_files import SamtoolsIndexFa, GATKCreateSequenceDictionary, GATKIndexVcf
 
 
 class BQSR(Processor):
+
+    tumor_bam: str
+    normal_bam: str
+    ref_fa: str
+    known_variant_vcf: Optional[str]
+
+    def main(
+            self,
+            tumor_bam: str,
+            normal_bam: str,
+            ref_fa: str,
+            known_variant_vcf: Optional[str]) -> Tuple[str, str]:
+
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.ref_fa = ref_fa
+        self.known_variant_vcf = known_variant_vcf
+
+        if self.known_variant_vcf is None:
+            self.logger.info(f'Known variant VCF not provided, skip BQSR')
+        else:
+            self.tumor_bam = self.run_bqsr(self.tumor_bam)
+            self.normal_bam = self.run_bqsr(self.normal_bam)
+
+        return self.tumor_bam, self.normal_bam
+
+    def run_bqsr(self, bam: str) -> str:
+        return RunBQSR(self.settings).main(
+            bam=bam,
+            ref_fa=self.ref_fa,
+            known_variant_vcf=self.known_variant_vcf)
+
+
+class RunBQSR(Processor):
 
     bam: str
     ref_fa: str
