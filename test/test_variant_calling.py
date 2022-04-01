@@ -10,20 +10,22 @@ class TestVariantCalling(TestCase):
         self.copy_and_set_files()
 
     def copy_and_set_files(self):
-        shutil.copy(f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa')
+        for file in ['chr9.fa', 'tumor-sorted.bam', 'normal-sorted.bam']:
+            shutil.copy(f'{self.indir}/{file}', f'{self.workdir}/{file}')
         self.ref_fa = f'{self.workdir}/chr9.fa'
-        self.tumor_bam = f'{self.indir}/tumor-sorted.bam'
-        self.normal_bam = f'{self.indir}/normal-sorted.bam'
+        self.tumor_bam = f'{self.workdir}/tumor-sorted.bam'
+        self.normal_bam = f'{self.workdir}/normal-sorted.bam'
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def test_mutect2_tn_paired(self):
         actual = VariantCalling(self.settings).main(
             variant_caller='mutect2',
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=f'{self.indir}/chr9-pon.vcf'
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -33,7 +35,8 @@ class TestVariantCalling(TestCase):
             variant_caller='mutect2',
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=None
+            normal_bam=None,
+            panel_of_normal_vcf=f'{self.indir}/chr9-pon.vcf'
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -43,7 +46,8 @@ class TestVariantCalling(TestCase):
             variant_caller='muse',
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=None
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -53,7 +57,8 @@ class TestVariantCalling(TestCase):
             variant_caller='varscan',
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=None
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -65,5 +70,5 @@ class TestVariantCalling(TestCase):
                     variant_caller=caller,
                     ref_fa=self.ref_fa,
                     tumor_bam=self.tumor_bam,
-                    normal_bam=None
-                )
+                    normal_bam=None,
+                    panel_of_normal_vcf=None)

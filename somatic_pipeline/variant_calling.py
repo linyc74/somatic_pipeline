@@ -1,7 +1,9 @@
-from typing import Optional, Union
 from abc import ABC, abstractmethod
+from typing import Optional, Union, List
+from .tools import edit_fpath
 from .template import Processor
 from .constant import TUMOR, NORMAL
+from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam
 
 
 class ProcessInterface(Processor, ABC):
@@ -9,6 +11,7 @@ class ProcessInterface(Processor, ABC):
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
+    panel_of_normal_vcf: Optional[str]
 
     vcf: str
 
@@ -16,11 +19,13 @@ class ProcessInterface(Processor, ABC):
             self,
             ref_fa: str,
             tumor_bam: str,
-            normal_bam: Optional[str]) -> str:
+            normal_bam: Optional[str],
+            panel_of_normal_vcf: Optional[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.panel_of_normal_vcf = panel_of_normal_vcf
 
         self.index_ref_fa()
         self.index_bams()
@@ -30,13 +35,12 @@ class ProcessInterface(Processor, ABC):
         return self.vcf
 
     def index_ref_fa(self):
-        cmd = f'samtools faidx {self.ref_fa}'
-        self.call(cmd)
+        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
 
     def index_bams(self):
-        self.call(f'samtools index {self.tumor_bam}')
+        SamtoolsIndexBam(self.settings).main(bam=self.tumor_bam)
         if self.normal_bam is not None:
-            self.call(f'samtools index {self.normal_bam}')
+            SamtoolsIndexBam(self.settings).main(bam=self.normal_bam)
 
     def set_vcf(self):
         self.vcf = f'{self.workdir}/raw.vcf'
@@ -48,24 +52,43 @@ class ProcessInterface(Processor, ABC):
 
 class Mutect2Base(ProcessInterface):
 
+    pon_args: List[str]
+
     def execute(self):
         return
 
     def create_sequence_dictionary(self):
-        log = f'{self.outdir}/gatk-CreateSequenceDictionary.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'gatk CreateSequenceDictionary',
-            f'-R {self.ref_fa}',
-            f'1> {log}',
-            f'2> {log}',
-        ])
-        self.call(cmd)
+        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
+
+    def prepare_panel_of_normal(self):
+        if self.panel_of_normal_vcf is not None:
+            self.__copy_pon_vcf()
+            self.__index_pon_vcf()
+        self.__set_pon_args()
+
+    def __copy_pon_vcf(self):
+        src = self.panel_of_normal_vcf
+        dst = edit_fpath(
+            fpath=self.panel_of_normal_vcf,
+            dstdir=self.workdir)
+        self.call(f'cp {src} {dst}')
+        self.panel_of_normal_vcf = dst
+
+    def __index_pon_vcf(self):
+        GATKIndexVcf(self.settings).main(vcf=self.panel_of_normal_vcf)
+
+    def __set_pon_args(self):
+        if self.panel_of_normal_vcf is None:
+            self.pon_args = []
+        else:
+            self.pon_args = [f'--panel-of-normals {self.panel_of_normal_vcf}']
 
 
 class Mutect2TNPaired(Mutect2Base):
 
     def execute(self):
         self.create_sequence_dictionary()
+        self.prepare_panel_of_normal()
         self.mutect2()
 
     def mutect2(self):
@@ -79,6 +102,7 @@ class Mutect2TNPaired(Mutect2Base):
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
+        ] + self.pon_args + [
             f'1> {log}',
             f'2> {log}',
         ])
@@ -90,6 +114,7 @@ class Mutect2TumorOnly(Mutect2Base):
     def execute(self):
         assert self.normal_bam is None
         self.create_sequence_dictionary()
+        self.prepare_panel_of_normal()
         self.mutect2()
 
     def mutect2(self):
@@ -100,6 +125,7 @@ class Mutect2TumorOnly(Mutect2Base):
             f'--input {self.tumor_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
+        ] + self.pon_args + [
             f'1> {log}',
             f'2> {log}',
         ])
@@ -265,6 +291,7 @@ class VariantCalling(Processor):
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
+    panel_of_normal_vcf: Optional[str]
 
     vcf: str
 
@@ -273,12 +300,14 @@ class VariantCalling(Processor):
             variant_caller: str,
             ref_fa: str,
             tumor_bam: str,
-            normal_bam: Optional[str]) -> str:
+            normal_bam: Optional[str],
+            panel_of_normal_vcf: Optional[str]) -> str:
 
         self.variant_caller = variant_caller
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.panel_of_normal_vcf = panel_of_normal_vcf
 
         process = Factory(self.settings).get_process(
             variant_caller=self.variant_caller,
@@ -287,6 +316,7 @@ class VariantCalling(Processor):
         self.vcf = process.main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=self.panel_of_normal_vcf)
 
         return self.vcf

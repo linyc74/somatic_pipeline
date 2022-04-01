@@ -91,6 +91,24 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--panel-of-normal-vcf'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'panel of normal VCF file for Mutect2 (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--bqsr-known-variant-vcf'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'known variants VCF file for BQSR, if None then skip BQSR (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--discard-bam'],
         'properties': {
             'action': 'store_true',
@@ -180,6 +198,8 @@ class EntryPoint:
             variant_caller=args.variant_caller,
             exome_target_bed=args.exome_target_bed,
             cnvkit_annotate_txt=args.cnvkit_annotate_txt,
+            panel_of_normal_vcf=args.panel_of_normal_vcf,
+            bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,
             discard_bam=args.discard_bam,
             outdir=args.outdir,
             threads=args.threads,

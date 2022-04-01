@@ -15,6 +15,8 @@ class Main:
     variant_caller: str
     exome_target_bed: Optional[str]
     cnvkit_annotate_txt: Optional[str]
+    panel_of_normal_vcf: Optional[str]
+    bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
 
     settings: Settings
@@ -30,6 +32,8 @@ class Main:
             variant_caller: str,
             exome_target_bed: str,
             cnvkit_annotate_txt: str,
+            panel_of_normal_vcf: str,
+            bqsr_known_variant_vcf: str,
             discard_bam: bool,
             outdir: str,
             threads: str,
@@ -38,12 +42,14 @@ class Main:
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
-        self.normal_fq1 = None if normal_fq1 == 'None' else normal_fq1
-        self.normal_fq2 = None if normal_fq2 == 'None' else normal_fq2
+        self.normal_fq1 = None if normal_fq1.lower() == 'none' else normal_fq1
+        self.normal_fq2 = None if normal_fq2.lower() == 'none' else normal_fq2
         self.read_aligner = read_aligner
         self.variant_caller = variant_caller
-        self.exome_target_bed = None if exome_target_bed == 'None' else exome_target_bed
-        self.cnvkit_annotate_txt = None if cnvkit_annotate_txt == 'None' else cnvkit_annotate_txt
+        self.exome_target_bed = None if exome_target_bed.lower() == 'none' else exome_target_bed
+        self.cnvkit_annotate_txt = None if cnvkit_annotate_txt.lower() == 'none' else cnvkit_annotate_txt
+        self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
+        self.bqsr_known_variant_vcf = None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf
         self.discard_bam = discard_bam
 
         self.settings = Settings(
@@ -66,4 +72,6 @@ class Main:
             variant_caller=self.variant_caller,
             exome_target_bed=self.exome_target_bed,
             cnvkit_annotate_txt=self.cnvkit_annotate_txt,
-            discard_bam=self.discard_bam)
+            bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
+            discard_bam=self.discard_bam,
+            panel_of_normal_vcf=self.panel_of_normal_vcf)

@@ -23,13 +23,14 @@ class SomaticPipeline(Processor):
     variant_caller: str
     exome_target_bed: Optional[str]
     cnvkit_annotate_txt: Optional[str]
+    panel_of_normal_vcf: Optional[str]
+    bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
 
     tumor_bam: str
     normal_bam: Optional[str]
     raw_vcf: str
     annotated_vcf: str
-    maf: str
 
     def main(
             self,
@@ -42,6 +43,8 @@ class SomaticPipeline(Processor):
             variant_caller: str,
             exome_target_bed: Optional[str],
             cnvkit_annotate_txt: Optional[str],
+            panel_of_normal_vcf: Optional[str],
+            bqsr_known_variant_vcf: Optional[str],
             discard_bam: bool):
 
         self.ref_fa = ref_fa
@@ -53,6 +56,8 @@ class SomaticPipeline(Processor):
         self.variant_caller = variant_caller
         self.exome_target_bed = exome_target_bed
         self.cnvkit_annotate_txt = cnvkit_annotate_txt
+        self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
         self.discard_bam = discard_bam
 
         self.copy_ref_fa()
@@ -100,7 +105,8 @@ class SomaticPipeline(Processor):
             variant_caller=self.variant_caller,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=self.panel_of_normal_vcf)
 
     def annotation(self):
         self.annotated_vcf = SnpEff(self.settings).main(
@@ -111,7 +117,7 @@ class SomaticPipeline(Processor):
             vcf=self.annotated_vcf)
 
     def vcf_2_maf(self):
-        self.maf = Vcf2Maf(self.settings).main(
+        Vcf2Maf(self.settings).main(
             annotated_vcf=self.annotated_vcf,
             ref_fa=self.ref_fa,
             variant_caller=self.variant_caller)
