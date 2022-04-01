@@ -7,8 +7,8 @@ class TestSomaticPipeline(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def test_tumor_normal_paired(self):
         SomaticPipeline(self.settings).main(
@@ -42,6 +42,6 @@ class TestSomaticPipeline(TestCase):
             panel_of_normal_vcf=f'{self.indir}/chr9-pon.vcf',
             bqsr_known_variant_vcf=f'{self.indir}/known-variants.vcf',
             discard_bam=True,
-            skip_variant_calling=False,
-            skip_cnv=False
+            skip_variant_calling=True,
+            skip_cnv=True
         )

@@ -7,14 +7,14 @@ from .index_files import SamtoolsIndexFa, GATKCreateSequenceDictionary, GATKInde
 class BQSR(Processor):
 
     tumor_bam: str
-    normal_bam: str
+    normal_bam: Optional[str]
     ref_fa: str
     known_variant_vcf: Optional[str]
 
     def main(
             self,
             tumor_bam: str,
-            normal_bam: str,
+            normal_bam: Optional[str],
             ref_fa: str,
             known_variant_vcf: Optional[str]) -> Tuple[str, str]:
 
@@ -27,7 +27,8 @@ class BQSR(Processor):
             self.logger.info(f'Known variant VCF not provided, skip BQSR')
         else:
             self.tumor_bam = self.run_bqsr(self.tumor_bam)
-            self.normal_bam = self.run_bqsr(self.normal_bam)
+            if self.normal_bam is not None:
+                self.normal_bam = self.run_bqsr(self.normal_bam)
 
         return self.tumor_bam, self.normal_bam
 

@@ -8,6 +8,7 @@ from .template import Processor
 from .trimming import TrimGalore
 from .alignment import Alignment
 from .copy_ref_fa import CopyRefFa
+from .map_stats import MappingStats
 from .parse_vcf import ParseSnpEffVcf
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
@@ -67,8 +68,8 @@ class SomaticPipeline(Processor):
 
         self.copy_ref_fa()
         self.trimming()
-        self.alignment_preprocessing_trunk()
-        self.variant_calling_trunk()
+        self.alignment_preprocessing_workflow()
+        self.variant_calling_workflow()
         self.compute_cnv()
         self.clean_up()
 
@@ -86,8 +87,8 @@ class SomaticPipeline(Processor):
                 fq1=self.normal_fq1,
                 fq2=self.normal_fq2)
 
-    def alignment_preprocessing_trunk(self):
-        AlignmentPreprocessingTrunk(self.settings).main(
+    def alignment_preprocessing_workflow(self):
+        AlignmentPreprocessingWorkflow(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
@@ -97,11 +98,11 @@ class SomaticPipeline(Processor):
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
             discard_bam=self.discard_bam)
 
-    def variant_calling_trunk(self):
+    def variant_calling_workflow(self):
         if self.skip_variant_calling:
             self.logger.info(f'Skip all variant calling tasks')
         else:
-            VariantCallingTrunk(self.settings).main(
+            VariantCallingWorkflow(self.settings).main(
                 ref_fa=self.ref_fa,
                 tumor_bam=self.tumor_bam,
                 normal_bam=self.normal_bam,
@@ -123,7 +124,7 @@ class SomaticPipeline(Processor):
         CleanUp(self.settings).main()
 
 
-class AlignmentPreprocessingTrunk(Processor):
+class AlignmentPreprocessingWorkflow(Processor):
 
     ref_fa: str
     tumor_fq1: str
@@ -160,6 +161,7 @@ class AlignmentPreprocessingTrunk(Processor):
         self.alignment()
         self.mark_duplicates()
         self.bqsr()
+        self.mapping_stats()
 
         return self.tumor_bam, self.normal_bam
 
@@ -185,8 +187,13 @@ class AlignmentPreprocessingTrunk(Processor):
             ref_fa=self.ref_fa,
             known_variant_vcf=self.bqsr_known_variant_vcf)
 
+    def mapping_stats(self):
+        MappingStats(self.settings).main(
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
 
-class VariantCallingTrunk(Processor):
+
+class VariantCallingWorkflow(Processor):
 
     ref_fa: str
     tumor_bam: str

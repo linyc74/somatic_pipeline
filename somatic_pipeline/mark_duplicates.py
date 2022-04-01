@@ -1,3 +1,4 @@
+import os
 from typing import Optional, Tuple
 from .tools import edit_fpath
 from .template import Processor
@@ -31,6 +32,7 @@ class MarkDuplicates(Processor):
 class GATKMarkDuplicates(Processor):
 
     REMOVE_DUPLICATES = 'false'
+    METRICS_DIRNAME = 'duplicate-metrics'
 
     bam: str
 
@@ -52,11 +54,13 @@ class GATKMarkDuplicates(Processor):
             dstdir=self.workdir)
 
     def set_metrics_txt(self):
+        dstdir = f'{self.outdir}/{self.METRICS_DIRNAME}'
+        os.makedirs(dstdir, exist_ok=True)
         self.metrics_txt = edit_fpath(
             fpath=self.bam,
             old_suffix='.bam',
             new_suffix='-duplicate-metrics.txt',
-            dstdir=self.outdir)
+            dstdir=dstdir)
 
     def execute(self):
         log = f'{self.outdir}/gatk-MarkDuplicates.log'
