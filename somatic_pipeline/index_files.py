@@ -72,11 +72,12 @@ class GATKIndexVcf(Processor):
     def main(self, vcf: str):
         self.vcf = vcf
         if self.index_file_already_exist():
+            self.logger.debug(f'Index file for {self.vcf} exists, skip indexing')
             return
         self.execute()
 
     def index_file_already_exist(self) -> bool:
-        return exists(f'{self.vcf}.idx')
+        return exists(f'{self.vcf}.idx') or exists(f'{self.vcf}.tbi')
 
     def execute(self):
         log = f'{self.outdir}/gatk-IndexFeatureFile.log'

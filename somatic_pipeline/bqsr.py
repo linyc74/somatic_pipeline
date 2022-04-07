@@ -25,12 +25,29 @@ class BQSR(Processor):
 
         if self.known_variant_vcf is None:
             self.logger.info(f'Known variant VCF not provided, skip BQSR')
-        else:
-            self.tumor_bam = self.run_bqsr(self.tumor_bam)
-            if self.normal_bam is not None:
-                self.normal_bam = self.run_bqsr(self.normal_bam)
+            return self.tumor_bam, self.normal_bam
+
+        self.prepare_ref_fa()
+        self.prepare_known_variant_vcf()
+        self.tumor_bam = self.run_bqsr(self.tumor_bam)
+        if self.normal_bam is not None:
+            self.normal_bam = self.run_bqsr(self.normal_bam)
 
         return self.tumor_bam, self.normal_bam
+
+    def prepare_ref_fa(self):
+        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
+        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
+
+    def prepare_known_variant_vcf(self):
+        src = self.known_variant_vcf
+        dst = edit_fpath(
+            fpath=self.known_variant_vcf,
+            dstdir=self.workdir)
+        self.call(f'cp {src} {dst}')
+        self.known_variant_vcf = dst
+
+        GATKIndexVcf(self.settings).main(vcf=self.known_variant_vcf)
 
     def run_bqsr(self, bam: str) -> str:
         return RunBQSR(self.settings).main(
@@ -58,26 +75,10 @@ class RunBQSR(Processor):
         self.ref_fa = ref_fa
         self.known_variant_vcf = known_variant_vcf
 
-        self.prepare_ref_fa()
-        self.prepare_known_variant_vcf()
         self.base_recalibrator()
         self.apply_bqsr()
 
         return self.out_bam
-
-    def prepare_ref_fa(self):
-        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
-        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
-
-    def prepare_known_variant_vcf(self):
-        src = self.known_variant_vcf
-        dst = edit_fpath(
-            fpath=self.known_variant_vcf,
-            dstdir=self.workdir)
-        self.call(f'cp {src} {dst}')
-        self.known_variant_vcf = dst
-
-        GATKIndexVcf(self.settings).main(vcf=self.known_variant_vcf)
 
     def base_recalibrator(self):
         self.recalibration_table = f'{self.workdir}/BQSR-recalibration.table'
