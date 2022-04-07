@@ -28,6 +28,7 @@ class SomaticPipeline(Processor):
     panel_of_normal_vcf: Optional[str]
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
+    skip_mark_duplicates: bool
     skip_variant_calling: bool
     skip_cnv: bool
 
@@ -48,6 +49,7 @@ class SomaticPipeline(Processor):
             panel_of_normal_vcf: Optional[str],
             bqsr_known_variant_vcf: Optional[str],
             discard_bam: bool,
+            skip_mark_duplicates: bool,
             skip_variant_calling: bool,
             skip_cnv: bool):
 
@@ -63,6 +65,7 @@ class SomaticPipeline(Processor):
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
         self.discard_bam = discard_bam
+        self.skip_mark_duplicates = skip_mark_duplicates
         self.skip_variant_calling = skip_variant_calling
         self.skip_cnv = skip_cnv
 
@@ -88,7 +91,7 @@ class SomaticPipeline(Processor):
                 fq2=self.normal_fq2)
 
     def alignment_preprocessing_workflow(self):
-        AlignmentPreprocessingWorkflow(self.settings).main(
+        self.tumor_bam, self.normal_bam = AlignmentPreprocessingWorkflow(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
@@ -96,7 +99,8 @@ class SomaticPipeline(Processor):
             normal_fq2=self.normal_fq2,
             read_aligner=self.read_aligner,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
-            discard_bam=self.discard_bam)
+            discard_bam=self.discard_bam,
+            skip_mark_duplicates=self.skip_mark_duplicates)
 
     def variant_calling_workflow(self):
         if self.skip_variant_calling:
@@ -134,6 +138,7 @@ class AlignmentPreprocessingWorkflow(Processor):
     read_aligner: str
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
+    skip_mark_duplicates: bool
 
     tumor_bam: str
     normal_bam: Optional[str]
@@ -147,7 +152,8 @@ class AlignmentPreprocessingWorkflow(Processor):
             normal_fq2: Optional[str],
             read_aligner: str,
             bqsr_known_variant_vcf: Optional[str],
-            discard_bam: bool) -> Tuple[str, str]:
+            discard_bam: bool,
+            skip_mark_duplicates: bool) -> Tuple[str, str]:
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -157,6 +163,7 @@ class AlignmentPreprocessingWorkflow(Processor):
         self.read_aligner = read_aligner
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
         self.discard_bam = discard_bam
+        self.skip_mark_duplicates = skip_mark_duplicates
 
         self.alignment()
         self.mark_duplicates()
@@ -176,6 +183,8 @@ class AlignmentPreprocessingWorkflow(Processor):
             discard_bam=self.discard_bam)
 
     def mark_duplicates(self):
+        if self.skip_mark_duplicates:
+            return
         self.tumor_bam, self.normal_bam = MarkDuplicates(self.settings).main(
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam)

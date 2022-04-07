@@ -105,7 +105,7 @@ OPTIONAL = [
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'known variants VCF file for BQSR, if None then skip BQSR (default: %(default)s)',
+            'help': 'known variants VCF file for BQSR, if "None" then skip BQSR (default: %(default)s)',
         }
     },
     {
@@ -113,6 +113,13 @@ OPTIONAL = [
         'properties': {
             'action': 'store_true',
             'help': 'do not save sorted BAM files in outdir',
+        }
+    },
+    {
+        'keys': ['--skip-mark-duplicates'],
+        'properties': {
+            'action': 'store_true',
+            'help': 'do not mark PCR duplicates',
         }
     },
     {
@@ -215,6 +222,7 @@ class EntryPoint:
             panel_of_normal_vcf=args.panel_of_normal_vcf,
             bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,
             discard_bam=args.discard_bam,
+            skip_mark_duplicates=args.skip_mark_duplicates,
             skip_variant_calling=args.skip_variant_calling,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,

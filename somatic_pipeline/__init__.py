@@ -18,6 +18,7 @@ class Main:
     panel_of_normal_vcf: Optional[str]
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
+    skip_mark_duplicates: bool
     skip_variant_calling: bool
     skip_cnv: bool
 
@@ -37,6 +38,7 @@ class Main:
             panel_of_normal_vcf: str,
             bqsr_known_variant_vcf: str,
             discard_bam: bool,
+            skip_mark_duplicates: bool,
             skip_variant_calling: bool,
             skip_cnv: bool,
             outdir: str,
@@ -55,6 +57,7 @@ class Main:
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.bqsr_known_variant_vcf = None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf
         self.discard_bam = discard_bam
+        self.skip_mark_duplicates = skip_mark_duplicates
         self.skip_variant_calling = skip_variant_calling
         self.skip_cnv = skip_cnv
 
@@ -81,5 +84,6 @@ class Main:
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
             discard_bam=self.discard_bam,
+            skip_mark_duplicates=self.skip_mark_duplicates,
             skip_variant_calling=self.skip_variant_calling,
             skip_cnv=self.skip_cnv)

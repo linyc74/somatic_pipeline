@@ -16,8 +16,8 @@ class TestVariantCalling(TestCase):
         self.tumor_bam = f'{self.workdir}/tumor-sorted.bam'
         self.normal_bam = f'{self.workdir}/normal-sorted.bam'
 
-    # def tearDown(self):
-    #     self.tear_down()
+    def tearDown(self):
+        self.tear_down()
 
     def test_mutect2_tn_paired(self):
         actual = VariantCalling(self.settings).main(
@@ -25,7 +25,7 @@ class TestVariantCalling(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            panel_of_normal_vcf=f'{self.indir}/chr9-pon.vcf'
+            panel_of_normal_vcf=None
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -36,7 +36,7 @@ class TestVariantCalling(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=None,
-            panel_of_normal_vcf=f'{self.indir}/chr9-pon.vcf'
+            panel_of_normal_vcf=f'{self.indir}/22_0406_twb_snp_pon.vcf'
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
