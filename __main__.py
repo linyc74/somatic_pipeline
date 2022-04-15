@@ -114,7 +114,7 @@ OPTIONAL = [
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'dbNSFP resource file (block gzipped) for SnpSift, if "None" then skip SnpSift (default: %(default)s)',
+            'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip SnpSift (default: %(default)s)',
         }
     },
     {

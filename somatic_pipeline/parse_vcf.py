@@ -59,15 +59,13 @@ class ParseSnpEffVcf(Processor):
             for line in fh:
                 if line.startswith('#'):
                     continue
-
-                n += 1
-                if n % self.LOG_INTERVAL == 0:
-                    self.logger.debug(msg=f'{n} variants parsed')
-
                 row = self.vcf_line_to_row(
                     vcf_line=line,
                     info_id_to_description=self.info_id_to_description)
                 self.data.append(row)
+                n += 1
+                if n % self.LOG_INTERVAL == 0:
+                    self.logger.debug(msg=f'{n} variants parsed')
 
     def save_csv(self):
         df = pd.DataFrame(self.data, columns=self.columns)
