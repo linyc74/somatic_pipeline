@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any, List, IO
+from typing import Dict, Any, List
 from .template import Processor, Settings
 
 
@@ -11,7 +11,7 @@ class ParseSnpEffVcf(Processor):
 
     vcf_header: str
     info_id_to_description: Dict[str, str]
-    vcf_fh: IO
+    columns: List[str]
     data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
 
     def __init__(self, settings: Settings):
@@ -24,7 +24,9 @@ class ParseSnpEffVcf(Processor):
         self.logger.info(msg='Start parsing annotated VCF')
         self.set_vcf_header()
         self.set_info_id_to_description()
+        self.set_columns()
         self.process_vcf_data()
+        self.save_csv()
 
     def set_vcf_header(self):
         self.vcf_header = ''
@@ -38,33 +40,38 @@ class ParseSnpEffVcf(Processor):
         self.info_id_to_description = GetInfoIDToDescription(self.settings).main(
             vcf_header=self.vcf_header)
 
+    def set_columns(self):
+        info_descriptions = list(self.info_id_to_description.values())
+        self.columns = [
+            'Chromosome',
+            'Position',
+            'ID',
+            'Ref Allele',
+            'Alt Allele',
+            'Quality',
+            'Filter',
+        ] + info_descriptions
+
     def process_vcf_data(self):
-        self.__open()
-
         n = 0
-        for line in self.vcf_fh:
-            if line.startswith('#'):
-                continue
-
-            n += 1
-            if n % self.LOG_INTERVAL == 0:
-                self.logger.debug(msg=f'{n} variants parsed')
-
-            row = self.vcf_line_to_row(
-                vcf_line=line,
-                info_id_to_description=self.info_id_to_description)
-
-            self.data.append(row)
-
-        self.__close_and_save()
-
-    def __open(self):
-        self.vcf_fh = open(self.vcf)
         self.data = []
+        with open(self.vcf) as fh:
+            for line in fh:
+                if line.startswith('#'):
+                    continue
 
-    def __close_and_save(self):
-        self.vcf_fh.close()
-        pd.DataFrame(self.data).to_csv(f'{self.outdir}/variants.csv', index=False)
+                n += 1
+                if n % self.LOG_INTERVAL == 0:
+                    self.logger.debug(msg=f'{n} variants parsed')
+
+                row = self.vcf_line_to_row(
+                    vcf_line=line,
+                    info_id_to_description=self.info_id_to_description)
+                self.data.append(row)
+
+    def save_csv(self):
+        df = pd.DataFrame(self.data, columns=self.columns)
+        df.to_csv(f'{self.outdir}/variants.csv', index=False)
 
 
 class GetInfoIDToDescription(Processor):
