@@ -109,6 +109,15 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--snpsift-dbnsfp-txt-gz'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'dbNSFP resource file (block gzipped) for SnpSift, if "None" then skip SnpSift (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--discard-bam'],
         'properties': {
             'action': 'store_true',
@@ -224,6 +233,7 @@ class EntryPoint:
             discard_bam=args.discard_bam,
             skip_mark_duplicates=args.skip_mark_duplicates,
             skip_variant_calling=args.skip_variant_calling,
+            snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,
             threads=args.threads,
