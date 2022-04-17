@@ -65,10 +65,11 @@ class TestSnpEffVcfLineToRow(TestCase):
         self.tear_down()
 
     def test_main(self):
-        vcf_line = 'chr9\t12303\t.\tA\tT\t.\t.\tMBQ=20,20;ANN=T|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|transcript|ENST00000442898.5|protein_coding||c.*2504T>A|||||2172|,T|non_coding_transcript_exon_variant|MODIFIER|DDX11L5|ENSG00000236875|transcript|ENST00000421620.2|unprocessed_pseudogene|2/6|n.70A>T||||||'
+        vcf_line = 'chr9\t12303\t.\tA\tT\t.\t.\tMBQ=20,20;ANN=T|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|transcript|ENST00000442898.5|protein_coding||c.*2504T>A|||||2172|,T|non_coding_transcript_exon_variant|MODIFIER|DDX11L5|ENSG00000236875|transcript|ENST00000421620.2|unprocessed_pseudogene|2/6|n.70A>T||||||;dbNSFP_CADD_phred=16.54'
         info_id_to_description = {
             'MBQ': 'median base quality by allele',
             'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
+            'dbNSFP_CADD_phred': 'Field \'CADD_phred\' from dbNSFP',
         }
         actual = SnpEffVcfLineToRow(self.settings).main(
             vcf_line=vcf_line,
@@ -83,6 +84,7 @@ class TestSnpEffVcfLineToRow(TestCase):
             'Quality': '.',
             'Filter': '.',
             'median base quality by allele': '20,20',
+            'Field \'CADD_phred\' from dbNSFP': '16.54',
             'Allele': 'T',
             'Annotation': 'downstream_gene_variant',
             'Annotation_Impact': 'MODIFIER',
@@ -98,7 +100,7 @@ class TestSnpEffVcfLineToRow(TestCase):
             'CDS.pos / CDS.length': '',
             'AA.pos / AA.length': '',
             'Distance': '2172',
-            'ERRORS / WARNINGS / INFO': ',T'
+            'ERRORS / WARNINGS / INFO': ',T',
         }
         self.assertDictEqual(expected, actual)
 

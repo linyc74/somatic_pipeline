@@ -11,7 +11,6 @@ class ParseSnpEffVcf(Processor):
 
     vcf_header: str
     info_id_to_description: Dict[str, str]
-    columns: List[str]
     data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
 
     def __init__(self, settings: Settings):
@@ -24,7 +23,6 @@ class ParseSnpEffVcf(Processor):
         self.logger.info(msg='Start parsing annotated VCF')
         self.set_vcf_header()
         self.set_info_id_to_description()
-        self.set_columns()
         self.process_vcf_data()
         self.save_csv()
 
@@ -40,18 +38,6 @@ class ParseSnpEffVcf(Processor):
         self.info_id_to_description = GetInfoIDToDescription(self.settings).main(
             vcf_header=self.vcf_header)
 
-    def set_columns(self):
-        info_descriptions = list(self.info_id_to_description.values())
-        self.columns = [
-            'Chromosome',
-            'Position',
-            'ID',
-            'Ref Allele',
-            'Alt Allele',
-            'Quality',
-            'Filter',
-        ] + info_descriptions
-
     def process_vcf_data(self):
         n = 0
         self.data = []
@@ -59,16 +45,18 @@ class ParseSnpEffVcf(Processor):
             for line in fh:
                 if line.startswith('#'):
                     continue
+
                 row = self.vcf_line_to_row(
                     vcf_line=line,
                     info_id_to_description=self.info_id_to_description)
                 self.data.append(row)
+
                 n += 1
                 if n % self.LOG_INTERVAL == 0:
                     self.logger.debug(msg=f'{n} variants parsed')
 
     def save_csv(self):
-        df = pd.DataFrame(self.data, columns=self.columns)
+        df = pd.DataFrame(self.data)
         df.to_csv(f'{self.outdir}/variants.csv', index=False)
 
 
