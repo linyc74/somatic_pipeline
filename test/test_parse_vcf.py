@@ -69,7 +69,7 @@ class TestSnpEffVcfLineToRow(TestCase):
         info_id_to_description = {
             'MBQ': 'median base quality by allele',
             'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
-            'dbNSFP_CADD_phred': 'Field \'CADD_phred\' from dbNSFP',
+            'dbNSFP_CADD_phred': 'dbNSFP CADD Phred Score',
         }
         actual = SnpEffVcfLineToRow(self.settings).main(
             vcf_line=vcf_line,
@@ -83,8 +83,10 @@ class TestSnpEffVcfLineToRow(TestCase):
             'Alt Allele': 'T',
             'Quality': '.',
             'Filter': '.',
+
             'median base quality by allele': '20,20',
-            'Field \'CADD_phred\' from dbNSFP': '16.54',
+            'dbNSFP CADD Phred Score': '16.54',
+
             'Allele': 'T',
             'Annotation': 'downstream_gene_variant',
             'Annotation_Impact': 'MODIFIER',

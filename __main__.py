@@ -2,7 +2,7 @@ import argparse
 import somatic_pipeline
 
 
-__VERSION__ = '1.4.1'
+__VERSION__ = '1.4.2-beta'
 
 
 PROG = 'python somatic_pipeline'
@@ -109,12 +109,30 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--clinvar-vcf-gz'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'ClinVar VCF file (block gzipped), if "None" then skip ClinVar annotation (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--dbsnp-vcf-gz'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'dbSNP VCF file (block gzipped), if "None" then skip dbSNP annotation (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--snpsift-dbnsfp-txt-gz'],
         'properties': {
             'type': str,
             'required': False,
             'default': 'None',
-            'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip SnpSift (default: %(default)s)',
+            'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip dbNSFP annotation (default: %(default)s)',
         }
     },
     {
@@ -233,6 +251,8 @@ class EntryPoint:
             discard_bam=args.discard_bam,
             skip_mark_duplicates=args.skip_mark_duplicates,
             skip_variant_calling=args.skip_variant_calling,
+            clinvar_vcf_gz=args.clinvar_vcf_gz,
+            dbsnp_vcf_gz=args.dbsnp_vcf_gz,
             snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,

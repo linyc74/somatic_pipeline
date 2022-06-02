@@ -27,6 +27,8 @@ class SomaticPipeline(Processor):
     cnvkit_annotate_txt: Optional[str]
     panel_of_normal_vcf: Optional[str]
     bqsr_known_variant_vcf: Optional[str]
+    clinvar_vcf_gz: Optional[str]
+    dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
     discard_bam: bool
     skip_mark_duplicates: bool
@@ -49,6 +51,8 @@ class SomaticPipeline(Processor):
             cnvkit_annotate_txt: Optional[str],
             panel_of_normal_vcf: Optional[str],
             bqsr_known_variant_vcf: Optional[str],
+            clinvar_vcf_gz: Optional[str],
+            dbsnp_vcf_gz: Optional[str],
             snpsift_dbnsfp_txt_gz: Optional[str],
             discard_bam: bool,
             skip_mark_duplicates: bool,
@@ -66,6 +70,8 @@ class SomaticPipeline(Processor):
         self.cnvkit_annotate_txt = cnvkit_annotate_txt
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
+        self.clinvar_vcf_gz = clinvar_vcf_gz
+        self.dbsnp_vcf_gz = dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
@@ -115,6 +121,8 @@ class SomaticPipeline(Processor):
                 normal_bam=self.normal_bam,
                 variant_caller=self.variant_caller,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
+                clinvar_vcf_gz=self.clinvar_vcf_gz,
+                dbsnp_vcf_gz=self.dbsnp_vcf_gz,
                 snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz)
 
     def compute_cnv(self):
@@ -213,6 +221,8 @@ class VariantCallingWorkflow(Processor):
     normal_bam: Optional[str]
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
+    clinvar_vcf_gz: Optional[str]
+    dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
 
     raw_vcf: str
@@ -225,6 +235,8 @@ class VariantCallingWorkflow(Processor):
             normal_bam: Optional[str],
             variant_caller: str,
             panel_of_normal_vcf: Optional[str],
+            clinvar_vcf_gz: Optional[str],
+            dbsnp_vcf_gz: Optional[str],
             snpsift_dbnsfp_txt_gz: Optional[str]):
 
         self.ref_fa = ref_fa
@@ -232,6 +244,8 @@ class VariantCallingWorkflow(Processor):
         self.normal_bam = normal_bam
         self.variant_caller = variant_caller
         self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.clinvar_vcf_gz = clinvar_vcf_gz
+        self.dbsnp_vcf_gz = dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
 
         self.variant_calling()
@@ -250,6 +264,8 @@ class VariantCallingWorkflow(Processor):
     def annotation(self):
         self.annotated_vcf = Annotation(self.settings).main(
             vcf=self.raw_vcf,
+            clinvar_vcf_gz=self.clinvar_vcf_gz,
+            dbsnp_vcf_gz=self.dbsnp_vcf_gz,
             snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz)
 
     def parse_vcf(self):
