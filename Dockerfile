@@ -37,10 +37,17 @@ ENV PATH /snpEff/exec:$PATH
 # download pre-build snpeff database
 RUN snpeff download -verbose GRCh38.99
 
+# dependency for cnvkit
+ARG d=/opt/conda/envs/somatic/lib/
+RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
+ && conda install -c bioconda -n somatic bioconductor-dnacopy=1.44.0 \
+ && ln -s ${d}libreadline.so.8.1 ${d}libreadline.so.6 \
+ && ln -s ${d}libncursesw.so.6.2 ${d}libncurses.so.5 \
+ && conda install -c anaconda -n somatic pomegranate=0.14.4 \
+ && conda clean --all --yes
+
 # install cnvkit, the pip used is in 'somatic' env
-RUN conda install -c anaconda -n somatic pomegranate=0.14.4 \
- && conda clean --all --yes \
- && pip install --upgrade pip \
+RUN pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
 
 # copy source code

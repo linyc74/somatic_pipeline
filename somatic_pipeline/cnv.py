@@ -78,10 +78,9 @@ class CleanUpBed(Processor):
 class CNVkitBatch(Processor):
 
     DSTDIR_NAME = 'cnvkit'
-
-    # the default segment method 'cbs' requires R package DNAcopy, which was hard to install
-    # thus the 'hmm-tumor' (which depends on 'pomegranate') was chosen
-    SEGMENT_METHOD = 'hmm-tumor'
+    # ON_TARGET_BIN_SIZE = 1000
+    # OFF_TARGET_BIN_SIZE = 1000
+    SEGMENT_METHOD = 'cbs'
 
     ref_fa: str
     tumor_bam: str
@@ -140,9 +139,13 @@ class CNVkitBatch(Processor):
             f'--fasta {self.ref_fa}',
         ] + self.annotate_args + self.mode_args + [
             f'--segment-method {self.SEGMENT_METHOD}',
+            # f'--target-avg-size {self.ON_TARGET_BIN_SIZE}',
+            # f'--antitarget-avg-size {self.OFF_TARGET_BIN_SIZE}',
+            '--drop-low-coverage',
             f'--output-dir {self.dstdir}',
             f'--processes {self.threads}',
             '--scatter',
+            '--diagram',
             self.tumor_bam,
             f'1> {log}',
             f'2> {log}',
