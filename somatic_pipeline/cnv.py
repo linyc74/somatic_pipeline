@@ -31,12 +31,20 @@ class ComputeCNV(Processor):
             return
 
         self.clean_up_bed()
+        self.report_auto_bin_size()
         self.run_cnvkit()
 
     def clean_up_bed(self):
         if self.exome_target_bed is not None:
             self.exome_target_bed = CleanUpBed(self.settings).main(
                 bed=self.exome_target_bed)
+
+    def report_auto_bin_size(self):
+        if self.exome_target_bed is not None:
+            CNVkitReportAutoBinSize(self.settings).main(
+                tumor_bam=self.tumor_bam,
+                normal_bam=self.normal_bam,
+                exome_target_bed=self.exome_target_bed)
 
     def run_cnvkit(self):
         CNVkitBatch(self.settings).main(
@@ -151,4 +159,38 @@ class CNVkitBatch(Processor):
             f'2> {log}',
         ]
         cmd = self.CMD_LINEBREAK.join(args)
+        self.call(cmd)
+
+
+class CNVkitReportAutoBinSize(Processor):
+
+    tumor_bam: str
+    normal_bam: str
+    exome_target_bed: str
+
+    def main(
+            self,
+            tumor_bam: str,
+            normal_bam: str,
+            exome_target_bed: str):
+
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.exome_target_bed = exome_target_bed
+
+        self.execute()
+
+    def execute(self):
+        log = f'{self.outdir}/cnvkit-autobin.log'
+        cmd = self.CMD_LINEBREAK.join([
+            'cnvkit.py autobin',
+            self.normal_bam,
+            self.tumor_bam,
+            '--method hybrid',
+            f'--targets {self.exome_target_bed}',
+            f'--target-output-bed {self.workdir}/cnvkit-autobin-target.bed',
+            f'--antitarget-output-bed {self.workdir}/cnvkit-autobin-antitarget.bed',
+            f'1> {log}',
+            f'2> {log}',
+        ])
         self.call(cmd)

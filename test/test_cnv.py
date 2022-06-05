@@ -3,7 +3,7 @@ from somatic_pipeline.cnv import ComputeCNV
 from .setup import TestCase
 
 
-class TestCNVkitBatch(TestCase):
+class TestComputeCNV(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
