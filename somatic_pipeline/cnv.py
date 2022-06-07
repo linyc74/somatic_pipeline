@@ -86,8 +86,6 @@ class CleanUpBed(Processor):
 class CNVkitBatch(Processor):
 
     DSTDIR_NAME = 'cnvkit'
-    # ON_TARGET_BIN_SIZE = 1000
-    # OFF_TARGET_BIN_SIZE = 1000
     SEGMENT_METHOD = 'cbs'
 
     ref_fa: str
@@ -97,7 +95,7 @@ class CNVkitBatch(Processor):
     annotate_txt: Optional[str]
 
     dstdir: str
-    mode_args: List[str]
+    method_args: List[str]
     annotate_args: List[str]
 
     def main(
@@ -115,7 +113,7 @@ class CNVkitBatch(Processor):
         self.annotate_txt = annotate_txt
 
         self.make_dstdir()
-        self.set_mode_args()
+        self.set_method_args()
         self.set_annotate_args()
         self.execute()
 
@@ -123,14 +121,12 @@ class CNVkitBatch(Processor):
         self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
         os.makedirs(self.dstdir, exist_ok=True)
 
-    def set_mode_args(self):
+    def set_method_args(self):
         if self.exome_target_bed is None:
-            mode = 'wgs'
-            self.mode_args = [f'-m {mode}']
+            self.method_args = [f'--method wgs']
         else:
-            mode = 'hybrid'
-            self.mode_args = [
-                f'-m {mode}',
+            self.method_args = [
+                f'--method hybrid',
                 f'--targets {self.exome_target_bed}'
             ]
 
@@ -145,10 +141,8 @@ class CNVkitBatch(Processor):
             'cnvkit.py batch',
             f'--normal {self.normal_bam}',
             f'--fasta {self.ref_fa}',
-        ] + self.annotate_args + self.mode_args + [
+        ] + self.annotate_args + self.method_args + [
             f'--segment-method {self.SEGMENT_METHOD}',
-            # f'--target-avg-size {self.ON_TARGET_BIN_SIZE}',
-            # f'--antitarget-avg-size {self.OFF_TARGET_BIN_SIZE}',
             '--drop-low-coverage',
             f'--output-dir {self.dstdir}',
             f'--processes {self.threads}',
