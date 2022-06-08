@@ -55,7 +55,7 @@ RUN conda install -c bioconda -n somatic perl-app-cpanminus=1.7044 \
  && ln -s /usr/include/locale.h /usr/include/xlocale.h \
  && cpan DBI \
  && apt-get update \
- && apt-get install -y libmysqlclient-dev \
+ && apt-get install -y default-libmysqlclient-dev \
  && cpan DBD::mysql \
  && cpan Try::Tiny
 
