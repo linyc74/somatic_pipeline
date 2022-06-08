@@ -50,6 +50,22 @@ RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
 RUN pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
 
+# perl dependency for vep
+RUN conda install -c bioconda -n somatic perl-app-cpanminus=1.7044 \
+ && ln -s /usr/include/locale.h /usr/include/xlocale.h \
+ && cpan DBI \
+ && apt-get install libmysqlclient-dev \
+ && cpan DBD::mysql \
+ && cpan Try::Tiny
+
+# install vep
+RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
+ && unzip 106.zip \
+ && perl ensembl-vep-release-106/INSTALL.pl --NO_HTSLIB
+
+# make vep executable
+ENV PATH /ensembl-vep-release-106:$PATH
+
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
 COPY ./__main__.py /somatic_pipeline/
