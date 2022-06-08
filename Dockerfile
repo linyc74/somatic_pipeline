@@ -51,19 +51,22 @@ RUN pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
 
 # perl dependency for vep
-RUN conda install -c bioconda -n somatic perl-app-cpanminus=1.7044 \
- && ln -s /usr/include/locale.h /usr/include/xlocale.h \
+RUN conda install -c conda-forge -n somatic \
+    perl=5.26.2=h470a237_0 \
+    gcc=12.1.0 \
+ && conda install -c anaconda -n somatic \
+    make=4.2.1 \
+ && conda install -c bioconda -n somatic \
+    perl-app-cpanminus=1.7044 \
  && cpan DBI \
- && apt-get update \
- && apt-get install -y default-libmysqlclient-dev \
- && cpan Devel::CheckLib \
  && cpan DBD::mysql \
  && cpan Try::Tiny
 
 # install vep
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
  && unzip 106.zip \
- && perl ensembl-vep-release-106/INSTALL.pl --NO_HTSLIB
+ && perl ensembl-vep-release-106/INSTALL.pl --NO_HTSLIB \
+ && rm 106.zip
 
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
