@@ -54,7 +54,8 @@ RUN pip install --upgrade pip \
 RUN conda install -c bioconda -n somatic perl-app-cpanminus=1.7044 \
  && ln -s /usr/include/locale.h /usr/include/xlocale.h \
  && cpan DBI \
- && apt-get install libmysqlclient-dev \
+ && apt-get update \
+ && apt-get install -y libmysqlclient-dev \
  && cpan DBD::mysql \
  && cpan Try::Tiny
 
