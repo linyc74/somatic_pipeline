@@ -51,6 +51,7 @@ RUN pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
 
 # perl dependency for vep
+# perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
 RUN conda install -c conda-forge -n somatic \
     perl=5.26.2=h470a237_0 \
     gcc=12.1.0 \
@@ -58,10 +59,7 @@ RUN conda install -c conda-forge -n somatic \
     make=4.2.1 \
  && conda install -c bioconda -n somatic \
     perl-app-cpanminus=1.7044 \
- && apt-get update \
- && apt-get install libmysqlclient-dev \
  && cpan DBI \
- && cpan DBD::mysql \
  && cpan Try::Tiny
 
 # install vep
