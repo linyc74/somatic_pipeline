@@ -56,6 +56,7 @@ RUN conda install -c bioconda -n somatic perl-app-cpanminus=1.7044 \
  && cpan DBI \
  && apt-get update \
  && apt-get install -y default-libmysqlclient-dev \
+ && cpan Devel::CheckLib \
  && cpan DBD::mysql \
  && cpan Try::Tiny
 
