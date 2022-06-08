@@ -58,6 +58,8 @@ RUN conda install -c conda-forge -n somatic \
     make=4.2.1 \
  && conda install -c bioconda -n somatic \
     perl-app-cpanminus=1.7044 \
+ && apt-get update \
+ && apt-get install libmysqlclient-dev \
  && cpan DBI \
  && cpan DBD::mysql \
  && cpan Try::Tiny
