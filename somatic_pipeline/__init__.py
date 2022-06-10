@@ -17,9 +17,12 @@ class Main:
     cnvkit_annotate_txt: Optional[str]
     panel_of_normal_vcf: Optional[str]
     bqsr_known_variant_vcf: Optional[str]
+    annotator: str
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
+    vep_db_tar_gz: Optional[str]
+    vep_db_type: str
     discard_bam: bool
     skip_mark_duplicates: bool
     skip_variant_calling: bool
@@ -40,9 +43,12 @@ class Main:
             cnvkit_annotate_txt: str,
             panel_of_normal_vcf: str,
             bqsr_known_variant_vcf: str,
+            annotator: str,
             clinvar_vcf_gz: str,
             dbsnp_vcf_gz: str,
             snpsift_dbnsfp_txt_gz: str,
+            vep_db_tar_gz: str,
+            vep_db_type: str,
             discard_bam: bool,
             skip_mark_duplicates: bool,
             skip_variant_calling: bool,
@@ -62,9 +68,12 @@ class Main:
         self.cnvkit_annotate_txt = None if cnvkit_annotate_txt.lower() == 'none' else cnvkit_annotate_txt
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.bqsr_known_variant_vcf = None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf
+        self.annotator = annotator
         self.clinvar_vcf_gz = None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz
         self.dbsnp_vcf_gz = None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz
+        self.vep_db_tar_gz = None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz
+        self.vep_db_type = vep_db_type
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
         self.skip_variant_calling = skip_variant_calling
@@ -92,9 +101,12 @@ class Main:
             cnvkit_annotate_txt=self.cnvkit_annotate_txt,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
+            annotator=self.annotator,
             clinvar_vcf_gz=self.clinvar_vcf_gz,
             dbsnp_vcf_gz=self.dbsnp_vcf_gz,
             snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
+            vep_db_tar_gz=self.vep_db_tar_gz,
+            vep_db_type=self.vep_db_type,
             discard_bam=self.discard_bam,
             skip_mark_duplicates=self.skip_mark_duplicates,
             skip_variant_calling=self.skip_variant_calling,

@@ -7,26 +7,47 @@ from .template import Processor
 
 class Annotation(Processor):
 
+    SNPEFF = 'snpeff'
+    VEP = 'vep'
+
+    annotator: str
     vcf: str
+    ref_fa: str
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
+    vep_db_tar_gz: Optional[str]
+    vep_db_type: str
 
     def main(
             self,
+            annotator: str,
             vcf: str,
+            ref_fa: str,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str]) -> str:
+            snpsift_dbnsfp_txt_gz: Optional[str],
+            vep_db_tar_gz: Optional[str],
+            vep_db_type: str) -> str:
 
+        self.annotator = annotator
         self.vcf = vcf
+        self.ref_fa = ref_fa
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
+        self.vep_db_tar_gz = vep_db_tar_gz
+        self.vep_db_type = vep_db_type
 
-        self.run_snpeff()
-        self.run_snpsift_annotate()
-        self.run_snpsift_dbnsfp()
+        assert self.annotator in [self.SNPEFF, self.VEP]
+
+        if self.annotator == self.SNPEFF:
+            self.run_snpeff()
+            self.run_snpsift_annotate()
+            self.run_snpsift_dbnsfp()
+        else:
+            self.run_vep()
+
         self.move_vcf()
 
         return self.vcf
@@ -37,13 +58,21 @@ class Annotation(Processor):
     def run_snpsift_annotate(self):
         for resource in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if resource is not None:
-                SnpSiftAnnotate(self.settings).main(vcf=self.vcf, db_vcf_gz=resource)
+                self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, db_vcf_gz=resource)
 
     def run_snpsift_dbnsfp(self):
         if self.snpsift_dbnsfp_txt_gz is not None:
             self.vcf = SnpSiftDbNSFP(self.settings).main(
                 vcf=self.vcf,
                 dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz)
+
+    def run_vep(self):
+        assert self.vep_db_tar_gz is not None
+        self.vcf = VEP(self.settings).main(
+            vcf=self.vcf,
+            ref_fa=self.ref_fa,
+            vep_db_tar_gz=self.vep_db_tar_gz,
+            vep_db_type=self.vep_db_type)
 
     def move_vcf(self):
         dst = f'{self.outdir}/annotated.vcf'
@@ -135,13 +164,13 @@ class SnpSiftAnnotate(Processor):
             dstdir=self.workdir)
 
     def execute(self):
-        stderr = f'{self.outdir}/snpsift.log'
+        stderr = f'{self.outdir}/snpsift-annotate.log'
         cmd = self.CMD_LINEBREAK.join([
             'snpsift annotate',
             self.db_vcf_gz,
             self.vcf,
             f'> {self.output_vcf}',
-            f'2> {stderr}',
+            f'2>> {stderr}',
         ])
         self.call(cmd)
 
@@ -189,12 +218,74 @@ class SnpSiftDbNSFP(Processor):
             dstdir=self.workdir)
 
     def execute(self):
-        stderr = f'{self.outdir}/snpsift.log'
+        stderr = f'{self.outdir}/snpsift-dbnsfp.log'
         cmd = self.CMD_LINEBREAK.join([
             'snpsift dbnsfp',
             f'-db {self.dbnsfp_txt_gz}',
             self.vcf,
             f'> {self.output_vcf}',
             f'2> {stderr}',
+        ])
+        self.call(cmd)
+
+
+class VEP(Processor):
+
+    VEP_DB_TYPE_TO_FLAG = {
+        'merged': '--merged',
+        'refseq': '--refseq',
+        'vep': '',
+    }
+
+    vcf: str
+    ref_fa: str
+    vep_db_tar_gz: str
+    vep_db_type: str
+
+    cache_dir: str
+    output_vcf: str
+
+    def main(
+            self,
+            vcf: str,
+            ref_fa: str,
+            vep_db_tar_gz: str,
+            vep_db_type: str) -> str:
+
+        self.vcf = vcf
+        self.ref_fa = ref_fa
+        self.vep_db_tar_gz = vep_db_tar_gz
+        self.vep_db_type = vep_db_type
+
+        self.extract_db_tar_gz()
+        self.set_output_vcf()
+        self.execute()
+
+        return self.output_vcf
+
+    def extract_db_tar_gz(self):
+        self.cache_dir = f'{self.workdir}/.vep'
+        os.makedirs(self.cache_dir, exist_ok=True)
+        self.call(f'tar -xzf {self.vep_db_tar_gz} -C "{self.cache_dir}"')
+
+    def set_output_vcf(self):
+        self.output_vcf = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix='-vep.vcf',
+            dstdir=self.workdir)
+
+    def execute(self):
+        log = f'{self.outdir}/vep.log'
+        cmd = self.CMD_LINEBREAK.join([
+            'vep --offline',
+            f'--input_file {self.vcf}',
+            f'--fasta {self.ref_fa}',
+            f'--dir_cache {self.cache_dir}',
+            self.VEP_DB_TYPE_TO_FLAG[self.vep_db_type],
+            '--vcf',  # output in vcf format
+            f'--output_file {self.output_vcf}',
+            f'1> {log}',
+            f'2> {log}',
         ])
         self.call(cmd)

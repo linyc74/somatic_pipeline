@@ -109,6 +109,16 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--annotator'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'choices': ['snpeff', 'vep'],
+            'default': 'snpeff',
+            'help': 'variant annotator (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--clinvar-vcf-gz'],
         'properties': {
             'type': str,
@@ -133,6 +143,25 @@ OPTIONAL = [
             'required': False,
             'default': 'None',
             'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip dbNSFP annotation (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--vep-db-tar-gz'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'VEP database tar.gz file, required for VEP annotation (default: %(default)s)',
+        }
+    },
+    {
+        'keys': ['--vep-db-type'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'choices': ['merged', 'vep', 'refseq'],
+            'default': 'merged',
+            'help': 'VEP database type, must match --vep-db-tar-gz (default: %(default)s)',
         }
     },
     {
@@ -251,9 +280,12 @@ class EntryPoint:
             discard_bam=args.discard_bam,
             skip_mark_duplicates=args.skip_mark_duplicates,
             skip_variant_calling=args.skip_variant_calling,
+            annotator=args.annotator,
             clinvar_vcf_gz=args.clinvar_vcf_gz,
             dbsnp_vcf_gz=args.dbsnp_vcf_gz,
             snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
+            vep_db_tar_gz=args.vep_db_tar_gz,
+            vep_db_type=args.vep_db_type,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,
             threads=args.threads,
