@@ -9,7 +9,7 @@ from .alignment import Alignment
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
 from .map_stats import MappingStats
-from .parse_vcf import ParseSnpEffVcf
+from .parse_vcf import ParseVcf
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
 
@@ -298,7 +298,7 @@ class VariantCallingWorkflow(Processor):
             vep_db_type=self.vep_db_type)
 
     def parse_vcf(self):
-        ParseSnpEffVcf(self.settings).main(
+        ParseVcf(self.settings).main(
             vcf=self.annotated_vcf)
 
     def vcf_2_maf(self):

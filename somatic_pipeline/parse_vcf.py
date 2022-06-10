@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 from .template import Processor, Settings
 
 
-class ParseSnpEffVcf(Processor):
+class ParseVcf(Processor):
 
     LOG_INTERVAL = 10000  # variants
 
@@ -15,7 +15,7 @@ class ParseSnpEffVcf(Processor):
 
     def __init__(self, settings: Settings):
         super().__init__(settings)
-        self.vcf_line_to_row = SnpEffVcfLineToRow(self.settings).main
+        self.vcf_line_to_row = VcfLineToRow(self.settings).main
 
     def main(self, vcf: str):
         self.vcf = vcf
@@ -101,17 +101,13 @@ class GetInfoIDToDescription(Processor):
         self.id_to_description[id_] = description
 
 
-class SnpEffVcfLineToRow(Processor):
+class VcfLineToRow(Processor):
 
     vcf_line: str
     info_id_to_description: Dict[str, str]
 
     vcf_info: str
     row: Dict[str, Any]
-
-    def __init__(self, settings: Settings):
-        super().__init__(settings)
-        self.unroll_snpeff_annotation = UnrollSnpEffAnnotation(self.settings).main
 
     def main(
             self,
@@ -123,7 +119,7 @@ class SnpEffVcfLineToRow(Processor):
 
         self.unpack_line_and_set_vcf_info()
         self.parse_vcf_info()
-        self.row = self.unroll_snpeff_annotation(self.row)
+        self.unroll_annotation()
 
         return self.row
 
@@ -153,11 +149,20 @@ class SnpEffVcfLineToRow(Processor):
             if description is not None:
                 self.row[description] = val
 
+    def unroll_annotation(self):
+        for unroller in [
+            UnrollSnpEffAnnotation(self.settings),
+            UnrollVEPAnnotation(self.settings)
+        ]:
+            self.row = unroller.main(self.row)
 
-class UnrollSnpEffAnnotation(Processor):
 
-    LEFT_STRIP = "Functional annotations: '"
-    RIGHT_STRIP = "' "
+class UnrollAnnotation(Processor):
+
+    LEFT_STRIP: str
+    RIGHT_STRIP: str
+    KEY_SEP: str
+    VALUE_SEP: str
 
     d: Dict[str, str]
 
@@ -173,9 +178,25 @@ class UnrollSnpEffAnnotation(Processor):
         return self.d
 
     def unroll(self, key: str, val: str):
-        keys = key[len(self.LEFT_STRIP):-len(self.RIGHT_STRIP)].split(' | ')
-        vals = val.split('|')
+        keys = key.lstrip(self.LEFT_STRIP).rstrip(self.RIGHT_STRIP).split(self.KEY_SEP)
+        vals = val.split(self.VALUE_SEP)
         new_dict = {
             k: v for k, v in zip(keys, vals)
         }
         self.d.update(new_dict)
+
+
+class UnrollSnpEffAnnotation(UnrollAnnotation):
+
+    LEFT_STRIP = "Functional annotations: '"
+    RIGHT_STRIP = "' "
+    KEY_SEP = ' | '
+    VALUE_SEP = '|'
+
+
+class UnrollVEPAnnotation(UnrollAnnotation):
+
+    LEFT_STRIP = 'Consequence annotations from Ensembl VEP. Format: '
+    RIGHT_STRIP = ''
+    KEY_SEP = '|'
+    VALUE_SEP = '|'

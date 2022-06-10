@@ -1,11 +1,11 @@
 from .setup import TestCase
 import numpy as np
 import pandas as pd
-from somatic_pipeline.parse_vcf import ParseSnpEffVcf, GetInfoIDToDescription, \
-    SnpEffVcfLineToRow, UnrollSnpEffAnnotation
+from somatic_pipeline.parse_vcf import ParseVcf, GetInfoIDToDescription, \
+    VcfLineToRow, UnrollSnpEffAnnotation, UnrollVEPAnnotation
 
 
-class TestParseSnpEffVcf(TestCase):
+class TestParseVcf(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -13,12 +13,21 @@ class TestParseSnpEffVcf(TestCase):
     def tearDown(self):
         self.tear_down()
 
-    def test_main(self):
-        ParseSnpEffVcf(self.settings).main(
-            vcf=f'{self.indir}/annotated.vcf'
+    def test_snpeff(self):
+        ParseVcf(self.settings).main(
+            vcf=f'{self.indir}/snpeff.vcf'
         )
         self.assertDataFrameEqual(
-            first=pd.read_csv(f'{self.indir}/variants.csv'),
+            first=pd.read_csv(f'{self.indir}/snpeff.csv'),
+            second=pd.read_csv(f'{self.outdir}/variants.csv'),
+        )
+
+    def test_vep(self):
+        ParseVcf(self.settings).main(
+            vcf=f'{self.indir}/vep.vcf'
+        )
+        self.assertDataFrameEqual(
+            first=pd.read_csv(f'{self.indir}/vep.csv'),
             second=pd.read_csv(f'{self.outdir}/variants.csv'),
         )
 
@@ -56,7 +65,7 @@ class TestGetInfoIDToDescription(TestCase):
         self.assertDictEqual(expected, actual)
 
 
-class TestSnpEffVcfLineToRow(TestCase):
+class TestVcfLineToRow(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -71,7 +80,7 @@ class TestSnpEffVcfLineToRow(TestCase):
             'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
             'dbNSFP_CADD_phred': 'dbNSFP CADD Phred Score',
         }
-        actual = SnpEffVcfLineToRow(self.settings).main(
+        actual = VcfLineToRow(self.settings).main(
             vcf_line=vcf_line,
             info_id_to_description=info_id_to_description
         )
@@ -138,6 +147,69 @@ class TestUnrollSnpEffAnnotation(TestCase):
             'AA.pos / AA.length': '',
             'Distance': '2172',
             'ERRORS / WARNINGS / INFO': ',T',
+        }
+        self.assertDictEqual(expected, actual)
+
+
+class TestUnrollVEPAnnotation(TestCase):
+
+    def setUp(self):
+        self.set_up(py_path=__file__)
+
+    def tearDown(self):
+        self.tear_down()
+
+    def test_mock(self):
+        d = {
+            "Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|BAM_EDIT":
+                'A|consequence(1)|impact(1)|symbol(1)|bam_edit(1)|consequence(2)|impact(2)|symbol(2)|bam_edit(2)'
+        }
+        actual = UnrollVEPAnnotation(self.settings).main(d=d)
+        expected = {
+            'Allele': 'A',
+            'Consequence': 'consequence(1)',
+            'IMPACT': 'impact(1)',
+            'SYMBOL': 'symbol(1)',
+            'BAM_EDIT': 'bam_edit(1)',
+        }
+        self.assertDictEqual(expected, actual)
+
+    def test_real(self):
+        d = {
+            "Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|SYMBOL_SOURCE|HGNC_ID|REFSEQ_MATCH|SOURCE|REFSEQ_OFFSET|GIVEN_REF|USED_REF|BAM_EDIT":
+                'A|intron_variant&non_coding_transcript_variant|MODIFIER|DDX11L5|ENSG00000236875|Transcript|ENST00000421620|unprocessed_pseudogene||2/5||||||||||1||HGNC|HGNC:37106||Ensembl||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|Transcript|ENST00000442898|protein_coding|||||||||||2077|-1||HGNC|HGNC:24361||Ensembl||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|Transcript|ENST00000696149|protein_coding|||||||||||2115|-1||HGNC|HGNC:24361||Ensembl||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|Transcript|ENST00000696150|processed_transcript|||||||||||3511|-1||HGNC|HGNC:24361||Ensembl||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|ENSG00000181404|Transcript|ENST00000696151|nonsense_mediated_decay|||||||||||4163|-1||HGNC|HGNC:24361||Ensembl||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|NM_001378090.1|protein_coding|||||||||||2115|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|NM_182905.6|protein_coding|||||||||||2115|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|intron_variant&non_coding_transcript_variant|MODIFIER|DDX11L5|100287596|Transcript|NR_051986.1|transcribed_pseudogene||1/2||||||||||1||EntrezGene|HGNC:37106||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517659.2|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517660.2|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517662.3|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517663.3|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517664.3|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517665.2|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_011517666.2|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_017014169.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_017014170.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_017014171.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_017014172.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_017014173.1|protein_coding|||||||||||4332|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_024447369.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XM_024447370.1|protein_coding|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_002956737.1|misc_RNA|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_002956738.1|misc_RNA|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_002956739.1|misc_RNA|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_002956740.1|misc_RNA|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_002956741.1|misc_RNA|||||||||||2683|-1||EntrezGene|HGNC:24361||RefSeq||G|G|,A|downstream_gene_variant|MODIFIER|WASHC1|100287171|Transcript|XR_929142.2|misc_RNA|||||||||||2077|-1||EntrezGene|HGNC:24361||RefSeq||G|G|'
+        }
+        actual = UnrollVEPAnnotation(self.settings).main(d=d)
+        expected = {
+            'Allele': 'A',
+            'Consequence': 'intron_variant&non_coding_transcript_variant',
+            'IMPACT': 'MODIFIER',
+            'SYMBOL': 'DDX11L5',
+            'Gene': 'ENSG00000236875',
+            'Feature_type': 'Transcript',
+            'Feature': 'ENST00000421620',
+            'BIOTYPE': 'unprocessed_pseudogene',
+            'EXON': '',
+            'INTRON': '2/5',
+            'HGVSc': '',
+            'HGVSp': '',
+            'cDNA_position': '',
+            'CDS_position': '',
+            'Protein_position': '',
+            'Amino_acids': '',
+            'Codons': '',
+            'Existing_variation': '',
+            'DISTANCE': '',
+            'STRAND': '1',
+            'FLAGS': '',
+            'SYMBOL_SOURCE': 'HGNC',
+            'HGNC_ID': 'HGNC:37106',
+            'REFSEQ_MATCH': '',
+            'SOURCE': 'Ensembl',
+            'REFSEQ_OFFSET': '',
+            'GIVEN_REF': 'G',
+            'USED_REF': 'G',
+            'BAM_EDIT': ',A',
         }
         self.assertDictEqual(expected, actual)
 
