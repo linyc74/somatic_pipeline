@@ -3,13 +3,13 @@ from .bqsr import BQSR
 from .cnv import ComputeCNV
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
+from .parse_vcf import ParseVcf
 from .template import Processor
 from .trimming import TrimGalore
 from .alignment import Alignment
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
 from .map_stats import MappingStats
-from .parse_vcf import ParseVcf
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
 
@@ -39,6 +39,7 @@ class SomaticPipeline(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    cadd_resource: Optional[str]
 
     cnvkit_annotate_txt: Optional[str]
     exome_target_bed: Optional[str]
@@ -63,6 +64,7 @@ class SomaticPipeline(Processor):
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
+            cadd_resource: Optional[str],
             discard_bam: bool,
             skip_mark_duplicates: bool,
             skip_variant_calling: bool,
@@ -85,6 +87,7 @@ class SomaticPipeline(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.cadd_resource = cadd_resource
 
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
@@ -139,7 +142,8 @@ class SomaticPipeline(Processor):
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
                 snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
                 vep_db_tar_gz=self.vep_db_tar_gz,
-                vep_db_type=self.vep_db_type)
+                vep_db_type=self.vep_db_type,
+                cadd_resource=self.cadd_resource)
 
     def compute_cnv(self):
         if self.skip_cnv:
@@ -243,6 +247,7 @@ class VariantCallingWorkflow(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    cadd_resource: Optional[str]
 
     raw_vcf: str
     annotated_vcf: str
@@ -259,7 +264,8 @@ class VariantCallingWorkflow(Processor):
             dbsnp_vcf_gz: Optional[str],
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
-            vep_db_type: str):
+            vep_db_type: str,
+            cadd_resource: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
@@ -272,6 +278,7 @@ class VariantCallingWorkflow(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.cadd_resource = cadd_resource
 
         self.variant_calling()
         self.annotation()
@@ -295,7 +302,8 @@ class VariantCallingWorkflow(Processor):
             dbsnp_vcf_gz=self.dbsnp_vcf_gz,
             snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=self.vep_db_tar_gz,
-            vep_db_type=self.vep_db_type)
+            vep_db_type=self.vep_db_type,
+            cadd_resource=self.cadd_resource)
 
     def parse_vcf(self):
         ParseVcf(self.settings).main(

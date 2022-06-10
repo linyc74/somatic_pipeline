@@ -26,7 +26,8 @@ class TestAnnotation(TestCase):
             dbsnp_vcf_gz=None,
             snpsift_dbnsfp_txt_gz=f'{self.indir}/22_0414_dbNSFP_chr9.txt.gz',
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
-            vep_db_type='merged'
+            vep_db_type='merged',
+            cadd_resource=None,
         )
         expected = f'{self.outdir}/annotated.vcf'
         self.assertFileExists(expected, actual)
@@ -101,7 +102,8 @@ class TestVEP(TestCase):
             vcf=f'{self.indir}/raw.vcf',
             ref_fa=self.ref_fa,
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
-            vep_db_type='merged'
+            vep_db_type='merged',
+            cadd_resource=None,
         )
         expected = f'{self.workdir}/raw-vep.vcf'
         self.assertEqual(expected, actual)

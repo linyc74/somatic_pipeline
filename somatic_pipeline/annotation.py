@@ -1,6 +1,6 @@
 import os
 from os.path import basename
-from typing import Optional
+from typing import Optional, List
 from .tools import edit_fpath
 from .template import Processor
 
@@ -18,6 +18,7 @@ class Annotation(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    cadd_resource: Optional[str]
 
     def main(
             self,
@@ -28,7 +29,8 @@ class Annotation(Processor):
             dbsnp_vcf_gz: Optional[str],
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
-            vep_db_type: str) -> str:
+            vep_db_type: str,
+            cadd_resource: Optional[str]) -> str:
 
         self.annotator = annotator
         self.vcf = vcf
@@ -38,6 +40,7 @@ class Annotation(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.cadd_resource = cadd_resource
 
         assert self.annotator in [self.SNPEFF, self.VEP]
 
@@ -72,7 +75,8 @@ class Annotation(Processor):
             vcf=self.vcf,
             ref_fa=self.ref_fa,
             vep_db_tar_gz=self.vep_db_tar_gz,
-            vep_db_type=self.vep_db_type)
+            vep_db_type=self.vep_db_type,
+            cadd_resource=self.cadd_resource)
 
     def move_vcf(self):
         dst = f'{self.outdir}/annotated.vcf'
@@ -241,8 +245,10 @@ class VEP(Processor):
     ref_fa: str
     vep_db_tar_gz: str
     vep_db_type: str
+    cadd_resource: Optional[str]
 
     cache_dir: str
+    plugin_args: List[str]
     output_vcf: str
 
     def main(
@@ -250,16 +256,20 @@ class VEP(Processor):
             vcf: str,
             ref_fa: str,
             vep_db_tar_gz: str,
-            vep_db_type: str) -> str:
+            vep_db_type: str,
+            cadd_resource: Optional[str]) -> str:
 
         self.vcf = vcf
         self.ref_fa = ref_fa
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.cadd_resource = cadd_resource
 
         self.extract_db_tar_gz()
+        self.set_plugin_args()
         self.set_output_vcf()
         self.execute()
+        self.move_summary_html()
 
         return self.output_vcf
 
@@ -267,6 +277,11 @@ class VEP(Processor):
         self.cache_dir = f'{self.workdir}/.vep'
         os.makedirs(self.cache_dir, exist_ok=True)
         self.call(f'tar -xzf {self.vep_db_tar_gz} -C "{self.cache_dir}"')
+
+    def set_plugin_args(self):
+        self.plugin_args = []
+        if self.cadd_resource is not None:
+            self.plugin_args.append(f'--plugin CADD,{self.cadd_resource}')
 
     def set_output_vcf(self):
         self.output_vcf = edit_fpath(
@@ -277,15 +292,22 @@ class VEP(Processor):
 
     def execute(self):
         log = f'{self.outdir}/vep.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'vep --offline',
+        args = [
+            'vep',
+            '--offline',
             f'--input_file {self.vcf}',
             f'--fasta {self.ref_fa}',
             f'--dir_cache {self.cache_dir}',
             self.VEP_DB_TYPE_TO_FLAG[self.vep_db_type],
+        ] + self.plugin_args + [
             '--vcf',  # output in vcf format
             f'--output_file {self.output_vcf}',
             f'1> {log}',
             f'2> {log}',
-        ])
-        self.call(cmd)
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))
+
+    def move_summary_html(self):
+        src = f'{self.output_vcf}_summary.html'
+        dst = f'{self.outdir}/vep-summary.html'
+        self.call(f'mv {src} {dst}')

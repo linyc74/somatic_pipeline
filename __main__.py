@@ -165,6 +165,15 @@ OPTIONAL = [
         }
     },
     {
+        'keys': ['--cadd-resource'],
+        'properties': {
+            'type': str,
+            'required': False,
+            'default': 'None',
+            'help': 'CADD resource file for VEP annotation, .tbi index file need to exist in the same folder (default: %(default)s)',
+        }
+    },
+    {
         'keys': ['--discard-bam'],
         'properties': {
             'action': 'store_true',
@@ -286,6 +295,7 @@ class EntryPoint:
             snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=args.vep_db_tar_gz,
             vep_db_type=args.vep_db_type,
+            cadd_resource=args.cadd_resource,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,
             threads=args.threads,
