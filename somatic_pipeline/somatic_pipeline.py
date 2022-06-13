@@ -39,7 +39,9 @@ class SomaticPipeline(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    vep_buffer_size: int
     cadd_resource: Optional[str]
+    dbnsfp_resource: Optional[str]
 
     cnvkit_annotate_txt: Optional[str]
     exome_target_bed: Optional[str]
@@ -64,7 +66,9 @@ class SomaticPipeline(Processor):
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
+            vep_buffer_size: int,
             cadd_resource: Optional[str],
+            dbnsfp_resource: Optional[str],
             discard_bam: bool,
             skip_mark_duplicates: bool,
             skip_variant_calling: bool,
@@ -87,7 +91,9 @@ class SomaticPipeline(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = cadd_resource
+        self.dbnsfp_resource = dbnsfp_resource
 
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
@@ -143,7 +149,9 @@ class SomaticPipeline(Processor):
                 snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
                 vep_db_tar_gz=self.vep_db_tar_gz,
                 vep_db_type=self.vep_db_type,
-                cadd_resource=self.cadd_resource)
+                vep_buffer_size=self.vep_buffer_size,
+                cadd_resource=self.cadd_resource,
+                dbnsfp_resource=self.dbnsfp_resource)
 
     def compute_cnv(self):
         if self.skip_cnv:
@@ -247,7 +255,9 @@ class VariantCallingWorkflow(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    vep_buffer_size: int
     cadd_resource: Optional[str]
+    dbnsfp_resource: Optional[str]
 
     raw_vcf: str
     annotated_vcf: str
@@ -265,7 +275,9 @@ class VariantCallingWorkflow(Processor):
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
-            cadd_resource: Optional[str]):
+            vep_buffer_size: int,
+            cadd_resource: Optional[str],
+            dbnsfp_resource: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
@@ -278,7 +290,9 @@ class VariantCallingWorkflow(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = cadd_resource
+        self.dbnsfp_resource = dbnsfp_resource
 
         self.variant_calling()
         self.annotation()
@@ -303,7 +317,9 @@ class VariantCallingWorkflow(Processor):
             snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=self.vep_db_tar_gz,
             vep_db_type=self.vep_db_type,
-            cadd_resource=self.cadd_resource)
+            vep_buffer_size=self.vep_buffer_size,
+            cadd_resource=self.cadd_resource,
+            dbnsfp_resource=self.dbnsfp_resource)
 
     def parse_vcf(self):
         ParseVcf(self.settings).main(

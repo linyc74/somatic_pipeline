@@ -18,7 +18,9 @@ class Annotation(Processor):
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    vep_buffer_size: int
     cadd_resource: Optional[str]
+    dbnsfp_resource: Optional[str]
 
     def main(
             self,
@@ -30,7 +32,9 @@ class Annotation(Processor):
             snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
-            cadd_resource: Optional[str]) -> str:
+            vep_buffer_size: int,
+            cadd_resource: Optional[str],
+            dbnsfp_resource: Optional[str]) -> str:
 
         self.annotator = annotator
         self.vcf = vcf
@@ -40,7 +44,9 @@ class Annotation(Processor):
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = cadd_resource
+        self.dbnsfp_resource = dbnsfp_resource
 
         assert self.annotator in [self.SNPEFF, self.VEP]
 
@@ -61,7 +67,7 @@ class Annotation(Processor):
     def run_snpsift_annotate(self):
         for resource in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if resource is not None:
-                self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, db_vcf_gz=resource)
+                self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=resource)
 
     def run_snpsift_dbnsfp(self):
         if self.snpsift_dbnsfp_txt_gz is not None:
@@ -76,7 +82,9 @@ class Annotation(Processor):
             ref_fa=self.ref_fa,
             vep_db_tar_gz=self.vep_db_tar_gz,
             vep_db_type=self.vep_db_type,
-            cadd_resource=self.cadd_resource)
+            vep_buffer_size=self.vep_buffer_size,
+            cadd_resource=self.cadd_resource,
+            dbnsfp_resource=self.dbnsfp_resource)
 
     def move_vcf(self):
         dst = f'{self.outdir}/annotated.vcf'
@@ -129,38 +137,26 @@ class SnpEff(Processor):
 class SnpSiftAnnotate(Processor):
 
     vcf: str
-    db_vcf_gz: str
+    resource_vcf_gz: str
 
     output_vcf: str
 
-    def main(self, vcf: str, db_vcf_gz: str) -> str:
+    def main(self, vcf: str, resource_vcf_gz: str) -> str:
 
         self.vcf = vcf
-        self.db_vcf_gz = db_vcf_gz
+        self.resource_vcf_gz = resource_vcf_gz
 
-        self.prepare_db_vcf_gz()
+        self.prepare_resource()
         self.set_output_vcf()
         self.execute()
 
         return self.output_vcf
 
-    def prepare_db_vcf_gz(self):
-        self.__copy()
-        self.__index()
-
-    def __copy(self):
-        src = self.db_vcf_gz
-        dst = edit_fpath(
-            fpath=self.db_vcf_gz,
-            dstdir=self.workdir)
-        self.call(f'cp {src} {dst}')
-        self.db_vcf_gz = dst
-
-    def __index(self):
-        self.call(f'tabix -p vcf {self.db_vcf_gz}')
+    def prepare_resource(self):
+        self.resource_vcf_gz = CopyAndTabixVcfGz(self.settings).main(self.resource_vcf_gz)
 
     def set_output_vcf(self):
-        suffix = basename(self.db_vcf_gz).rstrip('.vcf.gz')
+        suffix = basename(self.resource_vcf_gz).rstrip('.vcf.gz')
         self.output_vcf = edit_fpath(
             fpath=self.vcf,
             old_suffix='.vcf',
@@ -171,7 +167,7 @@ class SnpSiftAnnotate(Processor):
         stderr = f'{self.outdir}/snpsift-annotate.log'
         cmd = self.CMD_LINEBREAK.join([
             'snpsift annotate',
-            self.db_vcf_gz,
+            self.resource_vcf_gz,
             self.vcf,
             f'> {self.output_vcf}',
             f'2>> {stderr}',
@@ -200,25 +196,17 @@ class SnpSiftDbNSFP(Processor):
         return self.output_vcf
 
     def prepare_dbnsfp_txt_gz(self):
-        self.__copy()
-        self.__index()
-
-    def __copy(self):
-        src = self.dbnsfp_txt_gz
-        dst = edit_fpath(
-            fpath=self.dbnsfp_txt_gz,
-            dstdir=self.workdir)
-        self.call(f'cp {src} {dst}')
-        self.dbnsfp_txt_gz = dst
-
-    def __index(self):
-        self.call(f'tabix -p vcf {self.dbnsfp_txt_gz}')
+        self.dbnsfp_txt_gz = CopyAndTabixTsvGz(self.settings).main(
+            file=self.dbnsfp_txt_gz,
+            seqname_column=1,
+            start_column=2,
+            end_column=2)
 
     def set_output_vcf(self):
         self.output_vcf = edit_fpath(
             fpath=self.vcf,
             old_suffix='.vcf',
-            new_suffix='-dbnsfp.vcf',
+            new_suffix='-snpsift-dbnsfp.vcf',
             dstdir=self.workdir)
 
     def execute(self):
@@ -240,12 +228,15 @@ class VEP(Processor):
         'refseq': '--refseq',
         'vep': '',
     }
+    NUM_THREADS = 4  # recommended on the VEP qwebsite
 
     vcf: str
     ref_fa: str
     vep_db_tar_gz: str
     vep_db_type: str
+    vep_buffer_size: int
     cadd_resource: Optional[str]
+    dbnsfp_resource: Optional[str]
 
     cache_dir: str
     plugin_args: List[str]
@@ -257,15 +248,21 @@ class VEP(Processor):
             ref_fa: str,
             vep_db_tar_gz: str,
             vep_db_type: str,
-            cadd_resource: Optional[str]) -> str:
+            vep_buffer_size: int,
+            cadd_resource: Optional[str],
+            dbnsfp_resource: Optional[str]) -> str:
 
         self.vcf = vcf
         self.ref_fa = ref_fa
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = cadd_resource
+        self.dbnsfp_resource = dbnsfp_resource
 
         self.extract_db_tar_gz()
+        self.prepare_cadd_resource()
+        self.prepare_dbnsfp_resource()
         self.set_plugin_args()
         self.set_output_vcf()
         self.execute()
@@ -278,10 +275,29 @@ class VEP(Processor):
         os.makedirs(self.cache_dir, exist_ok=True)
         self.call(f'tar -xzf {self.vep_db_tar_gz} -C "{self.cache_dir}"')
 
+    def prepare_cadd_resource(self):
+        if self.cadd_resource is not None:
+            self.cadd_resource = CopyAndTabixTsvGz(self.settings).main(
+                file=self.cadd_resource,
+                seqname_column=1,
+                start_column=2,
+                end_column=2)
+
+    def prepare_dbnsfp_resource(self):
+        if self.dbnsfp_resource is not None:
+            AssertDbnsfpResourceFilenameForVEP(self.settings).main(self.dbnsfp_resource)
+            self.dbnsfp_resource = CopyAndTabixTsvGz(self.settings).main(
+                file=self.dbnsfp_resource,
+                seqname_column=1,
+                start_column=2,
+                end_column=2)
+
     def set_plugin_args(self):
         self.plugin_args = []
         if self.cadd_resource is not None:
             self.plugin_args.append(f'--plugin CADD,{self.cadd_resource}')
+        if self.dbnsfp_resource is not None:
+            self.plugin_args.append(f'--plugin dbNSFP,{self.dbnsfp_resource},ALL')
 
     def set_output_vcf(self):
         self.output_vcf = edit_fpath(
@@ -299,7 +315,12 @@ class VEP(Processor):
             f'--fasta {self.ref_fa}',
             f'--dir_cache {self.cache_dir}',
             self.VEP_DB_TYPE_TO_FLAG[self.vep_db_type],
-        ] + self.plugin_args + [
+            '--everything',
+            f'--fork {self.NUM_THREADS}',
+            f'--buffer_size {self.vep_buffer_size}',
+        ]
+        args += self.plugin_args
+        args += [
             '--vcf',  # output in vcf format
             f'--output_file {self.output_vcf}',
             f'1> {log}',
@@ -311,3 +332,88 @@ class VEP(Processor):
         src = f'{self.output_vcf}_summary.html'
         dst = f'{self.outdir}/vep-summary.html'
         self.call(f'mv {src} {dst}')
+
+
+class CopyAndTabix(Processor):
+
+    file: str
+    output: str
+
+    def copy(self):
+        self.output = edit_fpath(
+            fpath=self.file,
+            dstdir=self.workdir)
+        self.call(f'cp {self.file} {self.output}')
+
+
+class CopyAndTabixVcfGz(CopyAndTabix):
+
+    def main(self, file: str) -> str:
+        self.file = file
+        self.copy()
+        self.tabix()
+        return self.output
+
+    def tabix(self):
+        cmd = self.CMD_LINEBREAK.join([
+            'tabix',
+            '--preset vcf',
+            self.output
+        ])
+        self.call(cmd)
+
+
+class CopyAndTabixTsvGz(CopyAndTabix):
+
+    seqname_column: int
+    start_column: int
+    end_column: int
+
+    def main(
+            self,
+            file: str,
+            seqname_column: int,
+            start_column: int,
+            end_column: int) -> str:
+
+        self.file = file
+        self.seqname_column = seqname_column
+        self.start_column = start_column
+        self.end_column = end_column
+
+        self.copy()
+        self.tabix()
+
+        return self.output
+
+    def tabix(self):
+        cmd = self.CMD_LINEBREAK.join([
+            'tabix',
+            f'--sequence {self.seqname_column}',
+            f'--begin {self.start_column}',
+            f'--end {self.end_column}',
+            self.output,
+        ])
+        self.call(cmd)
+
+
+class AssertDbnsfpResourceFilenameForVEP(Processor):
+    """
+    The VEP plugin dbNSFP look for HARD-CODED version string in the filename. Bad software practice!
+
+    After manually checking some possible filenames,
+        it seems like it is checking the presence of '4.' or '3.' for versions 4 and 3, respectively
+    """
+
+    fname: str
+
+    def main(self, fpath: str):
+        self.fname = basename(fpath)
+        self.assert_has_version_string()
+
+    def assert_has_version_string(self):
+        has_version = ('4.' in self.fname) or ('3.' in self.fname)
+        if not has_version:
+            error = f'ERROR: dbNSFP resource filename "{self.fname}" does not contain version string "4." or "3."'
+            self.logger.info(error)
+            raise AssertionError

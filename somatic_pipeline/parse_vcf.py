@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 from .template import Processor, Settings
 
 
@@ -141,13 +141,17 @@ class VcfLineToRow(Processor):
     def parse_vcf_info(self):
         items = self.vcf_info.split(';')
         for item in items:
-            if '=' not in item:
-                continue
+            if '=' in item:
+                id_, val = self.__split(item)
+                description = self.info_id_to_description.get(id_, None)
+                if description is not None:
+                    self.row[description] = val
 
-            id_, val = item.split('=')
-            description = self.info_id_to_description.get(id_, None)
-            if description is not None:
-                self.row[description] = val
+    def __split(self, item: str) -> Tuple[str, str]:
+        p = item.index('=')
+        id_ = item[0:p]
+        val = item[p+1:]
+        return id_, val
 
     def unroll_annotation(self):
         for unroller in [
