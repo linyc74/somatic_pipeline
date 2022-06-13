@@ -52,22 +52,17 @@ class Annotation(Processor):
 
         if self.annotator == self.SNPEFF:
             self.run_snpeff()
-            self.run_snpsift_annotate()
             self.run_snpsift_dbnsfp()
         else:
             self.run_vep()
 
+        self.annotate_by_vcf_gz()
         self.move_vcf()
 
         return self.vcf
 
     def run_snpeff(self):
         self.vcf = SnpEff(self.settings).main(vcf=self.vcf)
-
-    def run_snpsift_annotate(self):
-        for resource in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
-            if resource is not None:
-                self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=resource)
 
     def run_snpsift_dbnsfp(self):
         if self.snpsift_dbnsfp_txt_gz is not None:
@@ -85,6 +80,11 @@ class Annotation(Processor):
             vep_buffer_size=self.vep_buffer_size,
             cadd_resource=self.cadd_resource,
             dbnsfp_resource=self.dbnsfp_resource)
+
+    def annotate_by_vcf_gz(self):
+        for vcf_gz in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
+            if vcf_gz is not None:
+                self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
 
     def move_vcf(self):
         dst = f'{self.outdir}/annotated.vcf'

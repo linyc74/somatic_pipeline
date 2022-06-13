@@ -10,8 +10,8 @@ class TestAnnotation(TestCase):
         self.set_up(py_path=__file__)
         self.copy_and_set_files()
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def copy_and_set_files(self):
         for file in ['chr9.fa']:
