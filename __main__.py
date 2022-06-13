@@ -191,7 +191,7 @@ OPTIONAL_GROUPS = {
                 'required': False,
                 'choices': ['merged', 'vep', 'refseq'],
                 'default': 'merged',
-                'help': 'VEP database type, must match --vep-db-tar-gz (default: %(default)s)',
+                'help': 'VEP database type, must match the content in --vep-db-tar-gz (default: %(default)s)',
             }
         },
         {
@@ -200,7 +200,7 @@ OPTIONAL_GROUPS = {
                 'type': int,
                 'required': False,
                 'default': 5000,
-                'help': 'number of variants read into memory by VEP, lower this for insufficient RAM (default: %(default)s)',
+                'help': 'number of variants loaded in memory by VEP, lower this to reduce memory load (default: %(default)s)',
             }
         },
         {
@@ -209,7 +209,7 @@ OPTIONAL_GROUPS = {
                 'type': str,
                 'required': False,
                 'default': 'None',
-                'help': 'Pre-processed dbNSFP resource file for VEP (default: %(default)s)',
+                'help': 'Pre-processed dbNSFP resource file (Bgzip TSV) for VEP (default: %(default)s)',
             }
         },
         {
@@ -218,7 +218,7 @@ OPTIONAL_GROUPS = {
                 'type': str,
                 'required': False,
                 'default': 'None',
-                'help': 'CADD resource file for VEP, .tbi index file need to exist in the same folder (default: %(default)s)',
+                'help': 'CADD resource file (Bgzip TSV) for VEP (default: %(default)s)',
             }
         },
         {
@@ -227,7 +227,7 @@ OPTIONAL_GROUPS = {
                 'type': str,
                 'required': False,
                 'default': 'None',
-                'help': 'ClinVar VCF file (block gzipped), if "None" then skip ClinVar annotation (default: %(default)s)',
+                'help': 'ClinVar VCF file (Bgzip VCF), if "None" then skip ClinVar annotation (default: %(default)s)',
             }
         },
         {
@@ -236,7 +236,7 @@ OPTIONAL_GROUPS = {
                 'type': str,
                 'required': False,
                 'default': 'None',
-                'help': 'dbSNP VCF file (block gzipped), if "None" then skip dbSNP annotation (default: %(default)s)',
+                'help': 'dbSNP VCF file (Bgzip VCF) (default: %(default)s)',
             }
         },
         {
@@ -245,7 +245,7 @@ OPTIONAL_GROUPS = {
                 'type': str,
                 'required': False,
                 'default': 'None',
-                'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip dbNSFP annotation (default: %(default)s)',
+                'help': 'SnpSift dbNSFP database file (Bgzip VCF) (default: %(default)s)',
             }
         },
     ],
