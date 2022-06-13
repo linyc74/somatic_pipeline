@@ -66,7 +66,7 @@ RUN conda install -c conda-forge -n somatic \
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
  && unzip 106.zip \
  && cd ensembl-vep-release-106 \
- && perl INSTALL.pl --AUTO p --PLUGINS all --NO_HTSLIB \
+ && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB \
  && cd .. \
  && rm 106.zip
 
