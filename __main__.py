@@ -33,215 +33,253 @@ REQUIRED = [
         }
     },
 ]
-OPTIONAL = [
-    {
-        'keys': ['-3', '--normal-fq1'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'path to the normal read 1 fastq(.gz) file (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['-4', '--normal-fq2'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'path to the normal read 2 fastq(.gz) file (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--read-aligner'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'choices': ['bwa', 'bowtie2'],
-            'default': 'bwa',
-            'help': 'read aligner (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--variant-caller'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'choices': ['mutect2', 'muse', 'varscan'],
-            'default': 'mutect2',
-            'help': 'variant caller (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--exome-target-bed'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'BED file of exome target probes to compute CNV (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--cnvkit-annotate-txt'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'CNVkit annotation file, usually UCSC refFlat.txt (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--panel-of-normal-vcf'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'panel of normal VCF file for Mutect2 (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--bqsr-known-variant-vcf'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'known variants VCF file for BQSR, if "None" then skip BQSR (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--annotator'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'choices': ['snpeff', 'vep'],
-            'default': 'snpeff',
-            'help': 'variant annotator (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--clinvar-vcf-gz'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'ClinVar VCF file (block gzipped), if "None" then skip ClinVar annotation (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--dbsnp-vcf-gz'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'dbSNP VCF file (block gzipped), if "None" then skip dbSNP annotation (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--snpsift-dbnsfp-txt-gz'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip dbNSFP annotation (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--vep-db-tar-gz'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'VEP database tar.gz file, required for VEP annotation (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--vep-db-type'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'choices': ['merged', 'vep', 'refseq'],
-            'default': 'merged',
-            'help': 'VEP database type, must match --vep-db-tar-gz (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--cadd-resource'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'None',
-            'help': 'CADD resource file for VEP annotation, .tbi index file need to exist in the same folder (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['--discard-bam'],
-        'properties': {
-            'action': 'store_true',
-            'help': 'do not save sorted BAM files in outdir',
-        }
-    },
-    {
-        'keys': ['--skip-mark-duplicates'],
-        'properties': {
-            'action': 'store_true',
-            'help': 'do not mark PCR duplicates',
-        }
-    },
-    {
-        'keys': ['--skip-variant-calling'],
-        'properties': {
-            'action': 'store_true',
-            'help': 'do not perform variant calling',
-        }
-    },
-    {
-        'keys': ['--skip-cnv'],
-        'properties': {
-            'action': 'store_true',
-            'help': 'do not compute copy number variation',
-        }
-    },
-    {
-        'keys': ['-o', '--outdir'],
-        'properties': {
-            'type': str,
-            'required': False,
-            'default': 'somatic_pipeline_outdir',
-            'help': 'path to the output directory (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['-t', '--threads'],
-        'properties': {
-            'type': int,
-            'required': False,
-            'default': 4,
-            'help': 'number of CPU threads (default: %(default)s)',
-        }
-    },
-    {
-        'keys': ['-d', '--debug'],
-        'properties': {
-            'action': 'store_true',
-            'help': 'debug mode',
-        }
-    },
-    {
-        'keys': ['-h', '--help'],
-        'properties': {
-            'action': 'help',
-            'help': 'show this help message',
-        }
-    },
-    {
-        'keys': ['-v', '--version'],
-        'properties': {
-            'action': 'version',
-            'version': __VERSION__,
-            'help': 'show version',
-        }
-    },
-]
+OPTIONAL_GROUPS = {
+    'Optional (general)':
+    [
+        {
+            'keys': ['-3', '--normal-fq1'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'path to the normal read 1 fastq(.gz) file (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['-4', '--normal-fq2'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'path to the normal read 2 fastq(.gz) file (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['-o', '--outdir'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'somatic_pipeline_outdir',
+                'help': 'path to the output directory (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['-t', '--threads'],
+            'properties': {
+                'type': int,
+                'required': False,
+                'default': 4,
+                'help': 'number of CPU threads (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['-d', '--debug'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'debug mode',
+            }
+        },
+        {
+            'keys': ['-h', '--help'],
+            'properties': {
+                'action': 'help',
+                'help': 'show this help message',
+            }
+        },
+        {
+            'keys': ['-v', '--version'],
+            'properties': {
+                'action': 'version',
+                'version': __VERSION__,
+                'help': 'show version',
+            }
+        },
+    ],
+
+    'Optional (pre-processing)':
+    [
+        {
+            'keys': ['--read-aligner'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'choices': ['bwa', 'bowtie2'],
+                'default': 'bwa',
+                'help': 'read aligner (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--skip-mark-duplicates'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'do not mark PCR duplicates',
+            }
+        },
+        {
+            'keys': ['--bqsr-known-variant-vcf'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'known variants VCF file for BQSR, if "None" then skip BQSR (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--discard-bam'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'do not save sorted BAM files in outdir',
+            }
+        },
+    ],
+
+    'Optional (variant calling)':
+    [
+        {
+            'keys': ['--variant-caller'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'choices': ['mutect2', 'muse', 'varscan'],
+                'default': 'mutect2',
+                'help': 'variant caller (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--skip-variant-calling'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'do not perform variant calling',
+            }
+        },
+        {
+            'keys': ['--panel-of-normal-vcf'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'panel of normal VCF file for Mutect2 (default: %(default)s)',
+            }
+        },
+    ],
+
+    'Optional (variant annotation)':
+    [
+        {
+            'keys': ['--annotator'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'choices': ['snpeff', 'vep'],
+                'default': 'vep',
+                'help': 'variant annotator (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--vep-db-tar-gz'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'VEP database tar.gz file, required for VEP annotation (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--vep-db-type'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'choices': ['merged', 'vep', 'refseq'],
+                'default': 'merged',
+                'help': 'VEP database type, must match --vep-db-tar-gz (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--vep-buffer-size'],
+            'properties': {
+                'type': int,
+                'required': False,
+                'default': 5000,
+                'help': 'number of variants read into memory by VEP, lower this for insufficient RAM (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--dbnsfp-resource'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'Pre-processed dbNSFP resource file for VEP (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--cadd-resource'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'CADD resource file for VEP, .tbi index file need to exist in the same folder (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--clinvar-vcf-gz'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'ClinVar VCF file (block gzipped), if "None" then skip ClinVar annotation (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--dbsnp-vcf-gz'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'dbSNP VCF file (block gzipped), if "None" then skip dbSNP annotation (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--snpsift-dbnsfp-txt-gz'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'SnpSift dbNSFP database file (block gzipped), if "None" then skip dbNSFP annotation (default: %(default)s)',
+            }
+        },
+    ],
+
+    'Optional (copy number variation)':
+    [
+        {
+            'keys': ['--skip-cnv'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'do not compute copy number variation',
+            }
+        },
+        {
+            'keys': ['--exome-target-bed'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'BED file of exome target probes to compute CNV (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--cnvkit-annotate-txt'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'CNVkit annotation file, usually UCSC refFlat.txt (default: %(default)s)',
+            }
+        },
+    ],
+
+}
 
 
 class EntryPoint:
@@ -262,14 +300,15 @@ class EntryPoint:
             formatter_class=argparse.RawTextHelpFormatter)
 
     def add_required_arguments(self):
-        group = self.parser.add_argument_group('required arguments')
+        group = self.parser.add_argument_group('Required')
         for item in REQUIRED:
             group.add_argument(*item['keys'], **item['properties'])
 
     def add_optional_arguments(self):
-        group = self.parser.add_argument_group('optional arguments')
-        for item in OPTIONAL:
-            group.add_argument(*item['keys'], **item['properties'])
+        for group_name, arguments in OPTIONAL_GROUPS.items():
+            group = self.parser.add_argument_group(group_name)
+            for arg in arguments:
+                group.add_argument(*arg['keys'], **arg['properties'])
 
     def run(self):
         args = self.parser.parse_args()
@@ -295,7 +334,9 @@ class EntryPoint:
             snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=args.vep_db_tar_gz,
             vep_db_type=args.vep_db_type,
+            vep_buffer_size=args.vep_buffer_size,
             cadd_resource=args.cadd_resource,
+            dbnsfp_resource=args.dbnsfp_resource,
             skip_cnv=args.skip_cnv,
             outdir=args.outdir,
             threads=args.threads,

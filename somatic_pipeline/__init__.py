@@ -23,7 +23,9 @@ class Main:
     snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
+    vep_buffer_size: int
     cadd_resource: Optional[str]
+    dbnsfp_resource: Optional[str]
     discard_bam: bool
     skip_mark_duplicates: bool
     skip_variant_calling: bool
@@ -50,7 +52,9 @@ class Main:
             snpsift_dbnsfp_txt_gz: str,
             vep_db_tar_gz: str,
             vep_db_type: str,
+            vep_buffer_size: int,
             cadd_resource: str,
+            dbnsfp_resource: str,
             discard_bam: bool,
             skip_mark_duplicates: bool,
             skip_variant_calling: bool,
@@ -76,7 +80,9 @@ class Main:
         self.snpsift_dbnsfp_txt_gz = None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz
         self.vep_db_type = vep_db_type
+        self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = None if cadd_resource.lower() == 'none' else cadd_resource
+        self.dbnsfp_resource = None if dbnsfp_resource.lower() == 'none' else dbnsfp_resource
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
         self.skip_variant_calling = skip_variant_calling
@@ -110,7 +116,9 @@ class Main:
             snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=self.vep_db_tar_gz,
             vep_db_type=self.vep_db_type,
+            vep_buffer_size=self.vep_buffer_size,
             cadd_resource=self.cadd_resource,
+            dbnsfp_resource=self.dbnsfp_resource,
             discard_bam=self.discard_bam,
             skip_mark_duplicates=self.skip_mark_duplicates,
             skip_variant_calling=self.skip_variant_calling,
