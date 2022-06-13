@@ -65,7 +65,7 @@ RUN conda install -c conda-forge -n somatic \
 # install vep
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
  && unzip 106.zip \
- && perl ensembl-vep-release-106/INSTALL.pl --NO_HTSLIB \
+ && perl ensembl-vep-release-106/INSTALL.pl --AUTO p --PLUGINS all --NO_HTSLIB \
  && rm 106.zip
 
 # make vep executable
