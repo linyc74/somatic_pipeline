@@ -60,13 +60,14 @@ RUN conda install -c conda-forge -n somatic \
  && conda install -c bioconda -n somatic \
     perl-app-cpanminus=1.7044 \
  && cpan DBI \
- && cpan Try::Tiny \
- && cpan Bio::EnsEMBL::Registry
+ && cpan Try::Tiny
 
 # install vep
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
  && unzip 106.zip \
- && perl ensembl-vep-release-106/INSTALL.pl --AUTO p --PLUGINS all --NO_HTSLIB \
+ && cd ensembl-vep-release-106 \
+ && perl INSTALL.pl --AUTO p --PLUGINS all --NO_HTSLIB \
+ && cd .. \
  && rm 106.zip
 
 # make vep executable
