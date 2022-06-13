@@ -19,33 +19,34 @@ class SomaticPipeline(Processor):
     ref_fa: str
     tumor_fq1: str
     tumor_fq2: str
+
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
 
     read_aligner: str
-    tumor_bam: str
-    normal_bam: Optional[str]
     skip_mark_duplicates: bool
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
+    tumor_bam: str
+    normal_bam: Optional[str]
 
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
     skip_variant_calling: bool
 
     annotator: str
-    clinvar_vcf_gz: Optional[str]
-    dbsnp_vcf_gz: Optional[str]
-    snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
     vep_buffer_size: int
-    cadd_resource: Optional[str]
     dbnsfp_resource: Optional[str]
+    cadd_resource: Optional[str]
+    clinvar_vcf_gz: Optional[str]
+    dbsnp_vcf_gz: Optional[str]
+    snpsift_dbnsfp_txt_gz: Optional[str]
 
+    skip_cnv: bool
     cnvkit_annotate_txt: Optional[str]
     exome_target_bed: Optional[str]
-    skip_cnv: bool
 
     def main(
             self,
@@ -77,28 +78,32 @@ class SomaticPipeline(Processor):
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
         self.tumor_fq2 = tumor_fq2
+
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+
         self.read_aligner = read_aligner
-        self.variant_caller = variant_caller
-        self.exome_target_bed = exome_target_bed
-        self.cnvkit_annotate_txt = cnvkit_annotate_txt
-        self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.skip_mark_duplicates = skip_mark_duplicates
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
+        self.discard_bam = discard_bam
+
+        self.variant_caller = variant_caller
+        self.skip_variant_calling = skip_variant_calling
+        self.panel_of_normal_vcf = panel_of_normal_vcf
+
         self.annotator = annotator
-        self.clinvar_vcf_gz = clinvar_vcf_gz
-        self.dbsnp_vcf_gz = dbsnp_vcf_gz
-        self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
         self.vep_buffer_size = vep_buffer_size
-        self.cadd_resource = cadd_resource
         self.dbnsfp_resource = dbnsfp_resource
+        self.cadd_resource = cadd_resource
+        self.clinvar_vcf_gz = clinvar_vcf_gz
+        self.dbsnp_vcf_gz = dbsnp_vcf_gz
+        self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
 
-        self.discard_bam = discard_bam
-        self.skip_mark_duplicates = skip_mark_duplicates
-        self.skip_variant_calling = skip_variant_calling
         self.skip_cnv = skip_cnv
+        self.exome_target_bed = exome_target_bed
+        self.cnvkit_annotate_txt = cnvkit_annotate_txt
 
         self.copy_ref_fa()
         self.trimming()

@@ -317,30 +317,35 @@ class EntryPoint:
             ref_fa=args.ref_fa,
             tumor_fq1=args.tumor_fq1,
             tumor_fq2=args.tumor_fq2,
+
             normal_fq1=args.normal_fq1,
             normal_fq2=args.normal_fq2,
+            outdir=args.outdir,
+            threads=args.threads,
+            debug=args.debug,
+
             read_aligner=args.read_aligner,
-            variant_caller=args.variant_caller,
-            exome_target_bed=args.exome_target_bed,
-            cnvkit_annotate_txt=args.cnvkit_annotate_txt,
-            panel_of_normal_vcf=args.panel_of_normal_vcf,
+            skip_mark_duplicates=args.skip_mark_duplicates,
             bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,
             discard_bam=args.discard_bam,
-            skip_mark_duplicates=args.skip_mark_duplicates,
+
+            variant_caller=args.variant_caller,
             skip_variant_calling=args.skip_variant_calling,
+            panel_of_normal_vcf=args.panel_of_normal_vcf,
+
             annotator=args.annotator,
-            clinvar_vcf_gz=args.clinvar_vcf_gz,
-            dbsnp_vcf_gz=args.dbsnp_vcf_gz,
-            snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
             vep_db_tar_gz=args.vep_db_tar_gz,
             vep_db_type=args.vep_db_type,
             vep_buffer_size=args.vep_buffer_size,
-            cadd_resource=args.cadd_resource,
             dbnsfp_resource=args.dbnsfp_resource,
+            cadd_resource=args.cadd_resource,
+            clinvar_vcf_gz=args.clinvar_vcf_gz,
+            dbsnp_vcf_gz=args.dbsnp_vcf_gz,
+            snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
+
             skip_cnv=args.skip_cnv,
-            outdir=args.outdir,
-            threads=args.threads,
-            debug=args.debug)
+            exome_target_bed=args.exome_target_bed,
+            cnvkit_annotate_txt=args.cnvkit_annotate_txt)
 
 
 if __name__ == '__main__':

@@ -60,7 +60,8 @@ RUN conda install -c conda-forge -n somatic \
  && conda install -c bioconda -n somatic \
     perl-app-cpanminus=1.7044 \
  && cpan DBI \
- && cpan Try::Tiny
+ && cpan Try::Tiny \
+ && cpan Bio::EnsEMBL::Registry
 
 # install vep
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
