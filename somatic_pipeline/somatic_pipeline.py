@@ -53,27 +53,32 @@ class SomaticPipeline(Processor):
             ref_fa: str,
             tumor_fq1: str,
             tumor_fq2: str,
+
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
+
             read_aligner: str,
-            variant_caller: str,
-            exome_target_bed: Optional[str],
-            cnvkit_annotate_txt: Optional[str],
-            panel_of_normal_vcf: Optional[str],
+            skip_mark_duplicates: bool,
             bqsr_known_variant_vcf: Optional[str],
+            discard_bam: bool,
+
+            variant_caller: str,
+            panel_of_normal_vcf: Optional[str],
+            skip_variant_calling: bool,
+
             annotator: str,
-            clinvar_vcf_gz: Optional[str],
-            dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
             vep_buffer_size: int,
-            cadd_resource: Optional[str],
             dbnsfp_resource: Optional[str],
-            discard_bam: bool,
-            skip_mark_duplicates: bool,
-            skip_variant_calling: bool,
-            skip_cnv: bool):
+            cadd_resource: Optional[str],
+            clinvar_vcf_gz: Optional[str],
+            dbsnp_vcf_gz: Optional[str],
+            snpsift_dbnsfp_txt_gz: Optional[str],
+
+            skip_cnv: bool,
+            exome_target_bed: Optional[str],
+            cnvkit_annotate_txt: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
