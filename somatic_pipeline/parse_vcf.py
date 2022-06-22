@@ -1,4 +1,5 @@
 import pandas as pd
+from os.path import exists
 from typing import Dict, Any, List, Tuple
 from .template import Processor, Settings
 
@@ -11,11 +12,12 @@ class ParseVcf(Processor):
 
     vcf_header: str
     info_id_to_description: Dict[str, str]
-    data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
+    all_columns: List[str]
 
     def __init__(self, settings: Settings):
         super().__init__(settings)
         self.vcf_line_to_row = VcfLineToRow(self.settings).main
+        self.save_data_to_csv = SaveDataToCsv(self.settings).main
 
     def main(self, vcf: str):
         self.vcf = vcf
@@ -23,8 +25,8 @@ class ParseVcf(Processor):
         self.logger.info(msg='Start parsing annotated VCF')
         self.set_vcf_header()
         self.set_info_id_to_description()
+        self.set_all_columns()
         self.process_vcf_data()
-        self.save_csv()
 
     def set_vcf_header(self):
         self.vcf_header = ''
@@ -38,29 +40,41 @@ class ParseVcf(Processor):
         self.info_id_to_description = GetInfoIDToDescription(self.settings).main(
             vcf_header=self.vcf_header)
 
+    def set_all_columns(self):
+        self.all_columns = GetAllColumns(self.settings).main(
+            info_id_to_description=self.info_id_to_description)
+
     def process_vcf_data(self):
         n = 0
-        self.data = []
+        data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
+        data = []
         with open(self.vcf) as fh:
             for line in fh:
                 if line.startswith('#'):
                     continue
 
                 row = self.__line_to_row(line)
-                self.data.append(row)
+                data.append(row)
 
                 n += 1
                 if n % self.LOG_INTERVAL == 0:
                     self.logger.debug(msg=f'{n} variants parsed')
+                    self.__to_csv(data=data)
+                    data = []  # clear up data
+
+            self.__to_csv(data=data)  # last partial chunk of data
 
     def __line_to_row(self, line: str) -> Dict[str, Any]:
         return self.vcf_line_to_row(
             vcf_line=line,
             info_id_to_description=self.info_id_to_description)
 
-    def save_csv(self):
-        df = pd.DataFrame(self.data)
-        df.to_csv(f'{self.outdir}/variants.csv', index=False)
+    def __to_csv(self, data: List[Dict[str, Any]]):
+        self.save_data_to_csv(
+            data=data,
+            all_columns=self.all_columns,
+            csv=f'{self.outdir}/variants.csv'
+        )
 
 
 class GetInfoIDToDescription(Processor):
@@ -99,6 +113,64 @@ class GetInfoIDToDescription(Processor):
         id_ = info_line.split('INFO=<ID=')[1].split(',')[0]
         description = info_line.split(',Description="')[1].split('">')[0]
         self.id_to_description[id_] = description
+
+
+class GetAllColumns(Processor):
+
+    BASE_COLUMNS = [
+        'Chromosome',
+        'Position',
+        'ID',
+        'Ref Allele',
+        'Alt Allele',
+        'Quality',
+        'Filter',
+    ]
+
+    info_id_to_description: Dict[str, str]
+
+    columns: List[str]
+
+    def main(
+            self,
+            info_id_to_description: Dict[str, str]) -> List[str]:
+
+        self.info_id_to_description = info_id_to_description
+
+        self.init_columns()
+        self.add_info_descriptions()
+        self.unroll_snpeff_columns()
+        self.unroll_vep_columns()
+
+        return self.columns
+
+    def init_columns(self):
+        self.columns = self.BASE_COLUMNS.copy()
+
+    def add_info_descriptions(self):
+        for val in self.info_id_to_description.values():
+            self.columns.append(val)
+
+    def unroll_snpeff_columns(self):
+        left_strip = "Functional annotations: '"
+        right_strip = "' "
+        sep = ' | '
+        for i, column in enumerate(self.columns):
+            if column.startswith(left_strip):
+                self.columns.pop(i)
+                new_columns = column.lstrip(left_strip).rstrip(right_strip).split(sep)
+                self.columns += new_columns
+                break
+
+    def unroll_vep_columns(self):
+        left_strip = 'Consequence annotations from Ensembl VEP. Format: '
+        sep = '|'
+        for i, column in enumerate(self.columns):
+            if column.startswith(left_strip):
+                self.columns.pop(i)
+                new_columns = column.lstrip(left_strip).split(sep)
+                self.columns += new_columns
+                break
 
 
 class VcfLineToRow(Processor):
@@ -204,3 +276,38 @@ class UnrollVEPAnnotation(UnrollAnnotation):
     RIGHT_STRIP = ''
     KEY_SEP = '|'
     VALUE_SEP = '|'
+
+
+class SaveDataToCsv(Processor):
+
+    data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
+    all_columns: List[str]
+    csv: str
+
+    def main(
+            self,
+            data: List[Dict[str, Any]],
+            all_columns: List[str],
+            csv: str):
+
+        self.data = data
+        self.all_columns = all_columns
+        self.csv = csv
+
+        self.write_to_csv()
+
+    def write_to_csv(self):
+        if not exists(self.csv):
+            header = True
+        else:
+            header = False
+
+        pd.DataFrame(
+            data=self.data,
+            columns=self.all_columns
+        ).to_csv(
+            self.csv,
+            mode='a',
+            header=header,
+            index=False
+        )

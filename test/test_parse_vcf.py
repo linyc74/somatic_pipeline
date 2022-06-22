@@ -2,7 +2,7 @@ from .setup import TestCase
 import numpy as np
 import pandas as pd
 from somatic_pipeline.parse_vcf import ParseVcf, GetInfoIDToDescription, \
-    VcfLineToRow, UnrollSnpEffAnnotation, UnrollVEPAnnotation
+    VcfLineToRow, UnrollSnpEffAnnotation, UnrollVEPAnnotation, GetAllColumns
 
 
 class TestParseVcf(TestCase):
@@ -63,6 +63,43 @@ class TestGetInfoIDToDescription(TestCase):
             vcf_header=vcf_header
         )
         self.assertDictEqual(expected, actual)
+
+
+class TestGetAllColumns(TestCase):
+
+    def setUp(self):
+        self.set_up(py_path=__file__)
+
+    def tearDown(self):
+        self.tear_down()
+
+    def test_main(self):
+        actual = GetAllColumns(self.settings).main(
+            info_id_to_description={
+                'ID1': 'Description 1',
+                'ID2': 'Description 2',
+                'ANN': 'Functional annotations: \'Allele | Annotation | Gene_Name\' ',
+                'CSQ': 'Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT',
+            }
+        )
+        expected = [
+            'Chromosome',
+            'Position',
+            'ID',
+            'Ref Allele',
+            'Alt Allele',
+            'Quality',
+            'Filter',
+            'Description 1',
+            'Description 2',
+            'Allele',
+            'Annotation',
+            'Gene_Name',
+            'Allele',
+            'Consequence',
+            'IMPACT',
+        ]
+        self.assertListEqual(expected, actual)
 
 
 class TestVcfLineToRow(TestCase):
