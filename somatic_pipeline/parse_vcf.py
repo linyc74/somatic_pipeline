@@ -148,10 +148,15 @@ class GetAllColumns(Processor):
         self.columns = self.BASE_COLUMNS.copy()
 
     def add_info_descriptions(self):
-        for val in self.info_id_to_description.values():
-            self.columns.append(val)
+        for description in self.info_id_to_description.values():
+            self.columns.append(description)
 
     def unroll_snpeff_columns(self):
+        """
+        "Functional annotations: 'Allele | Annotation | Gene_Name' "
+
+        ['Allele', 'Annotation', 'Gene_Name']
+        """
         left_strip = "Functional annotations: '"
         right_strip = "' "
         sep = ' | '
@@ -163,6 +168,11 @@ class GetAllColumns(Processor):
                 break
 
     def unroll_vep_columns(self):
+        """
+        "Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT"
+
+        ['Allele', 'Consequence', 'IMPACT']
+        """
         left_strip = 'Consequence annotations from Ensembl VEP. Format: '
         sep = '|'
         for i, column in enumerate(self.columns):

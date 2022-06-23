@@ -77,9 +77,9 @@ class TestGetAllColumns(TestCase):
         actual = GetAllColumns(self.settings).main(
             info_id_to_description={
                 'ID1': 'Description 1',
-                'ID2': 'Description 2',
                 'ANN': 'Functional annotations: \'Allele | Annotation | Gene_Name\' ',
                 'CSQ': 'Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT',
+                'ID2': 'Description 2',
             }
         )
         expected = [
@@ -90,11 +90,14 @@ class TestGetAllColumns(TestCase):
             'Alt Allele',
             'Quality',
             'Filter',
+
             'Description 1',
             'Description 2',
+
             'Allele',
             'Annotation',
             'Gene_Name',
+
             'Allele',
             'Consequence',
             'IMPACT',
