@@ -42,26 +42,27 @@ class TestGetInfoIDToDescription(TestCase):
 
     def test_main(self):
         vcf_header = '''\
-##GATKCommandLine=<ID=Mutect2,CommandLine="Mutect2 --normal-sample normal --output test/outdir/raw.vcf ...
-##INFO=<ID=AS_SB_TABLE,Number=1,Type=String,Description="Allele-specific forward/reverse read counts for strand bias tests. Includes the reference and alleles separated by |.">
+##SKIP
+##INFO=<ID=AS_SB_TABLE,Number=1,Type=String,Description="Allele-specific forward/reverse read counts for strand bias tests.">
 ##INFO=<ID=AS_UNIQ_ALT_READ_COUNT,Number=A,Type=Integer,Description="Number of reads with unique start and mate end positions for each alt at a variant site">
 ##INFO=<ID=GERMQ,Number=1,Type=Integer,Description="Phred-scaled quality that alt alleles are not germline variants">
 ##INFO=<ID=MBQ,Number=R,Type=Integer,Description="median base quality by allele">
-##MutectVersion=2.2
-##SnpEffVersion="5.0e (build 2021-03-09 06:01), by Pablo Cingolani"
-##SnpEffCmd="SnpEff  -htmlStats test/outdir/snpEff_summary.html GRCh38.99 test/test_me/raw.vcf "
-##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
+##SKIP
+##SKIP
+##SKIP
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name' ">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	normal	tumor'''
+
+        actual = GetInfoIDToDescription(self.settings).main(vcf_header=vcf_header)
+
         expected = {
-            'AS_SB_TABLE': 'Allele-specific forward/reverse read counts for strand bias tests. Includes the reference and alleles separated by |.',
+            'AS_SB_TABLE': 'Allele-specific forward/reverse read counts for strand bias tests.',
             'AS_UNIQ_ALT_READ_COUNT': 'Number of reads with unique start and mate end positions for each alt at a variant site',
             'GERMQ': 'Phred-scaled quality that alt alleles are not germline variants',
             'MBQ': 'median base quality by allele',
-            'ANN': 'Functional annotations: \'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO\' ',
+            'ANN': "Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name' ",
         }
-        actual = GetInfoIDToDescription(self.settings).main(
-            vcf_header=vcf_header
-        )
+
         self.assertDictEqual(expected, actual)
 
 
@@ -77,8 +78,8 @@ class TestGetAllColumns(TestCase):
         actual = GetAllColumns(self.settings).main(
             info_id_to_description={
                 'ID1': 'Description 1',
-                'ANN': 'Functional annotations: \'Allele | Annotation | Gene_Name\' ',
-                'CSQ': 'Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT',
+                'ANN': "Functional annotations: 'Allele | Annotation | Gene_Name' ",
+                'CSQ': 'Consequence annotations from Ensembl VEP. Format: ALLELE|CONSEQUENCE|IMPACT',
                 'ID2': 'Description 2',
             }
         )
@@ -98,8 +99,8 @@ class TestGetAllColumns(TestCase):
             'Annotation',
             'Gene_Name',
 
-            'Allele',
-            'Consequence',
+            'ALLELE',
+            'CONSEQUENCE',
             'IMPACT',
         ]
         self.assertListEqual(expected, actual)

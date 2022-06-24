@@ -7,8 +7,8 @@ from .template import Processor
 
 class Annotation(Processor):
 
-    SNPEFF = 'snpeff'
     VEP = 'vep'
+    SNPEFF = 'snpeff'
 
     annotator: str
     vcf: str
@@ -56,7 +56,7 @@ class Annotation(Processor):
         else:
             self.run_vep()
 
-        self.annotate_by_vcf_gz()
+        self.annotate_by_vcf_gz()  # independent of the choice of annotator
         self.move_vcf()
 
         return self.vcf

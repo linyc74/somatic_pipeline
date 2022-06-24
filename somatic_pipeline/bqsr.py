@@ -9,23 +9,19 @@ class BQSR(Processor):
     tumor_bam: str
     normal_bam: Optional[str]
     ref_fa: str
-    known_variant_vcf: Optional[str]
+    known_variant_vcf: str
 
     def main(
             self,
             tumor_bam: str,
             normal_bam: Optional[str],
             ref_fa: str,
-            known_variant_vcf: Optional[str]) -> Tuple[str, str]:
+            known_variant_vcf: str) -> Tuple[str, str]:
 
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.ref_fa = ref_fa
         self.known_variant_vcf = known_variant_vcf
-
-        if self.known_variant_vcf is None:
-            self.logger.info(f'Known variant VCF not provided, skip BQSR')
-            return self.tumor_bam, self.normal_bam
 
         self.prepare_ref_fa()
         self.prepare_known_variant_vcf()

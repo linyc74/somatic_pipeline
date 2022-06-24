@@ -16,13 +16,16 @@ from .mark_duplicates import MarkDuplicates
 
 class SomaticPipeline(Processor):
 
+    # required
     ref_fa: str
     tumor_fq1: str
     tumor_fq2: str
 
+    # optional
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
 
+    # preprocessing
     read_aligner: str
     skip_mark_duplicates: bool
     bqsr_known_variant_vcf: Optional[str]
@@ -30,10 +33,12 @@ class SomaticPipeline(Processor):
     tumor_bam: str
     normal_bam: Optional[str]
 
+    # variant calling
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
     skip_variant_calling: bool
 
+    # annotation
     annotator: str
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
@@ -44,6 +49,7 @@ class SomaticPipeline(Processor):
     dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
 
+    # cnv
     skip_cnv: bool
     cnvkit_annotate_txt: Optional[str]
     exome_target_bed: Optional[str]
@@ -234,12 +240,16 @@ class AlignmentPreprocessingWorkflow(Processor):
 
     def mark_duplicates(self):
         if self.skip_mark_duplicates:
+            self.logger.info(f'Skip mark PCR duplicates')
             return
         self.tumor_bam, self.normal_bam = MarkDuplicates(self.settings).main(
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam)
 
     def bqsr(self):
+        if self.bqsr_known_variant_vcf is None:
+            self.logger.info(f'BQSR known variant VCF not provided, skip BQSR')
+            return
         self.tumor_bam, self.normal_bam = BQSR(self.settings).main(
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -257,8 +267,10 @@ class VariantCallingWorkflow(Processor):
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
+
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
+
     annotator: str
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
@@ -277,8 +289,10 @@ class VariantCallingWorkflow(Processor):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
+
             variant_caller: str,
             panel_of_normal_vcf: Optional[str],
+
             annotator: str,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
@@ -292,8 +306,10 @@ class VariantCallingWorkflow(Processor):
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+
         self.variant_caller = variant_caller
         self.panel_of_normal_vcf = panel_of_normal_vcf
+
         self.annotator = annotator
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz

@@ -3,7 +3,7 @@ from somatic_pipeline.bqsr import BQSR
 from .setup import TestCase
 
 
-class TestRunBQSR(TestCase):
+class TestBQSR(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
