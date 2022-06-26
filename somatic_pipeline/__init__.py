@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 from .template import Settings
+from .tools import get_temp_path
 from .somatic_pipeline import SomaticPipeline
 
 
@@ -104,7 +105,7 @@ class Main:
         self.cnvkit_annotate_txt = None if cnvkit_annotate_txt.lower() == 'none' else cnvkit_annotate_txt
 
         self.settings = Settings(
-            workdir='./somatic_pipeline_workdir',
+            workdir=get_temp_path(prefix='./somatic_pipeline_workdir_'),
             outdir=outdir,
             threads=int(threads),
             debug=debug,
