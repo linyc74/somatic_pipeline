@@ -35,8 +35,9 @@ class SomaticPipeline(Processor):
 
     # variant calling
     variant_caller: str
-    panel_of_normal_vcf: Optional[str]
     skip_variant_calling: bool
+    panel_of_normal_vcf: Optional[str]
+    germline_resource_vcf: Optional[str]
 
     # annotation
     annotator: str
@@ -69,8 +70,9 @@ class SomaticPipeline(Processor):
             discard_bam: bool,
 
             variant_caller: str,
-            panel_of_normal_vcf: Optional[str],
             skip_variant_calling: bool,
+            panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str],
 
             annotator: str,
             vep_db_tar_gz: Optional[str],
@@ -101,6 +103,7 @@ class SomaticPipeline(Processor):
         self.variant_caller = variant_caller
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.germline_resource_vcf = germline_resource_vcf
 
         self.annotator = annotator
         self.vep_db_tar_gz = vep_db_tar_gz
@@ -159,6 +162,7 @@ class SomaticPipeline(Processor):
                 normal_bam=self.normal_bam,
                 variant_caller=self.variant_caller,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
+                germline_resource_vcf=self.germline_resource_vcf,
                 annotator=self.annotator,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
@@ -270,6 +274,7 @@ class VariantCallingWorkflow(Processor):
 
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
+    germline_resource_vcf: Optional[str]
 
     annotator: str
     clinvar_vcf_gz: Optional[str]
@@ -292,6 +297,7 @@ class VariantCallingWorkflow(Processor):
 
             variant_caller: str,
             panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str],
 
             annotator: str,
             clinvar_vcf_gz: Optional[str],
@@ -309,6 +315,7 @@ class VariantCallingWorkflow(Processor):
 
         self.variant_caller = variant_caller
         self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.germline_resource_vcf = germline_resource_vcf
 
         self.annotator = annotator
         self.clinvar_vcf_gz = clinvar_vcf_gz
@@ -331,7 +338,8 @@ class VariantCallingWorkflow(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            panel_of_normal_vcf=self.panel_of_normal_vcf)
+            panel_of_normal_vcf=self.panel_of_normal_vcf,
+            germline_resource_vcf=self.germline_resource_vcf)
 
     def annotation(self):
         self.annotated_vcf = Annotation(self.settings).main(

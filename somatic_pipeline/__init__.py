@@ -22,6 +22,7 @@ class Main:
     variant_caller: str
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
+    germline_resource_vcf: Optional[str]
 
     annotator: str
     vep_db_tar_gz: Optional[str]
@@ -59,6 +60,7 @@ class Main:
             variant_caller: str,
             skip_variant_calling: bool,
             panel_of_normal_vcf: str,
+            germline_resource_vcf: str,
 
             annotator: str,
             vep_db_tar_gz: str,
@@ -89,6 +91,7 @@ class Main:
         self.variant_caller = variant_caller
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
+        self.germline_resource_vcf = None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf
 
         self.annotator = annotator
         self.vep_db_tar_gz = None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz
@@ -130,6 +133,7 @@ class Main:
             variant_caller=self.variant_caller,
             skip_variant_calling=self.skip_variant_calling,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
+            germline_resource_vcf=self.germline_resource_vcf,
 
             annotator=self.annotator,
             vep_db_tar_gz=self.vep_db_tar_gz,

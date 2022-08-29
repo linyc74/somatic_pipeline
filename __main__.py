@@ -161,6 +161,17 @@ OPTIONAL_GROUPS = {
                 'help': 'panel of normal VCF file for Mutect2 (default: %(default)s)',
             }
         },
+
+        {
+            'keys': ['--germline-resource-vcf'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'germline resource VCF file for Mutect2 to estimate prior probability (default: %(default)s)',
+            }
+        },
+
     ],
 
     'Optional (variant annotation)':
@@ -332,6 +343,7 @@ class EntryPoint:
             variant_caller=args.variant_caller,
             skip_variant_calling=args.skip_variant_calling,
             panel_of_normal_vcf=args.panel_of_normal_vcf,
+            germline_resource_vcf=args.germline_resource_vcf,
 
             annotator=args.annotator,
             vep_db_tar_gz=args.vep_db_tar_gz,

@@ -12,6 +12,7 @@ class ProcessInterface(Processor, ABC):
     tumor_bam: str
     normal_bam: Optional[str]
     panel_of_normal_vcf: Optional[str]
+    germline_resource_vcf: Optional[str]
 
     vcf: str
 
@@ -20,12 +21,14 @@ class ProcessInterface(Processor, ABC):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
-            panel_of_normal_vcf: Optional[str]) -> str:
+            panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.germline_resource_vcf = germline_resource_vcf
 
         self.index_ref_fa()
         self.index_bams()
@@ -53,6 +56,7 @@ class ProcessInterface(Processor, ABC):
 class Mutect2Base(ProcessInterface):
 
     pon_args: List[str]
+    germline_resource_args: List[str]
 
     def execute(self):
         return
@@ -60,35 +64,63 @@ class Mutect2Base(ProcessInterface):
     def create_sequence_dictionary(self):
         GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
 
+    def prepare_resource_vcfs(self):
+        self.pon_args, self.germline_resource_args = PrepareResourceVcfs(self.settings).main(
+            panel_of_normal_vcf=self.panel_of_normal_vcf,
+            germline_resource_vcf=self.germline_resource_vcf)
+
+
+class PrepareResourceVcfs(Processor):
+
+    panel_of_normal_vcf: Optional[str]
+    germline_resource_vcf: Optional[str]
+
+    pon_args: List[str]
+    germline_resource_args: List[str]
+
+    def main(
+            self,
+            panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str]):
+
+        self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.germline_resource_vcf = germline_resource_vcf
+
+        self.prepare_panel_of_normal()
+        self.prepare_germline_resource()
+
+        return self.pon_args, self.germline_resource_args
+
     def prepare_panel_of_normal(self):
-        if self.panel_of_normal_vcf is not None:
-            self.__copy_pon_vcf()
-            self.__index_pon_vcf()
-        self.__set_pon_args()
-
-    def __copy_pon_vcf(self):
-        src = self.panel_of_normal_vcf
-        dst = edit_fpath(
-            fpath=self.panel_of_normal_vcf,
-            dstdir=self.workdir)
-        self.call(f'cp {src} {dst}')
-        self.panel_of_normal_vcf = dst
-
-    def __index_pon_vcf(self):
-        GATKIndexVcf(self.settings).main(vcf=self.panel_of_normal_vcf)
-
-    def __set_pon_args(self):
         if self.panel_of_normal_vcf is None:
             self.pon_args = []
         else:
+            self.panel_of_normal_vcf = self.__copy(self.panel_of_normal_vcf)
+            self.__index(self.panel_of_normal_vcf)
             self.pon_args = [f'--panel-of-normals {self.panel_of_normal_vcf}']
+
+    def prepare_germline_resource(self):
+        if self.germline_resource_vcf is None:
+            self.germline_resource_args = []
+        else:
+            self.germline_resource_vcf = self.__copy(self.germline_resource_vcf)
+            self.__index(self.germline_resource_vcf)
+            self.germline_resource_args = [f'--germline-resource {self.germline_resource_vcf}']
+
+    def __copy(self, vcf: str) -> str:
+        dst = edit_fpath(fpath=vcf, dstdir=self.workdir)
+        self.call(f'cp {vcf} {dst}')
+        return dst
+
+    def __index(self, vcf: str):
+        GATKIndexVcf(self.settings).main(vcf=vcf)
 
 
 class Mutect2TNPaired(Mutect2Base):
 
     def execute(self):
         self.create_sequence_dictionary()
-        self.prepare_panel_of_normal()
+        self.prepare_resource_vcfs()
         self.mutect2()
 
     def mutect2(self):
@@ -102,7 +134,7 @@ class Mutect2TNPaired(Mutect2Base):
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
-        ] + self.pon_args + [
+        ] + self.pon_args + self.germline_resource_args + [
             f'1> {log}',
             f'2> {log}',
         ])
@@ -114,7 +146,7 @@ class Mutect2TumorOnly(Mutect2Base):
     def execute(self):
         assert self.normal_bam is None
         self.create_sequence_dictionary()
-        self.prepare_panel_of_normal()
+        self.prepare_resource_vcfs()
         self.mutect2()
 
     def mutect2(self):
@@ -125,7 +157,7 @@ class Mutect2TumorOnly(Mutect2Base):
             f'--input {self.tumor_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
-        ] + self.pon_args + [
+        ] + self.pon_args + self.germline_resource_args + [
             f'1> {log}',
             f'2> {log}',
         ])
@@ -287,36 +319,24 @@ class Factory(Processor):
 
 class VariantCalling(Processor):
 
-    variant_caller: str
-    ref_fa: str
-    tumor_bam: str
-    normal_bam: Optional[str]
-    panel_of_normal_vcf: Optional[str]
-
-    vcf: str
-
     def main(
             self,
             variant_caller: str,
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
-            panel_of_normal_vcf: Optional[str]) -> str:
-
-        self.variant_caller = variant_caller
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.panel_of_normal_vcf = panel_of_normal_vcf
+            panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str]) -> str:
 
         process = Factory(self.settings).get_process(
-            variant_caller=self.variant_caller,
-            normal_bam=self.normal_bam)
+            variant_caller=variant_caller,
+            normal_bam=normal_bam)
 
-        self.vcf = process.main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            panel_of_normal_vcf=self.panel_of_normal_vcf)
+        vcf = process.main(
+            ref_fa=ref_fa,
+            tumor_bam=tumor_bam,
+            normal_bam=normal_bam,
+            panel_of_normal_vcf=panel_of_normal_vcf,
+            germline_resource_vcf=germline_resource_vcf)
 
-        return self.vcf
+        return vcf
