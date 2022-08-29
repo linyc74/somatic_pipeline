@@ -58,7 +58,7 @@ class TestSomaticPipeline(TestCase):
             discard_bam=True,
 
             variant_caller='mutect2',
-            panel_of_normal_vcf=f'{self.indir}/22_0406_twb_snp_pon.vcf',
+            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             skip_variant_calling=False,
 
             annotator='snpeff',

@@ -36,7 +36,7 @@ class TestVariantCalling(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=None,
-            panel_of_normal_vcf=f'{self.indir}/22_0406_twb_snp_pon.vcf'
+            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz'
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
