@@ -10,6 +10,7 @@ from .alignment import Alignment
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
 from .map_stats import MappingStats
+from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
 
@@ -331,6 +332,7 @@ class VariantCallingWorkflow(Processor):
         self.annotation()
         self.parse_vcf()
         self.vcf_2_maf()
+        self.compress_index_vcf()
 
     def variant_calling(self):
         self.raw_vcf = VariantCalling(self.settings).main(
@@ -364,3 +366,6 @@ class VariantCallingWorkflow(Processor):
             annotated_vcf=self.annotated_vcf,
             ref_fa=self.ref_fa,
             variant_caller=self.variant_caller)
+
+    def compress_index_vcf(self):
+        BgzipIndex(self.settings).main(vcf=self.annotated_vcf, keep=False)

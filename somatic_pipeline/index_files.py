@@ -88,3 +88,29 @@ class GATKIndexVcf(Processor):
             f'2>> {log}',
         ])
         self.call(cmd)
+
+
+class BgzipIndex(Processor):
+
+    vcf: str
+    keep: bool
+
+    vcf_gz: str
+
+    def main(self, vcf: str, keep: bool = True) -> str:
+        self.vcf = vcf
+        self.keep = keep
+
+        self.block_gzip()
+        self.tabix_index()
+
+        return self.vcf_gz
+
+    def block_gzip(self):
+        self.vcf_gz = self.vcf + '.gz'
+        self.call(f'bgzip --threads {self.threads} --stdout {self.vcf} > {self.vcf_gz}')
+        if not self.keep:
+            self.call(f'rm {self.vcf}')
+
+    def tabix_index(self):
+        self.call(f'tabix --preset vcf {self.vcf_gz}')
