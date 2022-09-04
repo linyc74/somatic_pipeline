@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from .bqsr import BQSR
 from .cnv import ComputeCNV
 from .vcf2maf import Vcf2Maf
@@ -13,6 +13,7 @@ from .map_stats import MappingStats
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
+from .variant_filtering import Mutect2VariantFiltering
 
 
 class SomaticPipeline(Processor):
@@ -39,6 +40,10 @@ class SomaticPipeline(Processor):
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+
+    # mutect2 variant filtering
+    filter_mutect2_variants: bool
+    variant_removal_flags: List[str]
 
     # annotation
     annotator: str
@@ -75,6 +80,9 @@ class SomaticPipeline(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
 
+            filter_mutect2_variants: bool,
+            variant_removal_flags: List[str],
+
             annotator: str,
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
@@ -105,6 +113,9 @@ class SomaticPipeline(Processor):
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
+
+        self.filter_mutect2_variants = filter_mutect2_variants
+        self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
         self.vep_db_tar_gz = vep_db_tar_gz
@@ -164,6 +175,8 @@ class SomaticPipeline(Processor):
                 variant_caller=self.variant_caller,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
+                filter_mutect2_variants=self.filter_mutect2_variants,
+                variant_removal_flags=self.variant_removal_flags,
                 annotator=self.annotator,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
@@ -277,6 +290,9 @@ class VariantCallingWorkflow(Processor):
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
 
+    filter_mutect2_variants: bool
+    variant_removal_flags: List[str]
+
     annotator: str
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
@@ -300,6 +316,9 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
 
+            filter_mutect2_variants: bool,
+            variant_removal_flags: List[str],
+
             annotator: str,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
@@ -318,6 +337,9 @@ class VariantCallingWorkflow(Processor):
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
 
+        self.filter_mutect2_variants = filter_mutect2_variants
+        self.variant_removal_flags = variant_removal_flags
+
         self.annotator = annotator
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
@@ -329,6 +351,7 @@ class VariantCallingWorkflow(Processor):
         self.dbnsfp_resource = dbnsfp_resource
 
         self.variant_calling()
+        self.mutect2_variant_filtering()
         self.annotation()
         self.parse_vcf()
         self.vcf_2_maf()
@@ -342,6 +365,14 @@ class VariantCallingWorkflow(Processor):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf)
+
+    def mutect2_variant_filtering(self):
+        if self.filter_mutect2_variants:
+            self.raw_vcf = Mutect2VariantFiltering(self.settings).main(
+                vcf=self.raw_vcf,
+                ref_fa=self.ref_fa,
+                variant_caller=self.variant_caller,
+                variant_removal_flags=self.variant_removal_flags)
 
     def annotation(self):
         self.annotated_vcf = Annotation(self.settings).main(

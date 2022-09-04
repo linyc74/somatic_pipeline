@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 from .template import Settings
 from .tools import get_temp_path
 from .somatic_pipeline import SomaticPipeline
@@ -23,6 +23,9 @@ class Main:
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+
+    filter_mutect2_variants: bool
+    variant_removal_flags: List[str]
 
     annotator: str
     vep_db_tar_gz: Optional[str]
@@ -62,6 +65,9 @@ class Main:
             panel_of_normal_vcf: str,
             germline_resource_vcf: str,
 
+            filter_mutect2_variants: bool,
+            variant_removal_flags: str,
+
             annotator: str,
             vep_db_tar_gz: str,
             vep_db_type: str,
@@ -92,6 +98,9 @@ class Main:
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.germline_resource_vcf = None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf
+
+        self.filter_mutect2_variants = filter_mutect2_variants
+        self.variant_removal_flags = [] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(',')
 
         self.annotator = annotator
         self.vep_db_tar_gz = None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz
@@ -134,6 +143,9 @@ class Main:
             skip_variant_calling=self.skip_variant_calling,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
+
+            filter_mutect2_variants=self.filter_mutect2_variants,
+            variant_removal_flags=self.variant_removal_flags,
 
             annotator=self.annotator,
             vep_db_tar_gz=self.vep_db_tar_gz,

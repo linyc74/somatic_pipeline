@@ -161,7 +161,6 @@ OPTIONAL_GROUPS = {
                 'help': 'panel of normal VCF file for Mutect2 (default: %(default)s)',
             }
         },
-
         {
             'keys': ['--germline-resource-vcf'],
             'properties': {
@@ -172,6 +171,26 @@ OPTIONAL_GROUPS = {
             }
         },
 
+    ],
+
+    'Optional (variant filtering)':
+    [
+        {
+            'keys': ['--filter-mutect2-variants'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'perform variant filtering for Mutect2',
+            }
+        },
+        {
+            'keys': ['--variant-removal-flags'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'comma-separated flags for variant removal, e.g. "panel_of_normals,map_qual" (default: %(default)s)',
+            }
+        },
     ],
 
     'Optional (variant annotation)':
@@ -344,6 +363,9 @@ class EntryPoint:
             skip_variant_calling=args.skip_variant_calling,
             panel_of_normal_vcf=args.panel_of_normal_vcf,
             germline_resource_vcf=args.germline_resource_vcf,
+
+            filter_mutect2_variants=args.filter_mutect2_variants,
+            variant_removal_flags=args.variant_removal_flags,
 
             annotator=args.annotator,
             vep_db_tar_gz=args.vep_db_tar_gz,
