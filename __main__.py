@@ -149,7 +149,7 @@ OPTIONAL_GROUPS = {
             'keys': ['--skip-variant-calling'],
             'properties': {
                 'action': 'store_true',
-                'help': 'do not perform variant calling',
+                'help': 'completely skip variant calling',
             }
         },
         {
@@ -203,6 +203,13 @@ OPTIONAL_GROUPS = {
                 'choices': ['snpeff', 'vep'],
                 'default': 'vep',
                 'help': 'variant annotator (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--skip-variant-annotation'],
+            'properties': {
+                'action': 'store_true',
+                'help': 'do not annotate variants',
             }
         },
         {
@@ -368,6 +375,7 @@ class EntryPoint:
             variant_removal_flags=args.variant_removal_flags,
 
             annotator=args.annotator,
+            skip_variant_annotation=args.skip_variant_annotation,
             vep_db_tar_gz=args.vep_db_tar_gz,
             vep_db_type=args.vep_db_type,
             vep_buffer_size=args.vep_buffer_size,

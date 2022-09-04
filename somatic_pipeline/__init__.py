@@ -28,6 +28,7 @@ class Main:
     variant_removal_flags: List[str]
 
     annotator: str
+    skip_variant_annotation: bool
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
     vep_buffer_size: int
@@ -69,6 +70,7 @@ class Main:
             variant_removal_flags: str,
 
             annotator: str,
+            skip_variant_annotation: bool,
             vep_db_tar_gz: str,
             vep_db_type: str,
             vep_buffer_size: int,
@@ -103,6 +105,7 @@ class Main:
         self.variant_removal_flags = [] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(',')
 
         self.annotator = annotator
+        self.skip_variant_annotation = skip_variant_annotation
         self.vep_db_tar_gz = None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz
         self.vep_db_type = vep_db_type
         self.vep_buffer_size = vep_buffer_size
@@ -148,6 +151,7 @@ class Main:
             variant_removal_flags=self.variant_removal_flags,
 
             annotator=self.annotator,
+            skip_variant_annotation=self.skip_variant_annotation,
             vep_db_tar_gz=self.vep_db_tar_gz,
             vep_db_type=self.vep_db_type,
             vep_buffer_size=self.vep_buffer_size,

@@ -47,6 +47,7 @@ class SomaticPipeline(Processor):
 
     # annotation
     annotator: str
+    skip_variant_annotation: bool
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
     vep_buffer_size: int
@@ -84,6 +85,7 @@ class SomaticPipeline(Processor):
             variant_removal_flags: List[str],
 
             annotator: str,
+            skip_variant_annotation: bool,
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
             vep_buffer_size: int,
@@ -118,6 +120,7 @@ class SomaticPipeline(Processor):
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
+        self.skip_variant_annotation = skip_variant_annotation
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
         self.vep_buffer_size = vep_buffer_size
@@ -178,6 +181,7 @@ class SomaticPipeline(Processor):
                 filter_mutect2_variants=self.filter_mutect2_variants,
                 variant_removal_flags=self.variant_removal_flags,
                 annotator=self.annotator,
+                skip_variant_annotation=self.skip_variant_annotation,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
                 snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
@@ -294,6 +298,7 @@ class VariantCallingWorkflow(Processor):
     variant_removal_flags: List[str]
 
     annotator: str
+    skip_variant_annotation: bool
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
@@ -303,8 +308,7 @@ class VariantCallingWorkflow(Processor):
     cadd_resource: Optional[str]
     dbnsfp_resource: Optional[str]
 
-    raw_vcf: str
-    annotated_vcf: str
+    vcf: str
 
     def main(
             self,
@@ -320,6 +324,7 @@ class VariantCallingWorkflow(Processor):
             variant_removal_flags: List[str],
 
             annotator: str,
+            skip_variant_annotation: bool,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
             snpsift_dbnsfp_txt_gz: Optional[str],
@@ -341,6 +346,7 @@ class VariantCallingWorkflow(Processor):
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
+        self.skip_variant_annotation = skip_variant_annotation
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
@@ -353,12 +359,13 @@ class VariantCallingWorkflow(Processor):
         self.variant_calling()
         self.mutect2_variant_filtering()
         self.annotation()
+        self.move_vcf_to_outdir()
         self.parse_vcf()
         self.vcf_2_maf()
         self.compress_index_vcf()
 
     def variant_calling(self):
-        self.raw_vcf = VariantCalling(self.settings).main(
+        self.vcf = VariantCalling(self.settings).main(
             variant_caller=self.variant_caller,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
@@ -368,35 +375,40 @@ class VariantCallingWorkflow(Processor):
 
     def mutect2_variant_filtering(self):
         if self.filter_mutect2_variants:
-            self.raw_vcf = Mutect2VariantFiltering(self.settings).main(
-                vcf=self.raw_vcf,
+            self.vcf = Mutect2VariantFiltering(self.settings).main(
+                vcf=self.vcf,
                 ref_fa=self.ref_fa,
                 variant_caller=self.variant_caller,
                 variant_removal_flags=self.variant_removal_flags)
 
     def annotation(self):
-        self.annotated_vcf = Annotation(self.settings).main(
-            annotator=self.annotator,
-            vcf=self.raw_vcf,
-            ref_fa=self.ref_fa,
-            clinvar_vcf_gz=self.clinvar_vcf_gz,
-            dbsnp_vcf_gz=self.dbsnp_vcf_gz,
-            snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
-            vep_db_tar_gz=self.vep_db_tar_gz,
-            vep_db_type=self.vep_db_type,
-            vep_buffer_size=self.vep_buffer_size,
-            cadd_resource=self.cadd_resource,
-            dbnsfp_resource=self.dbnsfp_resource)
+        if not self.skip_variant_annotation:
+            self.vcf = Annotation(self.settings).main(
+                annotator=self.annotator,
+                vcf=self.vcf,
+                ref_fa=self.ref_fa,
+                clinvar_vcf_gz=self.clinvar_vcf_gz,
+                dbsnp_vcf_gz=self.dbsnp_vcf_gz,
+                snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
+                vep_db_tar_gz=self.vep_db_tar_gz,
+                vep_db_type=self.vep_db_type,
+                vep_buffer_size=self.vep_buffer_size,
+                cadd_resource=self.cadd_resource,
+                dbnsfp_resource=self.dbnsfp_resource)
+
+    def move_vcf_to_outdir(self):
+        dst = f'{self.outdir}/variants.vcf'
+        self.call(f'mv {self.vcf} {dst}')
+        self.vcf = dst
 
     def parse_vcf(self):
-        ParseVcf(self.settings).main(
-            vcf=self.annotated_vcf)
+        ParseVcf(self.settings).main(vcf=self.vcf)
 
     def vcf_2_maf(self):
         Vcf2Maf(self.settings).main(
-            annotated_vcf=self.annotated_vcf,
+            annotated_vcf=self.vcf,
             ref_fa=self.ref_fa,
             variant_caller=self.variant_caller)
 
     def compress_index_vcf(self):
-        BgzipIndex(self.settings).main(vcf=self.annotated_vcf, keep=False)
+        BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)

@@ -33,6 +33,7 @@ class TestSomaticPipeline(TestCase):
             variant_removal_flags=[],
 
             annotator='vep',
+            skip_variant_annotation=False,
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
             vep_buffer_size=100,
@@ -70,6 +71,7 @@ class TestSomaticPipeline(TestCase):
             variant_removal_flags=['panel_of_normals', 'map_qual'],
 
             annotator='snpeff',
+            skip_variant_annotation=False,
             vep_db_tar_gz=None,
             vep_db_type='merged',
             vep_buffer_size=100,
