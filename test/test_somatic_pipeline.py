@@ -29,6 +29,9 @@ class TestSomaticPipeline(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
 
+            filter_mutect2_variants=False,
+            variant_removal_flags=[],
+
             annotator='vep',
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
@@ -62,6 +65,9 @@ class TestSomaticPipeline(TestCase):
             skip_variant_calling=False,
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+
+            filter_mutect2_variants=True,
+            variant_removal_flags=['panel_of_normals', 'map_qual'],
 
             annotator='snpeff',
             vep_db_tar_gz=None,
