@@ -102,14 +102,7 @@ class VariantRemoval(Processor):
 
         self.set_output_vcf()
         self.open_files()
-
-        for line in self.reader:
-            if line.startswith('#'):  # header
-                self.writer.write(line)
-                continue
-            if self.passed(line):
-                self.writer.write(line)
-
+        self.write_to_output_vcf()
         self.close_files()
 
         return self.output_vcf
@@ -125,10 +118,33 @@ class VariantRemoval(Processor):
         self.reader = open(self.vcf)
         self.writer = open(self.output_vcf, 'w')
 
-    def passed(self, line: str) -> bool:
+    def write_to_output_vcf(self):
+        total, passed = 0, 0
+        for line in self.reader:
+            if line.startswith('#'):  # header
+                self.writer.write(line)
+                continue
+
+            # variant line
+            total += 1
+            if self.__passed(line):
+                passed += 1
+                self.writer.write(line)
+
+        self.__log_result(total, passed)
+
+    def __passed(self, line: str) -> bool:
         variant_flags = line.split('\t')[6].split(';')
         red_flags = set(variant_flags).intersection(set(self.flags))
         return len(red_flags) == 0
+
+    def __log_result(self, total: int, passed: int):
+        percentage = passed / total * 100
+        msg = f'''\
+Remove variants having any one of the following flags: {', '.join(self.flags)}
+Total variants: {total}
+Remaining variants: {passed} ({percentage:.2f}%)'''
+        self.logger.info(msg)
 
     def close_files(self):
         self.reader.close()
