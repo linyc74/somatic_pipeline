@@ -224,10 +224,15 @@ class VcfLineToRow(Processor):
         items = self.vcf_info.split(';')
         for item in items:
             if '=' in item:
-                id_, val = self.__split(item)
-                description = self.info_id_to_description.get(id_, None)
-                if description is not None:
-                    self.row[description] = val
+                key, val = self.__split(item)
+                description = self.info_id_to_description.get(key, None)
+
+            else:  # there is no '=', this is a flag, without value
+                key, val = item, True
+                description = self.info_id_to_description.get(item, None)
+
+            if description is not None:
+                self.row[description] = val
 
     def __split(self, item: str) -> Tuple[str, str]:
         p = item.index('=')
