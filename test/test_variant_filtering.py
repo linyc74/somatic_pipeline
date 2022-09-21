@@ -27,12 +27,22 @@ class TestVariantFiltering(TestCase):
         expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
-    def test_not_valid_caller(self):
-        vcf = f'{self.indir}/raw.vcf'
+    def test_no_removal(self):
         actual = Mutect2VariantFiltering(self.settings).main(
-            vcf=vcf,
+            vcf=f'{self.indir}/raw.vcf',
+            ref_fa=self.ref_fa,
+            variant_caller='mutect2',
+            variant_removal_flags=[]
+        )
+        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_skip_for_invalid_caller(self):
+        actual = Mutect2VariantFiltering(self.settings).main(
+            vcf=f'{self.indir}/raw.vcf',
             ref_fa=self.ref_fa,
             variant_caller='muse',
             variant_removal_flags=[]
         )
-        self.assertFileExists(vcf, actual)
+        expected = f'{self.indir}/raw.vcf'
+        self.assertFileExists(expected, actual)
