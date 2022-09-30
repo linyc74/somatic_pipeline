@@ -28,6 +28,8 @@ class SomaticPipeline(Processor):
     normal_fq2: Optional[str]
 
     # preprocessing
+    clip_r1_5_prime: int
+    clip_r2_5_prime: int
     read_aligner: str
     skip_mark_duplicates: bool
     bqsr_known_variant_vcf: Optional[str]
@@ -71,6 +73,8 @@ class SomaticPipeline(Processor):
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
 
+            clip_r1_5_prime: int,
+            clip_r2_5_prime: int,
             read_aligner: str,
             skip_mark_duplicates: bool,
             bqsr_known_variant_vcf: Optional[str],
@@ -106,6 +110,8 @@ class SomaticPipeline(Processor):
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
 
+        self.clip_r1_5_prime = clip_r1_5_prime
+        self.clip_r2_5_prime = clip_r2_5_prime
         self.read_aligner = read_aligner
         self.skip_mark_duplicates = skip_mark_duplicates
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
@@ -148,12 +154,16 @@ class SomaticPipeline(Processor):
     def trimming(self):
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
             fq1=self.tumor_fq1,
-            fq2=self.tumor_fq2)
+            fq2=self.tumor_fq2,
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime)
 
         if self.normal_fq1 is not None:
             self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
                 fq1=self.normal_fq1,
-                fq2=self.normal_fq2)
+                fq2=self.normal_fq2,
+                clip_r1_5_prime=self.clip_r1_5_prime,
+                clip_r2_5_prime=self.clip_r2_5_prime)
 
     def alignment_preprocessing_workflow(self):
         self.tumor_bam, self.normal_bam = AlignmentPreprocessingWorkflow(self.settings).main(

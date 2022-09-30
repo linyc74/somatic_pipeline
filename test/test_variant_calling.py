@@ -1,5 +1,5 @@
 import shutil
-from somatic_pipeline.variant_calling import VariantCalling
+from somatic_pipeline.variant_calling import VariantCalling, HaplotypeCaller
 from .setup import TestCase
 
 
@@ -78,3 +78,12 @@ class TestVariantCalling(TestCase):
                     panel_of_normal_vcf=None,
                     germline_resource_vcf=None
                 )
+
+    def test_haplotype_caller(self):
+        VariantCalling(self.settings).main(
+            variant_caller='haplotype-caller',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=None,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None)

@@ -19,6 +19,8 @@ class TestSomaticPipeline(TestCase):
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
             normal_fq2=f'{self.indir}/normal.2.fq.gz',
 
+            clip_r1_5_prime=1,
+            clip_r2_5_prime=1,
             read_aligner='bwa',
             skip_mark_duplicates=False,
             bqsr_known_variant_vcf=f'{self.indir}/known-variants.vcf',
@@ -57,6 +59,8 @@ class TestSomaticPipeline(TestCase):
             normal_fq1=None,
             normal_fq2=None,
 
+            clip_r1_5_prime=1,
+            clip_r2_5_prime=1,
             read_aligner='bwa',
             skip_mark_duplicates=False,
             bqsr_known_variant_vcf=f'{self.indir}/known-variants.vcf',

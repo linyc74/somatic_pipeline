@@ -14,13 +14,23 @@ class TrimGalore(Processor):
 
     fq1: str
     fq2: str
+    clip_r1_5_prime: int
+    clip_r2_5_prime: int
 
     out_fq1: str
     out_fq2: str
 
-    def main(self, fq1: str, fq2: str) -> Tuple[str, str]:
+    def main(
+            self,
+            fq1: str,
+            fq2: str,
+            clip_r1_5_prime: int,
+            clip_r2_5_prime: int) -> Tuple[str, str]:
+
         self.fq1 = fq1
         self.fq2 = fq2
+        self.clip_r1_5_prime = clip_r1_5_prime
+        self.clip_r2_5_prime = clip_r2_5_prime
 
         self.execute()
         self.move_fastqc_report()
@@ -30,8 +40,7 @@ class TrimGalore(Processor):
         return self.out_fq1, self.out_fq2
 
     def execute(self):
-        log = f'{self.outdir}/trim-galore.log'
-        cmd = self.CMD_LINEBREAK.join([
+        args = [
             'trim_galore',
             '--paired',
             f'--quality {self.QUALITY}',
@@ -43,12 +52,23 @@ class TrimGalore(Processor):
             f'--max_n {self.MAX_N}',
             '--trim-n',
             '--gzip',
-            f'--output_dir {self.workdir}',
+            f'--output_dir {self.workdir}'
+        ]
+
+        if self.clip_r1_5_prime > 0:
+            args.append(f'--clip_R1 {self.clip_r1_5_prime}')
+
+        if self.clip_r2_5_prime > 0:
+            args.append(f'--clip_R2 {self.clip_r2_5_prime}')
+
+        log = f'{self.outdir}/trim-galore.log'
+        args += [
             self.fq1,
             self.fq2,
             f'1> {log} 2> {log}'
-        ])
-        self.call(cmd)
+        ]
+
+        self.call(self.CMD_LINEBREAK.join(args))
 
     def move_fastqc_report(self):
         dstdir = f'{self.outdir}/fastqc'

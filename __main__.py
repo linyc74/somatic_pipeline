@@ -2,7 +2,7 @@ import argparse
 import somatic_pipeline
 
 
-__VERSION__ = '1.6.0'
+__VERSION__ = '1.6.1-beta'
 
 
 PROG = 'python somatic_pipeline'
@@ -99,6 +99,24 @@ OPTIONAL_GROUPS = {
     'Optional (pre-processing)':
     [
         {
+            'keys': ['--clip-r1-5-prime'],
+            'properties': {
+                'type': int,
+                'required': False,
+                'default': 0,
+                'help': 'hard clip <int> bp from 5\' end of read 1 (default: %(default)s)',
+            }
+        },
+        {
+            'keys': ['--clip-r2-5-prime'],
+            'properties': {
+                'type': int,
+                'required': False,
+                'default': 0,
+                'help': 'hard clip <int> bp from 5\' end of read 2 (default: %(default)s)',
+            }
+        },
+        {
             'keys': ['--read-aligner'],
             'properties': {
                 'type': str,
@@ -140,7 +158,7 @@ OPTIONAL_GROUPS = {
             'properties': {
                 'type': str,
                 'required': False,
-                'choices': ['mutect2', 'muse', 'varscan'],
+                'choices': ['mutect2', 'muse', 'varscan', 'haplotype-caller'],
                 'default': 'mutect2',
                 'help': 'variant caller (default: %(default)s)',
             }
@@ -361,6 +379,8 @@ class EntryPoint:
             threads=args.threads,
             debug=args.debug,
 
+            clip_r1_5_prime=args.clip_r1_5_prime,
+            clip_r2_5_prime=args.clip_r2_5_prime,
             read_aligner=args.read_aligner,
             skip_mark_duplicates=args.skip_mark_duplicates,
             bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,

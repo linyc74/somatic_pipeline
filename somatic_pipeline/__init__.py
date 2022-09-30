@@ -14,6 +14,8 @@ class Main:
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
 
+    clip_r1_5_prime: int
+    clip_r2_5_prime: int
     read_aligner: str
     skip_mark_duplicates: bool
     bqsr_known_variant_vcf: Optional[str]
@@ -56,6 +58,8 @@ class Main:
             threads: str,
             debug: bool,
 
+            clip_r1_5_prime: int,
+            clip_r2_5_prime: int,
             read_aligner: str,
             skip_mark_duplicates: bool,
             bqsr_known_variant_vcf: str,
@@ -91,6 +95,8 @@ class Main:
         self.normal_fq1 = None if normal_fq1.lower() == 'none' else normal_fq1
         self.normal_fq2 = None if normal_fq2.lower() == 'none' else normal_fq2
 
+        self.clip_r1_5_prime = clip_r1_5_prime
+        self.clip_r2_5_prime = clip_r2_5_prime
         self.read_aligner = read_aligner
         self.skip_mark_duplicates = skip_mark_duplicates
         self.bqsr_known_variant_vcf = None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf
@@ -137,6 +143,8 @@ class Main:
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
 
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime,
             read_aligner=self.read_aligner,
             skip_mark_duplicates=self.skip_mark_duplicates,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,

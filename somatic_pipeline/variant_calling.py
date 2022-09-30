@@ -53,7 +53,7 @@ class ProcessInterface(Processor, ABC):
         return
 
 
-class Mutect2Base(ProcessInterface):
+class GATKProcessInterface(ProcessInterface):
 
     pon_args: List[str]
     germline_resource_args: List[str]
@@ -116,7 +116,7 @@ class PrepareResourceVcfs(Processor):
         GATKIndexVcf(self.settings).main(vcf=vcf)
 
 
-class Mutect2TNPaired(Mutect2Base):
+class Mutect2TNPaired(GATKProcessInterface):
 
     def execute(self):
         self.create_sequence_dictionary()
@@ -141,7 +141,7 @@ class Mutect2TNPaired(Mutect2Base):
         self.call(cmd)
 
 
-class Mutect2TumorOnly(Mutect2Base):
+class Mutect2TumorOnly(GATKProcessInterface):
 
     def execute(self):
         assert self.normal_bam is None
@@ -162,6 +162,27 @@ class Mutect2TumorOnly(Mutect2Base):
             f'2> {log}',
         ])
         self.call(cmd)
+
+
+class HaplotypeCaller(GATKProcessInterface):
+
+    def execute(self):
+        assert self.normal_bam is None
+        self.create_sequence_dictionary()
+        self.haplotype_caller()
+
+    def haplotype_caller(self):
+        log = f'{self.outdir}/gatk-HaplotypeCaller.log'
+        args = [
+            'gatk HaplotypeCaller',
+            f'--reference {self.ref_fa}',
+            f'--input {self.tumor_bam}',
+            f'--output {self.vcf}',
+            f'--native-pair-hmm-threads {self.threads}',
+            f'1> {log}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))
 
 
 class Muse(ProcessInterface):
@@ -284,8 +305,10 @@ class Factory(Processor):
     MUTECT2 = 'mutect2'
     MUSE = 'muse'
     VARSCAN = 'varscan'
+    HAPLOTYPE_CALLER = 'haplotype-caller'
     TUMOR_ONLY_PROCESS_DICT = {
-        MUTECT2: Mutect2TumorOnly
+        MUTECT2: Mutect2TumorOnly,
+        HAPLOTYPE_CALLER: HaplotypeCaller
     }
     TN_PAIRED_PROCESS_DICT = {
         MUTECT2: Mutect2TNPaired,
@@ -296,7 +319,8 @@ class Factory(Processor):
         Mutect2TNPaired,
         Mutect2TumorOnly,
         Muse,
-        Varscan
+        Varscan,
+        HaplotypeCaller,
     ]
 
     def get_process(
@@ -304,10 +328,10 @@ class Factory(Processor):
             variant_caller: str,
             normal_bam: Optional[str]) -> PROCESS_TYPES:
 
-        assert variant_caller in [self.MUTECT2, self.MUSE, self.VARSCAN]
+        assert variant_caller in [self.MUTECT2, self.MUSE, self.VARSCAN, self.HAPLOTYPE_CALLER]
 
         if normal_bam is None:
-            assert variant_caller == self.MUTECT2, \
+            assert variant_caller in [self.MUTECT2, self.HAPLOTYPE_CALLER], \
                 f"variant_caller = '{variant_caller}', which does not support tumor-only mode"
             _class = self.TUMOR_ONLY_PROCESS_DICT[variant_caller]
 

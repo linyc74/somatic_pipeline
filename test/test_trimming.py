@@ -14,10 +14,11 @@ class TestTrimGalore(TestCase):
         trimmed_fq1, trimmed_fq2 = TrimGalore(self.settings).main(
             fq1=f'{self.indir}/tumor.1.fq.gz',
             fq2=f'{self.indir}/tumor.2.fq.gz',
+            clip_r1_5_prime=1,
+            clip_r2_5_prime=1,
         )
         for expected, actual in [
             (f'{self.workdir}/tumor.1_val_1.fq.gz', trimmed_fq1),
             (f'{self.workdir}/tumor.2_val_2.fq.gz', trimmed_fq2),
         ]:
             self.assertFileExists(expected, actual)
-
