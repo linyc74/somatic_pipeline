@@ -26,7 +26,7 @@ class Main:
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
 
-    filter_mutect2_variants: bool
+    filter_variants: bool
     variant_removal_flags: List[str]
 
     annotator: str
@@ -70,7 +70,7 @@ class Main:
             panel_of_normal_vcf: str,
             germline_resource_vcf: str,
 
-            filter_mutect2_variants: bool,
+            filter_variants: bool,
             variant_removal_flags: str,
 
             annotator: str,
@@ -107,7 +107,7 @@ class Main:
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.germline_resource_vcf = None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf
 
-        self.filter_mutect2_variants = filter_mutect2_variants
+        self.filter_variants = filter_variants
         self.variant_removal_flags = [] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(',')
 
         self.annotator = annotator
@@ -155,7 +155,7 @@ class Main:
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
 
-            filter_mutect2_variants=self.filter_mutect2_variants,
+            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags,
 
             annotator=self.annotator,

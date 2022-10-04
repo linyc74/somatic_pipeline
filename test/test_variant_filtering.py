@@ -1,5 +1,5 @@
 import shutil
-from somatic_pipeline.variant_filtering import Mutect2VariantFiltering
+from somatic_pipeline.variant_filtering import VariantFiltering
 from .setup import TestCase
 
 
@@ -17,32 +17,32 @@ class TestVariantFiltering(TestCase):
     def tearDown(self):
         self.tear_down()
 
-    def test_main(self):
-        actual = Mutect2VariantFiltering(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+    def test_mutect2_filtering(self):
+        actual = VariantFiltering(self.settings).main(
+            vcf=f'{self.indir}/raw-mutect2.vcf',
             ref_fa=self.ref_fa,
             variant_caller='mutect2',
             variant_removal_flags=['panel_of_normals', 'map_qual']
         )
-        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        expected = f'{self.workdir}/raw-mutect2-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
-    def test_no_removal(self):
-        actual = Mutect2VariantFiltering(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+    def test_haplotype_filtering(self):
+        actual = VariantFiltering(self.settings).main(
+            vcf=f'{self.indir}/raw-haplotype.vcf',
             ref_fa=self.ref_fa,
-            variant_caller='mutect2',
-            variant_removal_flags=[]
+            variant_caller='haplotype-caller',
+            variant_removal_flags=['QD2']
         )
-        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        expected = f'{self.workdir}/raw-haplotype-snp-indel-flagged-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_skip_for_invalid_caller(self):
-        actual = Mutect2VariantFiltering(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+        actual = VariantFiltering(self.settings).main(
+            vcf=f'{self.indir}/raw-mutect2.vcf',
             ref_fa=self.ref_fa,
             variant_caller='muse',
             variant_removal_flags=[]
         )
-        expected = f'{self.indir}/raw.vcf'
+        expected = f'{self.indir}/raw-mutect2.vcf'
         self.assertFileExists(expected, actual)

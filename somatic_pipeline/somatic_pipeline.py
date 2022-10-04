@@ -13,7 +13,7 @@ from .map_stats import MappingStats
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
-from .variant_filtering import Mutect2VariantFiltering
+from .variant_filtering import VariantFiltering
 
 
 class SomaticPipeline(Processor):
@@ -43,8 +43,8 @@ class SomaticPipeline(Processor):
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
 
-    # mutect2 variant filtering
-    filter_mutect2_variants: bool
+    # variant filtering
+    filter_variants: bool
     variant_removal_flags: List[str]
 
     # annotation
@@ -85,7 +85,7 @@ class SomaticPipeline(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
 
-            filter_mutect2_variants: bool,
+            filter_variants: bool,
             variant_removal_flags: List[str],
 
             annotator: str,
@@ -122,7 +122,7 @@ class SomaticPipeline(Processor):
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
 
-        self.filter_mutect2_variants = filter_mutect2_variants
+        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
@@ -188,7 +188,7 @@ class SomaticPipeline(Processor):
                 variant_caller=self.variant_caller,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
-                filter_mutect2_variants=self.filter_mutect2_variants,
+                filter_variants=self.filter_variants,
                 variant_removal_flags=self.variant_removal_flags,
                 annotator=self.annotator,
                 skip_variant_annotation=self.skip_variant_annotation,
@@ -304,7 +304,7 @@ class VariantCallingWorkflow(Processor):
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
 
-    filter_mutect2_variants: bool
+    filter_variants: bool
     variant_removal_flags: List[str]
 
     annotator: str
@@ -330,7 +330,7 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
 
-            filter_mutect2_variants: bool,
+            filter_variants: bool,
             variant_removal_flags: List[str],
 
             annotator: str,
@@ -352,7 +352,7 @@ class VariantCallingWorkflow(Processor):
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
 
-        self.filter_mutect2_variants = filter_mutect2_variants
+        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
@@ -367,7 +367,7 @@ class VariantCallingWorkflow(Processor):
         self.dbnsfp_resource = dbnsfp_resource
 
         self.variant_calling()
-        self.mutect2_variant_filtering()
+        self.variant_filtering()
         self.annotation()
         self.move_vcf_to_outdir()
         self.parse_vcf()
@@ -383,9 +383,9 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf)
 
-    def mutect2_variant_filtering(self):
-        if self.filter_mutect2_variants:
-            self.vcf = Mutect2VariantFiltering(self.settings).main(
+    def variant_filtering(self):
+        if self.filter_variants:
+            self.vcf = VariantFiltering(self.settings).main(
                 vcf=self.vcf,
                 ref_fa=self.ref_fa,
                 variant_caller=self.variant_caller,

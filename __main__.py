@@ -194,10 +194,10 @@ OPTIONAL_GROUPS = {
     'Optional (variant filtering)':
     [
         {
-            'keys': ['--filter-mutect2-variants'],
+            'keys': ['--filter-variants'],
             'properties': {
                 'action': 'store_true',
-                'help': 'perform variant filtering for Mutect2',
+                'help': 'perform variant filtering for Mutect2 or HaplotypeCaller',
             }
         },
         {
@@ -391,7 +391,7 @@ class EntryPoint:
             panel_of_normal_vcf=args.panel_of_normal_vcf,
             germline_resource_vcf=args.germline_resource_vcf,
 
-            filter_mutect2_variants=args.filter_mutect2_variants,
+            filter_variants=args.filter_variants,
             variant_removal_flags=args.variant_removal_flags,
 
             annotator=args.annotator,
