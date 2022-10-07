@@ -144,6 +144,7 @@ class Mutect2Base(GATKBase):
 
     pon_args: List[str]
     germline_resource_args: List[str]
+    f1r2_tar_gz: str
 
     def prepare_mutect2_resource_vcfs(self):
         self.pon_args, self.germline_resource_args = PrepareMutect2ResourceVcfs(self.settings).main(
@@ -151,24 +152,10 @@ class Mutect2Base(GATKBase):
             germline_resource_vcf=self.germline_resource_vcf)
 
     def filter_mutect_calls(self):
-        log = f'{self.outdir}/gatk-FilterMutectCalls.log'
-        stats_tsv = f'{self.outdir}/filter-mutect-stats.tsv'
-        output = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix='-filter-mutect-calls.vcf',
-            dstdir=self.workdir)
-        self.call(self.CMD_LINEBREAK.join([
-            'gatk FilterMutectCalls',
-            f'--variant {self.vcf}',
-            f'--reference {self.ref_fa}',
-            f'--output {output}',
-            f'--filtering-stats {stats_tsv}',
-            f'--create-output-variant-index false',
-            f'1> {log}',
-            f'2> {log}',
-        ]))
-        self.vcf = output
+        self.vcf = FilterMutectCalls(self.settings).main(
+            vcf=self.vcf,
+            ref_fa=self.ref_fa,
+            f1r2_tar_gz=self.f1r2_tar_gz)
 
 
 class PrepareMutect2ResourceVcfs(Processor):
@@ -217,6 +204,58 @@ class PrepareMutect2ResourceVcfs(Processor):
         GATKIndexVcf(self.settings).main(vcf=vcf)
 
 
+class FilterMutectCalls(Processor):
+
+    vcf: str
+    ref_fa: str
+    f1r2_tar_gz: str
+
+    orientation_artifact_tar_gz: str
+
+    def main(self, vcf: str, ref_fa: str, f1r2_tar_gz: str) -> str:
+
+        self.vcf = vcf
+        self.ref_fa = ref_fa
+        self.f1r2_tar_gz = f1r2_tar_gz
+
+        self.learn_read_orientation_model()
+        self.filter_mutect_calls()
+
+        return self.vcf
+
+    def learn_read_orientation_model(self):
+        log = f'{self.outdir}/gatk-LearnReadOrientationModel.log'
+        self.orientation_artifact_tar_gz = f'{self.workdir}/artifact-prior-table.tar.gz'
+        self.call(self.CMD_LINEBREAK.join([
+            'gatk LearnReadOrientationModel',
+            f'--input {self.f1r2_tar_gz}',
+            f'--output {self.orientation_artifact_tar_gz}',
+            f'1> {log}',
+            f'2> {log}',
+        ]))
+
+    def filter_mutect_calls(self):
+        log = f'{self.outdir}/gatk-FilterMutectCalls.log'
+        stats_tsv = f'{self.outdir}/filter-mutect-stats.tsv'
+        output = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix='-filter-mutect-calls.vcf',
+            dstdir=self.workdir)
+        self.call(self.CMD_LINEBREAK.join([
+            'gatk FilterMutectCalls',
+            f'--variant {self.vcf}',
+            f'--reference {self.ref_fa}',
+            f'--output {output}',
+            f'--filtering-stats {stats_tsv}',
+            f'--orientation-bias-artifact-priors {self.orientation_artifact_tar_gz}',
+            f'--create-output-variant-index false',
+            f'1> {log}',
+            f'2> {log}',
+        ]))
+        self.vcf = output
+
+
 class Mutect2TNPaired(Mutect2Base):
 
     def main(
@@ -250,7 +289,8 @@ class Mutect2TNPaired(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        output = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/raw.vcf'
+        self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
         args = [
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
@@ -258,14 +298,14 @@ class Mutect2TNPaired(Mutect2Base):
             f'--input {self.normal_bam}',
             f'--tumor-sample {TUMOR}',
             f'--normal-sample {NORMAL}',
-            f'--output {output}',
+            f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
+            f'--f1r2-tar-gz {self.f1r2_tar_gz}',
         ] + self.pon_args + self.germline_resource_args + [
             f'1> {log}',
             f'2> {log}',
         ]
         self.call(self.CMD_LINEBREAK.join(args))
-        self.vcf = output
 
 
 class Mutect2TumorOnly(Mutect2Base):
@@ -301,19 +341,20 @@ class Mutect2TumorOnly(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        output = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/raw.vcf'
+        self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
         cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
             f'--reference {self.ref_fa}',
             f'--input {self.tumor_bam}',
-            f'--output {output}',
+            f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
+            f'--f1r2-tar-gz {self.f1r2_tar_gz}',
         ] + self.pon_args + self.germline_resource_args + [
             f'1> {log}',
             f'2> {log}',
         ])
         self.call(cmd)
-        self.vcf = output
 
 
 class HaplotypeCaller(GATKBase):

@@ -28,7 +28,7 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             filter_variants=True,
-            variant_removal_flags=['map_qual'],
+            variant_removal_flags=['orientation'],
         )
         expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
@@ -42,7 +42,7 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             filter_variants=True,
-            variant_removal_flags=['panel_of_normals', 'map_qual'],
+            variant_removal_flags=['orientation', 'panel_of_normals'],
         )
         expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
