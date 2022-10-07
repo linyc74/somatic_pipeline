@@ -2,7 +2,7 @@ import argparse
 import somatic_pipeline
 
 
-__VERSION__ = '1.6.1'
+__VERSION__ = '1.6.2-beta'
 
 
 PROG = 'python somatic_pipeline'

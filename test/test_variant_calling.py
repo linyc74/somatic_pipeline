@@ -1,5 +1,5 @@
 import shutil
-from somatic_pipeline.variant_calling import VariantCalling, HaplotypeCaller
+from somatic_pipeline.variant_calling import VariantCalling
 from .setup import TestCase
 
 
@@ -26,9 +26,11 @@ class TestVariantCalling(TestCase):
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
-            germline_resource_vcf=None
+            germline_resource_vcf=None,
+            filter_variants=True,
+            variant_removal_flags=['map_qual'],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_mutect2_tumor_only(self):
@@ -38,9 +40,25 @@ class TestVariantCalling(TestCase):
             tumor_bam=self.tumor_bam,
             normal_bam=None,
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
-            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz'
+            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+            filter_variants=True,
+            variant_removal_flags=['panel_of_normals', 'map_qual'],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_haplotype_caller(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='haplotype-caller',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=None,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None,
+            filter_variants=True,
+            variant_removal_flags=[]
+        )
+        expected = f'{self.workdir}/raw-snp-indel-flagged.vcf'
         self.assertFileExists(expected, actual)
 
     def test_muse(self):
@@ -50,7 +68,9 @@ class TestVariantCalling(TestCase):
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
-            germline_resource_vcf=None
+            germline_resource_vcf=None,
+            filter_variants=False,
+            variant_removal_flags=[],
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -62,12 +82,26 @@ class TestVariantCalling(TestCase):
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
-            germline_resource_vcf=None
+            germline_resource_vcf=None,
+            filter_variants=False,
+            variant_removal_flags=[],
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
 
-    def test_assert_no_tumor_only_mode(self):
+    def test_raise_assertion_error(self):
+        with self.assertRaises(AssertionError):
+            VariantCalling(self.settings).main(
+                variant_caller='invalid-caller',
+                ref_fa=self.ref_fa,
+                tumor_bam=self.tumor_bam,
+                normal_bam=self.normal_bam,
+                panel_of_normal_vcf=None,
+                germline_resource_vcf=None,
+                filter_variants=False,
+                variant_removal_flags=[]
+            )
+
         for caller in ['muse', 'varscan']:
             with self.assertRaises(AssertionError):
                 VariantCalling(self.settings).main(
@@ -76,14 +110,7 @@ class TestVariantCalling(TestCase):
                     tumor_bam=self.tumor_bam,
                     normal_bam=None,
                     panel_of_normal_vcf=None,
-                    germline_resource_vcf=None
+                    germline_resource_vcf=None,
+                    filter_variants=False,
+                    variant_removal_flags=[]
                 )
-
-    def test_haplotype_caller(self):
-        VariantCalling(self.settings).main(
-            variant_caller='haplotype-caller',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=None,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None)
