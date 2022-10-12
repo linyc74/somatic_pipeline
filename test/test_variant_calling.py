@@ -28,7 +28,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=None,
-            filter_variants=True,
             variant_removal_flags=['orientation'],
         )
         expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
@@ -43,7 +42,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=None,
-            filter_variants=True,
             variant_removal_flags=['orientation', 'panel_of_normals'],
         )
         expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
@@ -58,7 +56,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=None,
-            filter_variants=True,
             variant_removal_flags=[]
         )
         expected = f'{self.workdir}/raw-snp-indel-flagged.vcf'
@@ -73,7 +70,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=None,
-            filter_variants=False,
             variant_removal_flags=[],
         )
         expected = f'{self.workdir}/raw.vcf'
@@ -88,7 +84,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=None,
-            filter_variants=False,
             variant_removal_flags=[],
         )
         expected = f'{self.workdir}/raw.vcf'
@@ -104,7 +99,6 @@ class TestVariantCalling(TestCase):
                 panel_of_normal_vcf=None,
                 germline_resource_vcf=None,
                 vardict_call_region_bed=None,
-                filter_variants=False,
                 variant_removal_flags=[]
             )
 
@@ -118,7 +112,6 @@ class TestVariantCalling(TestCase):
                     panel_of_normal_vcf=None,
                     germline_resource_vcf=None,
                     vardict_call_region_bed=None,
-                    filter_variants=False,
                     variant_removal_flags=[]
                 )
 
@@ -131,8 +124,7 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
-            filter_variants=False,
-            variant_removal_flags=[],
+            variant_removal_flags=['NM5.25', 'PASS'],
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
@@ -146,7 +138,6 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
-            filter_variants=False,
             variant_removal_flags=[],
         )
         expected = f'{self.workdir}/raw.vcf'

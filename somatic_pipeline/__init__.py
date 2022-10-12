@@ -27,7 +27,6 @@ class Main:
     germline_resource_vcf: Optional[str]
     vardict_call_region_bed: Optional[str]
 
-    filter_variants: bool
     variant_removal_flags: List[str]
 
     annotator: str
@@ -72,7 +71,6 @@ class Main:
             germline_resource_vcf: str,
             vardict_call_region_bed: str,
 
-            filter_variants: bool,
             variant_removal_flags: str,
 
             annotator: str,
@@ -110,7 +108,6 @@ class Main:
         self.germline_resource_vcf = None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf
         self.vardict_call_region_bed = None if vardict_call_region_bed.lower() == 'none' else vardict_call_region_bed
 
-        self.filter_variants = filter_variants
         self.variant_removal_flags = [] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(',')
 
         self.annotator = annotator
@@ -159,7 +156,6 @@ class Main:
             germline_resource_vcf=self.germline_resource_vcf,
             vardict_call_region_bed=self.vardict_call_region_bed,
 
-            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags,
 
             annotator=self.annotator,

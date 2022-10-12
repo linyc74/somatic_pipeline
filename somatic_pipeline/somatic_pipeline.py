@@ -44,7 +44,6 @@ class SomaticPipeline(Processor):
     vardict_call_region_bed: Optional[str]
 
     # variant filtering
-    filter_variants: bool
     variant_removal_flags: List[str]
 
     # annotation
@@ -86,7 +85,6 @@ class SomaticPipeline(Processor):
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
-            filter_variants: bool,
             variant_removal_flags: List[str],
 
             annotator: str,
@@ -124,7 +122,6 @@ class SomaticPipeline(Processor):
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
@@ -191,7 +188,6 @@ class SomaticPipeline(Processor):
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
                 vardict_call_region_bed=self.vardict_call_region_bed,
-                filter_variants=self.filter_variants,
                 variant_removal_flags=self.variant_removal_flags,
                 annotator=self.annotator,
                 skip_variant_annotation=self.skip_variant_annotation,
@@ -308,7 +304,6 @@ class VariantCallingWorkflow(Processor):
     germline_resource_vcf: Optional[str]
     vardict_call_region_bed: Optional[str]
 
-    filter_variants: bool
     variant_removal_flags: List[str]
 
     annotator: str
@@ -335,7 +330,6 @@ class VariantCallingWorkflow(Processor):
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
-            filter_variants: bool,
             variant_removal_flags: List[str],
 
             annotator: str,
@@ -358,7 +352,6 @@ class VariantCallingWorkflow(Processor):
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.annotator = annotator
@@ -388,7 +381,6 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
             vardict_call_region_bed=self.vardict_call_region_bed,
-            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
     def annotation(self):

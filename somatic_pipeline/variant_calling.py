@@ -15,7 +15,6 @@ class VariantCalling(Processor):
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
     vardict_call_region_bed: Optional[str]
-    filter_variants: bool
     variant_removal_flags: List[str]
 
     vcf: str
@@ -29,7 +28,6 @@ class VariantCalling(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
-            filter_variants: bool,
             variant_removal_flags: List[str]) -> str:
 
         self.variant_caller = variant_caller
@@ -39,7 +37,6 @@ class VariantCalling(Processor):
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         tumor_normal_paired = normal_bam is not None
@@ -75,7 +72,6 @@ class VariantCalling(Processor):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
-            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
     def mutect2_tumor_only(self):
@@ -84,7 +80,6 @@ class VariantCalling(Processor):
             tumor_bam=self.tumor_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
-            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
     def haplotype_caller(self):
@@ -92,33 +87,36 @@ class VariantCalling(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
     def muse(self):
         self.vcf = Muse(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
+            normal_bam=self.normal_bam,
+            variant_removal_flags=self.variant_removal_flags)
 
     def varscan(self):
         self.vcf = Varscan(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
+            normal_bam=self.normal_bam,
+            variant_removal_flags=self.variant_removal_flags)
 
     def vardict_tn_paired(self):
         self.vcf = VarDictTNPaired(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            bed=self.vardict_call_region_bed)
+            bed=self.vardict_call_region_bed,
+            variant_removal_flags=self.variant_removal_flags)
 
     def vardict_tumor_only(self):
         self.vcf = VarDictTumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            bed=self.vardict_call_region_bed)
+            bed=self.vardict_call_region_bed,
+            variant_removal_flags=self.variant_removal_flags)
 
 
 class Base(Processor, ABC):
@@ -212,8 +210,6 @@ Remaining variants: {passed} ({percentage:.2f}%)'''
 
 
 class GATKBase(Base):
-
-    filter_variants: bool
 
     def create_sequence_dictionary(self):
         GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
@@ -347,7 +343,6 @@ class Mutect2TNPaired(Mutect2Base):
             normal_bam: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
-            filter_variants: bool,
             variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
@@ -355,16 +350,14 @@ class Mutect2TNPaired(Mutect2Base):
         self.normal_bam = normal_bam
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
-        if self.filter_variants:
-            self.filter_mutect_calls()
-            self.remove_variants()
+        self.filter_mutect_calls()
+        self.remove_variants()
 
         return self.vcf
 
@@ -397,7 +390,6 @@ class Mutect2TumorOnly(Mutect2Base):
             tumor_bam: str,
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
-            filter_variants: bool,
             variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
@@ -405,16 +397,14 @@ class Mutect2TumorOnly(Mutect2Base):
         self.normal_bam = None
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
-        if self.filter_variants:
-            self.filter_mutect_calls()
-            self.remove_variants()
+        self.filter_mutect_calls()
+        self.remove_variants()
 
         return self.vcf
 
@@ -443,21 +433,18 @@ class HaplotypeCaller(GATKBase):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
-            filter_variants: bool,
             variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
-        self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.haplotype_caller()
-        if self.filter_variants:
-            self.filter_haplotype_variants()
-            self.remove_variants()
+        self.filter_haplotype_variants()
+        self.remove_variants()
 
         return self.vcf
 
@@ -613,15 +600,18 @@ class Muse(Base):
             self,
             ref_fa: str,
             tumor_bam: str,
-            normal_bam: Optional[str]) -> str:
+            normal_bam: str,
+            variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
         self.muse_call()
         self.muse_sump()
+        self.remove_variants()
 
         return self.vcf
 
@@ -665,11 +655,13 @@ class Varscan(Base):
             self,
             ref_fa: str,
             tumor_bam: str,
-            normal_bam: Optional[str]) -> str:
+            normal_bam: str,
+            variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
         self.samtools_mpileup()
@@ -677,6 +669,7 @@ class Varscan(Base):
         self.compress_vcfs()
         self.index_vcfs()
         self.concat_snp_indel_vcfs()
+        self.remove_variants()
 
         return self.vcf
 
@@ -744,6 +737,9 @@ class Varscan(Base):
         self.call(cmd)
 
 
+#
+
+
 class VarDictBase(Base):
 
     ALLELE_FREQ_THRESHOLD = 0.01
@@ -783,17 +779,20 @@ class VarDictTumorOnly(VarDictBase):
             self,
             ref_fa: str,
             tumor_bam: str,
+            variant_removal_flags: List[str],
             bed: Optional[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = None
+        self.variant_removal_flags = variant_removal_flags
         self.bed = bed
 
         self.index_ref_fa_and_bams()
         if self.bed is None:
             self.build_bed_for_wgs_mode()
         self.run_vardict()
+        self.remove_variants()
 
         return self.vcf
 
@@ -833,17 +832,20 @@ class VarDictTNPaired(VarDictBase):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: str,
+            variant_removal_flags: List[str],
             bed: Optional[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
         self.bed = bed
 
         self.index_ref_fa_and_bams()
         if self.bed is None:
             self.build_bed_for_wgs_mode()
         self.run_vardict()
+        self.remove_variants()
 
         return self.vcf
 
@@ -873,3 +875,69 @@ class VarDictTNPaired(VarDictBase):
             f'2> {log}',
         ]
         self.call(self.CMD_LINEBREAK.join(args))
+
+
+#
+
+
+class LoFreq(Base):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: str,
+            variant_removal_flags: List[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
+
+        self.index_ref_fa_and_bams()
+
+        self.remove_variants()
+
+        return self.vcf
+
+
+class Platypus(Base):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: str,
+            variant_removal_flags: List[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
+
+        self.index_ref_fa_and_bams()
+
+        self.remove_variants()
+
+        return self.vcf
+
+
+class SomaticSniper(Base):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: str,
+            variant_removal_flags: List[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.variant_removal_flags = variant_removal_flags
+
+        self.index_ref_fa_and_bams()
+
+        self.remove_variants()
+
+        return self.vcf
