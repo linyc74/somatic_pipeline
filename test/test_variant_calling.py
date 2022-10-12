@@ -126,7 +126,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_removal_flags=['NM5.25', 'PASS'],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/raw-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_vardict_tn_paired(self):
