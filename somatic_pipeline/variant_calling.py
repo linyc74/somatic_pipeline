@@ -14,6 +14,7 @@ class VariantCalling(Processor):
     normal_bam: Optional[str]
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+    vardict_call_region_bed: Optional[str]
     filter_variants: bool
     variant_removal_flags: List[str]
 
@@ -27,6 +28,7 @@ class VariantCalling(Processor):
             normal_bam: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
+            vardict_call_region_bed: Optional[str],
             filter_variants: bool,
             variant_removal_flags: List[str]) -> str:
 
@@ -36,6 +38,7 @@ class VariantCalling(Processor):
         self.normal_bam = normal_bam
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
+        self.vardict_call_region_bed = vardict_call_region_bed
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
@@ -48,6 +51,8 @@ class VariantCalling(Processor):
                 self.muse()
             elif variant_caller == 'varscan':
                 self.varscan()
+            elif variant_caller == 'vardict':
+                self.vardict_tn_paired()
             else:
                 raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-normal paired mode')
 
@@ -56,6 +61,8 @@ class VariantCalling(Processor):
                 self.mutect2_tumor_only()
             elif variant_caller == 'haplotype-caller':
                 self.haplotype_caller()
+            elif variant_caller == 'vardict':
+                self.vardict_tumor_only()
             else:
                 raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-only mode')
 
@@ -71,23 +78,10 @@ class VariantCalling(Processor):
             filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
-    def muse(self):
-        self.vcf = Muse(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
-
-    def varscan(self):
-        self.vcf = Varscan(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
-
     def mutect2_tumor_only(self):
         self.vcf = Mutect2TumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
             filter_variants=self.filter_variants,
@@ -101,40 +95,128 @@ class VariantCalling(Processor):
             filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 
+    def muse(self):
+        self.vcf = Muse(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
+
+    def varscan(self):
+        self.vcf = Varscan(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
+
+    def vardict_tn_paired(self):
+        self.vcf = VarDictTNPaired(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            bed=self.vardict_call_region_bed)
+
+    def vardict_tumor_only(self):
+        self.vcf = VarDictTumorOnly(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            bed=self.vardict_call_region_bed)
+
 
 class Base(Processor, ABC):
 
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
+    variant_removal_flags: List[str]
 
     vcf: str
 
-    def index_ref_fa(self):
+    def index_ref_fa_and_bams(self):
         SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
-
-    def index_bams(self):
         SamtoolsIndexBam(self.settings).main(bam=self.tumor_bam)
         if self.normal_bam is not None:
             SamtoolsIndexBam(self.settings).main(bam=self.normal_bam)
-
-    def set_vcf(self):
-        self.vcf = f'{self.workdir}/raw.vcf'
-
-
-class GATKBase(Base):
-
-    filter_variants: bool
-    variant_removal_flags: List[str]
-
-    def create_sequence_dictionary(self):
-        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
 
     def remove_variants(self):
         if len(self.variant_removal_flags) > 0:
             self.vcf = RemoveVariants(self.settings).main(
                 vcf=self.vcf,
                 flags=self.variant_removal_flags)
+
+
+class RemoveVariants(Processor):
+
+    vcf: str
+    flags: List[str]
+
+    output_vcf: str
+    reader: IO
+    writer: IO
+
+    def main(self, vcf: str, flags: List[str]) -> str:
+
+        self.vcf = vcf
+        self.flags = flags
+
+        self.set_output_vcf()
+        self.open_files()
+        self.write_to_output_vcf()
+        self.close_files()
+
+        return self.output_vcf
+
+    def set_output_vcf(self):
+        self.output_vcf = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix='-variant-removal.vcf',
+            dstdir=self.workdir)
+
+    def open_files(self):
+        self.reader = open(self.vcf)
+        self.writer = open(self.output_vcf, 'w')
+
+    def write_to_output_vcf(self):
+        total, passed = 0, 0
+        for line in self.reader:
+            if line.startswith('#'):  # header
+                self.writer.write(line)
+                continue
+
+            # variant line
+            total += 1
+            if self.__passed(line):
+                passed += 1
+                self.writer.write(line)
+
+        self.__log_result(total, passed)
+
+    def __passed(self, line: str) -> bool:
+        variant_flags = line.split('\t')[6].split(';')
+        red_flags = set(variant_flags).intersection(set(self.flags))
+        return len(red_flags) == 0
+
+    def __log_result(self, total: int, passed: int):
+        percentage = passed / total * 100
+        msg = f'''\
+Remove variants having any one of the following flags: {', '.join(self.flags)}
+Total variants: {total}
+Remaining variants: {passed} ({percentage:.2f}%)'''
+        self.logger.info(msg)
+
+    def close_files(self):
+        self.reader.close()
+        self.writer.close()
+
+
+#
+
+
+class GATKBase(Base):
+
+    filter_variants: bool
+
+    def create_sequence_dictionary(self):
+        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
 
 
 class Mutect2Base(GATKBase):
@@ -276,8 +358,7 @@ class Mutect2TNPaired(Mutect2Base):
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa()
-        self.index_bams()
+        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
@@ -314,7 +395,6 @@ class Mutect2TumorOnly(Mutect2Base):
             self,
             ref_fa: str,
             tumor_bam: str,
-            normal_bam: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             filter_variants: bool,
@@ -322,14 +402,13 @@ class Mutect2TumorOnly(Mutect2Base):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
+        self.normal_bam = None
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa()
-        self.index_bams()
+        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
@@ -373,8 +452,7 @@ class HaplotypeCaller(GATKBase):
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa()
-        self.index_bams()
+        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.haplotype_caller()
         if self.filter_variants:
@@ -522,69 +600,7 @@ class FilterHaplotypeVariants(Processor):
         ]))
 
 
-class RemoveVariants(Processor):
-
-    vcf: str
-    flags: List[str]
-
-    output_vcf: str
-    reader: IO
-    writer: IO
-
-    def main(self, vcf: str, flags: List[str]) -> str:
-
-        self.vcf = vcf
-        self.flags = flags
-
-        self.set_output_vcf()
-        self.open_files()
-        self.write_to_output_vcf()
-        self.close_files()
-
-        return self.output_vcf
-
-    def set_output_vcf(self):
-        self.output_vcf = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix='-variant-removal.vcf',
-            dstdir=self.workdir)
-
-    def open_files(self):
-        self.reader = open(self.vcf)
-        self.writer = open(self.output_vcf, 'w')
-
-    def write_to_output_vcf(self):
-        total, passed = 0, 0
-        for line in self.reader:
-            if line.startswith('#'):  # header
-                self.writer.write(line)
-                continue
-
-            # variant line
-            total += 1
-            if self.__passed(line):
-                passed += 1
-                self.writer.write(line)
-
-        self.__log_result(total, passed)
-
-    def __passed(self, line: str) -> bool:
-        variant_flags = line.split('\t')[6].split(';')
-        red_flags = set(variant_flags).intersection(set(self.flags))
-        return len(red_flags) == 0
-
-    def __log_result(self, total: int, passed: int):
-        percentage = passed / total * 100
-        msg = f'''\
-Remove variants having any one of the following flags: {', '.join(self.flags)}
-Total variants: {total}
-Remaining variants: {passed} ({percentage:.2f}%)'''
-        self.logger.info(msg)
-
-    def close_files(self):
-        self.reader.close()
-        self.writer.close()
+#
 
 
 class Muse(Base):
@@ -603,9 +619,7 @@ class Muse(Base):
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
 
-        self.index_ref_fa()
-        self.index_bams()
-        self.set_vcf()
+        self.index_ref_fa_and_bams()
         self.muse_call()
         self.muse_sump()
 
@@ -627,6 +641,7 @@ class Muse(Base):
         self.call_result_txt = output + '.MuSE.txt'
 
     def muse_sump(self):
+        self.vcf = f'{self.workdir}/raw.vcf'
         log = f'{self.outdir}/MuSE-sump.log'
         cmd = self.CMD_LINEBREAK.join([
             'MuSE sump',
@@ -656,10 +671,7 @@ class Varscan(Base):
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
 
-        self.index_ref_fa()
-        self.index_bams()
-        self.set_vcf()
-
+        self.index_ref_fa_and_bams()
         self.samtools_mpileup()
         self.varscan_somatic()
         self.compress_vcfs()
@@ -717,6 +729,7 @@ class Varscan(Base):
 
     def concat_snp_indel_vcfs(self):
         log = f'{self.outdir}/bcftools-merge.log'
+        self.vcf = f'{self.workdir}/raw.vcf'
         cmd = self.CMD_LINEBREAK.join([
             'bcftools concat',
             '--allow-overlaps',  # first coordinate of the next file can precede last record of the current file
@@ -729,3 +742,134 @@ class Varscan(Base):
             f'2> {log}',
         ])
         self.call(cmd)
+
+
+class VarDictBase(Base):
+
+    ALLELE_FREQ_THRESHOLD = 0.01
+
+    bed: str
+    genome_file: str
+
+    def build_bed_for_wgs_mode(self):
+        self.__genome_file()
+        self.__bed()
+
+    def __genome_file(self):
+        chr_to_length = {}
+        this_chr = None
+        with open(self.ref_fa) as reader:
+            for line in reader:
+                if line.startswith('>'):
+                    this_chr = line[1:].split(' ')[0]
+                    chr_to_length.setdefault(this_chr, 0)
+                else:
+                    chr_to_length[this_chr] += len(line.strip())
+
+        self.genome_file = f'{self.workdir}/vardict-genome-file.txt'
+        with open(self.genome_file, 'w') as writer:
+            for c, l in chr_to_length.items():
+                writer.write(f'{c}\t{l}\n')
+
+    def __bed(self):
+        self.bed = f'{self.workdir}/vardict-wgs.bed'
+        # Create regions with a window size of 50150 bp and overlapping size 150 bp
+        self.call(f'bedtools makewindows -g {self.genome_file} -w 50150 -s 50000 > {self.bed}')
+
+
+class VarDictTumorOnly(VarDictBase):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            bed: Optional[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = None
+        self.bed = bed
+
+        self.index_ref_fa_and_bams()
+        if self.bed is None:
+            self.build_bed_for_wgs_mode()
+        self.run_vardict()
+
+        return self.vcf
+
+    def run_vardict(self):
+        log = f'{self.outdir}/vardict.log'
+        self.vcf = f'{self.workdir}/raw.vcf'
+        args = [
+            'vardict',
+            f'-G {self.ref_fa}',
+            f'-f {self.ALLELE_FREQ_THRESHOLD}',
+            f'-N {TUMOR}',
+            f'-b {self.tumor_bam}',
+            '-c 1',  # column for chromosome
+            '-S 2',  # column for region start
+            '-E 3',  # column for region end
+            '-g 4',  # column for gene name
+            self.bed,
+            f'2> {log}',
+            '|',
+            'teststrandbias.R',
+            f'2> {log}',
+            '|',
+            'var2vcf_valid.pl',
+            f'-N {TUMOR}',
+            '-E',  # do not print END tag
+            f'-f {self.ALLELE_FREQ_THRESHOLD}',
+            f'1> {self.vcf}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))
+
+
+class VarDictTNPaired(VarDictBase):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: str,
+            bed: Optional[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.bed = bed
+
+        self.index_ref_fa_and_bams()
+        if self.bed is None:
+            self.build_bed_for_wgs_mode()
+        self.run_vardict()
+
+        return self.vcf
+
+    def run_vardict(self):
+        log = f'{self.outdir}/vardict.log'
+        self.vcf = f'{self.workdir}/raw.vcf'
+        args = [
+            'vardict',
+            f'-G {self.ref_fa}',
+            f'-f {self.ALLELE_FREQ_THRESHOLD}',
+            f'-N {TUMOR}',
+            f'-b "{self.tumor_bam}|{self.normal_bam}"',
+            '-c 1',  # column for chromosome
+            '-S 2',  # column for region start
+            '-E 3',  # column for region end
+            '-g 4',  # column for gene name
+            self.bed,
+            f'2> {log}',
+            '|',
+            'teststrandbias.R',
+            f'2> {log}',
+            '|',
+            'var2vcf_paired.pl',
+            f'-N "{TUMOR}|{NORMAL}"',
+            f'-f {self.ALLELE_FREQ_THRESHOLD}',
+            f'1> {self.vcf}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))

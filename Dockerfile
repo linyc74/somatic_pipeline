@@ -73,6 +73,12 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
 
+# vardict
+RUN conda install -c bioconda -n somatic \
+    vardict=2019.06.04 \
+    bedtools=2.30.0
+ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
+
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
 COPY ./__main__.py /somatic_pipeline/

@@ -25,6 +25,7 @@ class Main:
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+    vardict_call_region_bed: Optional[str]
 
     filter_variants: bool
     variant_removal_flags: List[str]
@@ -69,6 +70,7 @@ class Main:
             skip_variant_calling: bool,
             panel_of_normal_vcf: str,
             germline_resource_vcf: str,
+            vardict_call_region_bed: str,
 
             filter_variants: bool,
             variant_removal_flags: str,
@@ -106,6 +108,7 @@ class Main:
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf
         self.germline_resource_vcf = None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf
+        self.vardict_call_region_bed = None if vardict_call_region_bed.lower() == 'none' else vardict_call_region_bed
 
         self.filter_variants = filter_variants
         self.variant_removal_flags = [] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(',')
@@ -154,6 +157,7 @@ class Main:
             skip_variant_calling=self.skip_variant_calling,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
+            vardict_call_region_bed=self.vardict_call_region_bed,
 
             filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags,

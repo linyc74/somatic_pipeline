@@ -41,6 +41,7 @@ class SomaticPipeline(Processor):
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+    vardict_call_region_bed: Optional[str]
 
     # variant filtering
     filter_variants: bool
@@ -83,6 +84,7 @@ class SomaticPipeline(Processor):
             skip_variant_calling: bool,
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
+            vardict_call_region_bed: Optional[str],
 
             filter_variants: bool,
             variant_removal_flags: List[str],
@@ -120,6 +122,7 @@ class SomaticPipeline(Processor):
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
+        self.vardict_call_region_bed = vardict_call_region_bed
 
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
@@ -187,6 +190,7 @@ class SomaticPipeline(Processor):
                 variant_caller=self.variant_caller,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
+                vardict_call_region_bed=self.vardict_call_region_bed,
                 filter_variants=self.filter_variants,
                 variant_removal_flags=self.variant_removal_flags,
                 annotator=self.annotator,
@@ -302,6 +306,7 @@ class VariantCallingWorkflow(Processor):
     variant_caller: str
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
+    vardict_call_region_bed: Optional[str]
 
     filter_variants: bool
     variant_removal_flags: List[str]
@@ -328,6 +333,7 @@ class VariantCallingWorkflow(Processor):
             variant_caller: str,
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
+            vardict_call_region_bed: Optional[str],
 
             filter_variants: bool,
             variant_removal_flags: List[str],
@@ -350,6 +356,7 @@ class VariantCallingWorkflow(Processor):
         self.variant_caller = variant_caller
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
+        self.vardict_call_region_bed = vardict_call_region_bed
 
         self.filter_variants = filter_variants
         self.variant_removal_flags = variant_removal_flags
@@ -380,6 +387,7 @@ class VariantCallingWorkflow(Processor):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
+            vardict_call_region_bed=self.vardict_call_region_bed,
             filter_variants=self.filter_variants,
             variant_removal_flags=self.variant_removal_flags)
 

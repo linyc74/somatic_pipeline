@@ -16,8 +16,8 @@ class TestVariantCalling(TestCase):
         self.tumor_bam = f'{self.workdir}/tumor-sorted.bam'
         self.normal_bam = f'{self.workdir}/normal-sorted.bam'
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def test_mutect2_tn_paired(self):
         actual = VariantCalling(self.settings).main(
@@ -27,6 +27,7 @@ class TestVariantCalling(TestCase):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
+            vardict_call_region_bed=None,
             filter_variants=True,
             variant_removal_flags=['orientation'],
         )
@@ -41,6 +42,7 @@ class TestVariantCalling(TestCase):
             normal_bam=None,
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+            vardict_call_region_bed=None,
             filter_variants=True,
             variant_removal_flags=['orientation', 'panel_of_normals'],
         )
@@ -55,6 +57,7 @@ class TestVariantCalling(TestCase):
             normal_bam=None,
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
+            vardict_call_region_bed=None,
             filter_variants=True,
             variant_removal_flags=[]
         )
@@ -69,6 +72,7 @@ class TestVariantCalling(TestCase):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
+            vardict_call_region_bed=None,
             filter_variants=False,
             variant_removal_flags=[],
         )
@@ -83,6 +87,7 @@ class TestVariantCalling(TestCase):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=None,
             germline_resource_vcf=None,
+            vardict_call_region_bed=None,
             filter_variants=False,
             variant_removal_flags=[],
         )
@@ -98,6 +103,7 @@ class TestVariantCalling(TestCase):
                 normal_bam=self.normal_bam,
                 panel_of_normal_vcf=None,
                 germline_resource_vcf=None,
+                vardict_call_region_bed=None,
                 filter_variants=False,
                 variant_removal_flags=[]
             )
@@ -111,6 +117,37 @@ class TestVariantCalling(TestCase):
                     normal_bam=None,
                     panel_of_normal_vcf=None,
                     germline_resource_vcf=None,
+                    vardict_call_region_bed=None,
                     filter_variants=False,
                     variant_removal_flags=[]
                 )
+
+    def test_vardict_tumor_only(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='vardict',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=None,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None,
+            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            filter_variants=False,
+            variant_removal_flags=[],
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_vardict_tn_paired(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='vardict',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None,
+            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            filter_variants=False,
+            variant_removal_flags=[],
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)

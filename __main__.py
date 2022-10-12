@@ -2,7 +2,7 @@ import argparse
 import somatic_pipeline
 
 
-__VERSION__ = '1.6.2'
+__VERSION__ = '1.6.3-beta'
 
 
 PROG = 'python somatic_pipeline'
@@ -188,7 +188,15 @@ OPTIONAL_GROUPS = {
                 'help': 'germline resource VCF file for Mutect2 to estimate prior probability (default: %(default)s)',
             }
         },
-
+        {
+            'keys': ['--vardict-call-region-bed'],
+            'properties': {
+                'type': str,
+                'required': False,
+                'default': 'None',
+                'help': 'variant calling region bed file (WES) for VarDict (default: %(default)s)',
+            }
+        },
     ],
 
     'Optional (variant filtering)':
@@ -390,6 +398,7 @@ class EntryPoint:
             skip_variant_calling=args.skip_variant_calling,
             panel_of_normal_vcf=args.panel_of_normal_vcf,
             germline_resource_vcf=args.germline_resource_vcf,
+            vardict_call_region_bed=args.vardict_call_region_bed,
 
             filter_variants=args.filter_variants,
             variant_removal_flags=args.variant_removal_flags,
