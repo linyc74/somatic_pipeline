@@ -18,21 +18,28 @@ RUN conda create -n somatic python=3.7 \
     vcf2maf=1.6.21 \
     vardict=2019.06.04 \
     bedtools=2.30.0 \
-    lofreq=2.1.5 \
     somatic-sniper=1.0.5.0 \
  && mamba install -c anaconda -n somatic \
-    pandas=1.3.5 \
- && mamba clean --all --yes
+    pandas=1.3.5
 
+# activate somatic env
 # for identical commands (e.g. pip), somatic overrides default environment
 ENV PATH /opt/conda/envs/somatic/bin:$PATH
 
-# extra env path for vardict
+# extra vardict path
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
 
 # bcftools dependency issue
 ARG d=/opt/conda/envs/somatic/lib/
 RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
+
+# download and untar lofreq
+RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
+ && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
+ && rm lofreq_star-2.1.5_linux-x86-64.tgz
+
+# make lofreq executable
+ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
 
 # download and unzip snpeff
 RUN mamba install -c conda-forge unzip=6.0 \
@@ -48,16 +55,19 @@ RUN snpeff download -verbose GRCh38.99
 
 # dependency for cnvkit
 ARG d=/opt/conda/envs/somatic/lib/
-RUN mamba install -c conda-forge -n somatic r-base=3.2.2 \
- && mamba install -c bioconda -n somatic bioconductor-dnacopy=1.44.0 \
+RUN mamba install -c conda-forge -n somatic \
+    r-base=3.2.2 \
+ && mamba install -c bioconda -n somatic \
+    bioconductor-dnacopy=1.44.0 \
  && ln -s ${d}libreadline.so.8.1 ${d}libreadline.so.6 \
  && ln -s ${d}libncursesw.so.6.2 ${d}libncurses.so.5 \
- && mamba install -c anaconda -n somatic pomegranate=0.14.4 \
- && mamba clean --all --yes
+ && mamba install -c anaconda -n somatic \
+    pomegranate=0.14.4
 
 # install cnvkit, the pip used is in 'somatic' env
 RUN pip install --upgrade pip \
- && pip install --no-cache-dir cnvkit==0.9.9
+ && pip install --no-cache-dir \
+    cnvkit==0.9.9
 
 # perl dependency for vep
 # perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
@@ -81,6 +91,9 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
 
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
+
+# clean up
+RUN conda clean --all --yes
 
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
