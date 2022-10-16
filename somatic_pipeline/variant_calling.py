@@ -223,7 +223,7 @@ class RemoveVariants(Processor):
         return len(red_flags) == 0
 
     def __log_result(self, total: int, passed: int):
-        percentage = passed / total * 100
+        percentage = passed / total * 100 if total > 0 else 0.
         msg = f'''\
 Remove variants having any one of the following flags: {', '.join(self.flags)}
 Total variants: {total}
