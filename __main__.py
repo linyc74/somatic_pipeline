@@ -158,7 +158,7 @@ OPTIONAL_GROUPS = {
             'properties': {
                 'type': str,
                 'required': False,
-                'choices': ['mutect2', 'muse', 'varscan', 'haplotype-caller', 'vardict', 'lofreq'],
+                'choices': ['mutect2', 'muse', 'varscan', 'haplotype-caller', 'vardict', 'lofreq', 'somatic-sniper'],
                 'default': 'mutect2',
                 'help': 'variant caller (default: %(default)s)',
             }
