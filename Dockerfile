@@ -1,13 +1,10 @@
 FROM continuumio/miniconda3:4.10.3
 
+# mamba in the base environment
+RUN conda install -c conda-forge mamba=0.27.0
+
 RUN conda create -n somatic \
- && conda install -c conda-forge -n somatic \
-    mamba=0.27.0
-
-# for identical commands (e.g. pip), somatic overrides default environment
-ENV PATH /opt/conda/envs/somatic/bin:$PATH
-
-RUN mamba install -c conda-forge -n somatic \
+ && mamba install -c conda-forge -n somatic \
     tbb=2020.2 \
  && mamba install -c bioconda -n somatic \
     trim-galore=0.6.6 \
@@ -26,6 +23,9 @@ RUN mamba install -c conda-forge -n somatic \
  && mamba install -c anaconda -n somatic \
     pandas=1.3.5 \
  && mamba clean --all --yes
+
+# for identical commands (e.g. pip), somatic overrides default environment
+ENV PATH /opt/conda/envs/somatic/bin:$PATH
 
 # extra env path for vardict
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
