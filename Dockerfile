@@ -79,6 +79,10 @@ RUN conda install -c bioconda -n somatic \
     bedtools=2.30.0
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
 
+# lofreq
+RUN conda install -c bioconda -n somatic \
+    lofreq=2.1.5
+
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
 COPY ./__main__.py /somatic_pipeline/

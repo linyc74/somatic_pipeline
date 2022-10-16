@@ -52,6 +52,8 @@ class VariantCalling(Processor):
                 self.vardict_tn_paired()
             elif variant_caller == 'lofreq':
                 self.lofreq_tn_paired()
+            elif variant_caller == 'somatic-sniper':
+                self.somatic_sniper()
             else:
                 raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-normal paired mode')
 
@@ -134,6 +136,16 @@ class VariantCalling(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             variant_removal_flags=self.variant_removal_flags)
+
+    def somatic_sniper(self):
+        self.vcf = SomaticSniper(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            variant_removal_flags=self.variant_removal_flags)
+
+
+#
 
 
 class Base(Processor, ABC):
@@ -1005,7 +1017,24 @@ class SomaticSniper(Base):
         self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
-
+        self.run_somatic_sniper()
         self.remove_variants()
 
         return self.vcf
+
+    def run_somatic_sniper(self):
+        self.vcf = f'{self.workdir}/raw.vcf'
+        log = f'{self.outdir}/bam-somaticsniper.log'
+        args = [
+            'bam-somaticsniper',
+            f'-n {NORMAL}',
+            f'-t {TUMOR}',
+            f'-F vcf',  # output format
+            f'-f {self.ref_fa}',
+            self.tumor_bam,
+            self.normal_bam,
+            self.vcf,
+            f'1> {log}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))

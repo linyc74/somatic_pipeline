@@ -105,7 +105,7 @@ class BwaAligner(TemplateAligner):
             'bwa mem',
             f'-t {self.threads}',
             f'-o {self.sam}',
-            f'-R "@RG\\tID:foo\\tSM:{self.sample_name}\\tPL:ILLUMINA"',  # needs literal '\t' for tab
+            f'-R "@RG\\tID:foo\\tSM:{self.sample_name}\\tPL:ILLUMINA\\tLB:{self.sample_name}"',  # needs literal '\t' for tab
             self.index,
             self.fq1,
             self.fq2,
@@ -128,6 +128,7 @@ class Bowtie2Aligner(TemplateAligner):
             f'--rg-id foo',
             f'--rg "SM:{self.sample_name}"',
             f'--rg "PL:ILLUMINA"',
+            f'--rg "LB:{self.sample_name}"',  # library tag required by some callers, e.g. SomaticSniper
             f'--threads {self.threads}',
             f'2> {log}',
         ])
