@@ -3,7 +3,7 @@ FROM continuumio/miniconda3:4.10.3
 # mamba in the base environment
 RUN conda install -c conda-forge mamba=0.27.0
 
-RUN conda create -n somatic \
+RUN conda create -n somatic python=3.7 \
  && mamba install -c conda-forge -n somatic \
     tbb=2020.2 \
  && mamba install -c bioconda -n somatic \
