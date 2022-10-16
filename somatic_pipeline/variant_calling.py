@@ -50,6 +50,8 @@ class VariantCalling(Processor):
                 self.varscan()
             elif variant_caller == 'vardict':
                 self.vardict_tn_paired()
+            elif variant_caller == 'lofreq':
+                self.lofreq_tn_paired()
             else:
                 raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-normal paired mode')
 
@@ -60,6 +62,8 @@ class VariantCalling(Processor):
                 self.haplotype_caller()
             elif variant_caller == 'vardict':
                 self.vardict_tumor_only()
+            elif variant_caller == 'lofreq':
+                self.lofreq_tumor_only()
             else:
                 raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-only mode')
 
@@ -116,6 +120,19 @@ class VariantCalling(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             bed=self.vardict_call_region_bed,
+            variant_removal_flags=self.variant_removal_flags)
+
+    def lofreq_tn_paired(self):
+        self.vcf = LoFreqTNPaired(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            variant_removal_flags=self.variant_removal_flags)
+
+    def lofreq_tumor_only(self):
+        self.vcf = LoFreqTumorOnly(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
             variant_removal_flags=self.variant_removal_flags)
 
 
@@ -880,7 +897,42 @@ class VarDictTNPaired(VarDictBase):
 #
 
 
-class LoFreq(Base):
+class LoFreqTumorOnly(Base):
+
+    def main(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            variant_removal_flags: List[str]) -> str:
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = None
+        self.variant_removal_flags = variant_removal_flags
+
+        self.index_ref_fa_and_bams()
+        self.lofreq_call_parallel()
+        self.remove_variants()
+
+        return self.vcf
+
+    def lofreq_call_parallel(self):
+        self.vcf = f'{self.workdir}/raw.vcf'
+        log = f'{self.outdir}/lofreq-call-parallel.log'
+        args = [
+            'lofreq call-parallel',
+            f'--ref {self.ref_fa}',
+            f'--pp-threads {self.threads}',
+            '--call-indels',  # works only when BAM file contains indel qualities, GATK BQSR does that
+            f'--out {self.vcf}',
+            self.tumor_bam,
+            f'1> {log}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))
+
+
+class LoFreqTNPaired(Base):
 
     def main(
             self,
@@ -895,31 +947,47 @@ class LoFreq(Base):
         self.variant_removal_flags = variant_removal_flags
 
         self.index_ref_fa_and_bams()
-
+        self.lofreq_somatic()
+        self.concat_snp_indel_vcfs()
         self.remove_variants()
 
         return self.vcf
 
+    def lofreq_somatic(self):
+        log = f'{self.outdir}/lofreq-somatic.log'
+        args = [
+            'lofreq somatic',
+            f'--normal {self.normal_bam}',
+            f'--tumor {self.tumor_bam}',
+            f'--ref {self.ref_fa}',
+            f'--threads {self.threads}',
+            '--call-indels',  # works only when BAM file contains indel qualities, GATK BQSR does that
+            f'-o {self.workdir}/lofreq-',
+            f'1> {log}',
+            f'2> {log}',
+        ]
+        self.call(self.CMD_LINEBREAK.join(args))
 
-class Platypus(Base):
+    def concat_snp_indel_vcfs(self):
+        snp_vcf = f'{self.workdir}/lofreq-somatic_final.snvs.vcf.gz'
+        indel_vcf = f'{self.workdir}/lofreq-somatic_final.indels.vcf.gz'
+        self.vcf = f'{self.workdir}/raw.vcf'
+        log = f'{self.outdir}/bcftools-merge.log'
+        cmd = self.CMD_LINEBREAK.join([
+            'bcftools concat',
+            '--allow-overlaps',  # first coordinate of the next file can precede last record of the current file
+            f'--threads {self.threads}',
+            f'--output-type v',  # uncompressed VCF
+            f'--output {self.vcf}',
+            snp_vcf,
+            indel_vcf,
+            f'1> {log}',
+            f'2> {log}',
+        ])
+        self.call(cmd)
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            variant_removal_flags: List[str]) -> str:
 
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.variant_removal_flags = variant_removal_flags
-
-        self.index_ref_fa_and_bams()
-
-        self.remove_variants()
-
-        return self.vcf
+#
 
 
 class SomaticSniper(Base):

@@ -142,3 +142,31 @@ class TestVariantCalling(TestCase):
         )
         expected = f'{self.workdir}/raw.vcf'
         self.assertFileExists(expected, actual)
+
+    def test_lofreq_tumor_only(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='lofreq',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=None,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None,
+            vardict_call_region_bed=None,
+            variant_removal_flags=[],
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)
+
+    def test_lofreq_tn_paired(self):
+        actual = VariantCalling(self.settings).main(
+            variant_caller='lofreq',
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            panel_of_normal_vcf=None,
+            germline_resource_vcf=None,
+            vardict_call_region_bed=None,
+            variant_removal_flags=[],
+        )
+        expected = f'{self.workdir}/raw.vcf'
+        self.assertFileExists(expected, actual)
