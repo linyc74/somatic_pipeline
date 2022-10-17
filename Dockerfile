@@ -38,7 +38,7 @@ RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-
  && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
  && rm lofreq_star-2.1.5_linux-x86-64.tgz
 
-# lofreq depends on libhts
+# lofreq depends on libhts.so.3
 ENV LD_LIBRARY_PATH=/opt/conda/envs/somatic/lib:$LD_LIBRARY_PATH
 
 # make lofreq executable
@@ -52,9 +52,6 @@ RUN mamba install -c conda-forge unzip=6.0 \
 
 # make snpeff executable
 ENV PATH /snpEff/exec:$PATH
-
-# download pre-build snpeff database
-# RUN snpeff download -verbose GRCh38.99
 
 # dependency for cnvkit
 ARG d=/opt/conda/envs/somatic/lib/
