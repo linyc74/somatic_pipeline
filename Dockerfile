@@ -18,12 +18,15 @@ RUN conda create -n somatic \
     pandas=1.3.5 \
  && conda clean --all --yes
 
+# activate somatic env
 # for identical commands (e.g. pip), somatic overrides default environment
 ENV PATH /opt/conda/envs/somatic/bin:$PATH
 
 # bcftools dependency issue
 ARG d=/opt/conda/envs/somatic/lib/
 RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
+
+
 
 # download and unzip snpeff
 RUN conda install -c conda-forge unzip=6.0 \
@@ -37,6 +40,8 @@ ENV PATH /snpEff/exec:$PATH
 # download pre-build snpeff database
 RUN snpeff download -verbose GRCh38.99
 
+
+
 # dependency for cnvkit
 ARG d=/opt/conda/envs/somatic/lib/
 RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
@@ -49,6 +54,8 @@ RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
 # install cnvkit, the pip used is in 'somatic' env
 RUN pip install --upgrade pip \
  && pip install --no-cache-dir cnvkit==0.9.9
+
+
 
 # perl dependency for vep
 # perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
@@ -73,6 +80,8 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
 
+
+
 # download and untar lofreq
 RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
  && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
@@ -84,6 +93,8 @@ ENV LD_LIBRARY_PATH=/opt/conda/envs/somatic/lib:$LD_LIBRARY_PATH
 # make lofreq executable
 ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
 
+
+
 # vardict & somatic-sniper
 RUN conda install -c bioconda -n somatic \
     vardict=2019.06.04 \
@@ -92,6 +103,8 @@ RUN conda install -c bioconda -n somatic \
 
 # extra vardict path
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
+
+
 
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
