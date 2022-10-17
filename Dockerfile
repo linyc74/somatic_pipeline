@@ -73,6 +73,26 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
 
+# download and untar lofreq
+RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
+ && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
+ && rm lofreq_star-2.1.5_linux-x86-64.tgz
+
+# lofreq depends on libhts.so.3
+ENV LD_LIBRARY_PATH=/opt/conda/envs/somatic/lib:$LD_LIBRARY_PATH
+
+# make lofreq executable
+ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
+
+# vardict & somatic-sniper
+RUN conda install -c bioconda -n somatic \
+    vardict=2019.06.04 \
+    bedtools=2.30.0 \
+    somatic-sniper=1.0.5.0 \
+
+# extra vardict path
+ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
+
 # copy source code
 COPY somatic_pipeline/* /somatic_pipeline/somatic_pipeline/
 COPY ./__main__.py /somatic_pipeline/
