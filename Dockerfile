@@ -88,7 +88,7 @@ ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
 RUN conda install -c bioconda -n somatic \
     vardict=2019.06.04 \
     bedtools=2.30.0 \
-    somatic-sniper=1.0.5.0 \
+    somatic-sniper=1.0.5.0
 
 # extra vardict path
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
