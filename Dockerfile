@@ -12,11 +12,11 @@ RUN conda create -n somatic python=3.7 \
     samtools=1.11 \
     gatk4=4.2.4.1 \
     bowtie2=2.3.5 \
-    muse=1.0 \
     varscan=2.3.7 \
     bcftools=1.8 \
     vcf2maf=1.6.21 \
     vardict=2019.06.04 \
+    muse=1.0 \
     bedtools=2.30.0 \
     somatic-sniper=1.0.5.0 \
  && mamba install -c anaconda -n somatic \
@@ -56,9 +56,9 @@ RUN snpeff download -verbose GRCh38.99
 # dependency for cnvkit
 ARG d=/opt/conda/envs/somatic/lib/
 RUN mamba install -c conda-forge -n somatic \
-    r-base=3.2.2 \
+    r-base=4.1.2 \
  && mamba install -c bioconda -n somatic \
-    bioconductor-dnacopy=1.44.0 \
+    bioconductor-dnacopy=1.68.0 \
  && ln -s ${d}libreadline.so.8.1 ${d}libreadline.so.6 \
  && ln -s ${d}libncursesw.so.6.2 ${d}libncurses.so.5 \
  && mamba install -c anaconda -n somatic \
@@ -71,9 +71,9 @@ RUN pip install --upgrade pip \
 
 # perl dependency for vep
 # perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
-RUN mamba install -c conda-forge -n somatic \
+RUN mamba install -c conda-forge -c anaconda -n somatic \
     perl=5.26.2=h470a237_0 \
-    gcc=12.1.0 \
+    gcc=9.5.0 \
  && mamba install -c anaconda -n somatic \
     make=4.2.1 \
  && mamba install -c bioconda -n somatic \
