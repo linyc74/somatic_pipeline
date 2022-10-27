@@ -1,4 +1,5 @@
 import argparse
+from typing import List
 from somatic_pipeline import Run
 
 
@@ -7,7 +8,7 @@ __VERSION__ = '1.7.0-beta'
 
 PROG = 'python somatic_pipeline'
 DESCRIPTION = f'Somatic pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
-REQUIRED_GROUP_NAME_TO_ARGUMENTS = {
+GROUP_NAME_TO_ARGUMENTS = {
     'main':
         [
             {
@@ -55,8 +56,7 @@ REQUIRED_GROUP_NAME_TO_ARGUMENTS = {
                 }
             },
         ],
-}
-OPTIONAL_GROUP_NAME_TO_ARGUMENTS = {
+
     'normal':
         [
             {
@@ -378,9 +378,9 @@ END = '\033[0m'
 
 class EntryPoint:
 
-    __root: argparse.ArgumentParser
-    __main: argparse.ArgumentParser
-    __annotate: argparse.ArgumentParser
+    root_parser: argparse.ArgumentParser
+    main_parser: argparse.ArgumentParser
+    annotate_parser: argparse.ArgumentParser
 
     def main(self):
         self.set_parsers()
@@ -389,53 +389,73 @@ class EntryPoint:
         self.run()
 
     def set_parsers(self):
-        self.__root = argparse.ArgumentParser(
+        self.root_parser = argparse.ArgumentParser(
             description=DESCRIPTION,
             formatter_class=argparse.RawTextHelpFormatter)
 
-        subparsers = self.__root.add_subparsers(
+        subparsers = self.root_parser.add_subparsers(
             title='commands',
             dest='mode'
         )
 
-        self.__main = subparsers.add_parser(
-            prog=PROG,
+        self.main_parser = subparsers.add_parser(
+            prog=f'{PROG} main',
             name='main',
             description=DESCRIPTION,
             add_help=False)
 
-        self.__annotate = subparsers.add_parser(
-            prog=PROG,
+        self.annotate_parser = subparsers.add_parser(
+            prog=f'{PROG} annotate',
             name='annotate',
             description=DESCRIPTION,
             add_help=False)
 
     def add_main_parser_arguments(self):
-        group = self.__main.add_argument_group(f'{BOLD}{RED}Required{END}')
-        for item in REQUIRED_GROUP_NAME_TO_ARGUMENTS['main']:
-            group.add_argument(*item['keys'], **item['properties'])
-
-        for group_name, arguments in OPTIONAL_GROUP_NAME_TO_ARGUMENTS.items():
-            group = self.__main.add_argument_group(f'{BOLD}{YELLOW}Optional {BLUE}({group_name}){END}')
-            for arg in arguments:
-                group.add_argument(*arg['keys'], **arg['properties'])
+        self.__add_arguments(
+            parser=self.main_parser,
+            required_group_name='main',
+            optional_group_names=[
+                'normal',
+                'general',
+                'pre-processing',
+                'variant calling',
+                'variant filtering',
+                'variant annotation',
+                'copy number variation',
+            ]
+        )
 
     def add_annotate_parser_arguments(self):
-        g = self.__annotate.add_argument_group(f'{BOLD}{RED}Required{END}')
-        for item in REQUIRED_GROUP_NAME_TO_ARGUMENTS['annotate']:
-            g.add_argument(*item['keys'], **item['properties'])
+        self.__add_arguments(
+            parser=self.annotate_parser,
+            required_group_name='annotate',
+            optional_group_names=[
+                'general',
+                'variant annotation'
+            ]
+        )
 
-        for group_name in ['general', 'variant annotation']:
-            g = self.__annotate.add_argument_group(f'{BOLD}{YELLOW}Optional {BLUE}({group_name}){END}')
-            arguments = OPTIONAL_GROUP_NAME_TO_ARGUMENTS[group_name]
-            for arg in arguments:
-                g.add_argument(*arg['keys'], **arg['properties'])
+    def __add_arguments(
+            self,
+            parser: argparse.ArgumentParser,
+            required_group_name: str,
+            optional_group_names: List[str]):
+
+        group = parser.add_argument_group(f'{BOLD}{RED}Required{END}')
+        for arg in GROUP_NAME_TO_ARGUMENTS[required_group_name]:
+            group.add_argument(*arg['keys'], **arg['properties'])
+
+        for group_name in optional_group_names:
+            group = parser.add_argument_group(f'{BOLD}{YELLOW}Optional{END}{BOLD} | {BLUE}{group_name}{END}')
+            for arg in GROUP_NAME_TO_ARGUMENTS[group_name]:
+                group.add_argument(*arg['keys'], **arg['properties'])
 
     def run(self):
-        args = self.__root.parse_args()
+        args = self.root_parser.parse_args()
 
+        prefix = f'{BOLD}Start running Somatic Pipeline version {__VERSION__} '
         if args.mode == 'main':
-            print(f'Start running Somatic Pipeline version {__VERSION__}\n', flush=True)
+            print(f'{prefix}{CYAN}main mode{END}\n', flush=True)
             Run().main(
                 ref_fa=args.ref_fa,
                 tumor_fq1=args.tumor_fq1,
@@ -479,7 +499,7 @@ class EntryPoint:
             )
 
         elif args.mode == 'annotate':
-            print(f'Start running Somatic Pipeline version {__VERSION__} \033[93mannotate\033[0m\n', flush=True)
+            print(f'{prefix}{CYAN}annotate mode{END}\n', flush=True)
             Run().annotate(
                 ref_fa=args.ref_fa,
                 vcf=args.vcf,
