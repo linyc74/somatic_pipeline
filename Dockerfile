@@ -28,6 +28,7 @@ RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
 
 
 
+# --- snpeff ---
 # download and unzip snpeff
 RUN conda install -c conda-forge unzip=6.0 \
  && wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
@@ -42,6 +43,7 @@ RUN snpeff download -verbose GRCh38.99
 
 
 
+# --- cnvkit ---
 # dependency for cnvkit
 ARG d=/opt/conda/envs/somatic/lib/
 RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
@@ -57,6 +59,7 @@ RUN pip install --upgrade pip \
 
 
 
+# --- vep ---
 # perl dependency for vep
 # perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
 RUN conda install -c conda-forge -n somatic \
@@ -82,6 +85,7 @@ ENV PATH /ensembl-vep-release-106:$PATH
 
 
 
+# --- lofreq ---
 # download and untar lofreq
 RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
  && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
@@ -95,7 +99,7 @@ ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
 
 
 
-# vardict & somatic-sniper
+# --- vardict & somatic-sniper ---
 RUN conda install -c bioconda -n somatic \
     vardict=2019.06.04 \
     bedtools=2.30.0 \
