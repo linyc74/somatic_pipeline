@@ -390,6 +390,7 @@ class EntryPoint:
 
     def set_parsers(self):
         self.root_parser = argparse.ArgumentParser(
+            prog=PROG,
             description=DESCRIPTION,
             formatter_class=argparse.RawTextHelpFormatter)
 
@@ -446,7 +447,7 @@ class EntryPoint:
             group.add_argument(*arg['keys'], **arg['properties'])
 
         for group_name in optional_group_names:
-            group = parser.add_argument_group(f'{BOLD}{YELLOW}Optional{END}{BOLD} | {BLUE}{group_name}{END}')
+            group = parser.add_argument_group(f'{BOLD}{YELLOW}Optional{END} {BOLD}| {BLUE}{group_name}{END}')
             for arg in GROUP_NAME_TO_ARGUMENTS[group_name]:
                 group.add_argument(*arg['keys'], **arg['properties'])
 
