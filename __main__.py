@@ -3,11 +3,23 @@ from typing import List
 from somatic_pipeline import Run
 
 
-__VERSION__ = '1.7.0-beta'
+__VERSION__ = '1.7.0'
+
+
+PURPLE = '\033[95m'
+CYAN = '\033[96m'
+DARKCYAN = '\033[36m'
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+RED = '\033[91m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+END = '\033[0m'
 
 
 PROG = 'python somatic_pipeline'
-DESCRIPTION = f'Somatic pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw)'
+DESCRIPTION = f'{BOLD}Somatic pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw){END}'
 GROUP_NAME_TO_ARGUMENTS = {
     'main':
         [
@@ -364,18 +376,6 @@ GROUP_NAME_TO_ARGUMENTS = {
 }
 
 
-PURPLE = '\033[95m'
-CYAN = '\033[96m'
-DARKCYAN = '\033[36m'
-BLUE = '\033[94m'
-GREEN = '\033[92m'
-YELLOW = '\033[93m'
-RED = '\033[91m'
-BOLD = '\033[1m'
-UNDERLINE = '\033[4m'
-END = '\033[0m'
-
-
 class EntryPoint:
 
     root_parser: argparse.ArgumentParser
@@ -402,13 +402,13 @@ class EntryPoint:
         self.main_parser = subparsers.add_parser(
             prog=f'{PROG} main',
             name='main',
-            description=DESCRIPTION,
+            description=f'{DESCRIPTION} - {BOLD}{CYAN}main mode{END}',
             add_help=False)
 
         self.annotate_parser = subparsers.add_parser(
             prog=f'{PROG} annotate',
             name='annotate',
-            description=DESCRIPTION,
+            description=f'{DESCRIPTION} - {BOLD}{CYAN}annotate mode{END}',
             add_help=False)
 
     def add_main_parser_arguments(self):
@@ -454,9 +454,13 @@ class EntryPoint:
     def run(self):
         args = self.root_parser.parse_args()
 
-        prefix = f'{BOLD}Start running Somatic Pipeline version {__VERSION__} '
-        if args.mode == 'main':
-            print(f'{prefix}{CYAN}main mode{END}\n', flush=True)
+        prefix = f'Start running Somatic Pipeline version {__VERSION__} '
+
+        if args.mode is None:
+            self.root_parser.print_help()
+
+        elif args.mode == 'main':
+            print(f'{prefix}main mode\n', flush=True)
             Run().main(
                 ref_fa=args.ref_fa,
                 tumor_fq1=args.tumor_fq1,
@@ -500,7 +504,7 @@ class EntryPoint:
             )
 
         elif args.mode == 'annotate':
-            print(f'{prefix}{CYAN}annotate mode{END}\n', flush=True)
+            print(f'{prefix}annotate mode\n', flush=True)
             Run().annotate(
                 ref_fa=args.ref_fa,
                 vcf=args.vcf,
