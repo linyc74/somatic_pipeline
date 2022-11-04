@@ -20,6 +20,21 @@ END = '\033[0m'
 
 PROG = 'python somatic_pipeline'
 DESCRIPTION = f'{BOLD}Somatic pipeline (version {__VERSION__}) by Yu-Cheng Lin (ylin@nycu.edu.tw){END}'
+HELP_ARG = {
+    'keys': ['-h', '--help'],
+    'properties': {
+        'action': 'help',
+        'help': 'show this help message',
+    }
+}
+VERSION_ARG = {
+    'keys': ['-v', '--version'],
+    'properties': {
+        'action': 'version',
+        'version': __VERSION__,
+        'help': 'show version',
+    }
+}
 GROUP_NAME_TO_ARGUMENTS = {
     'main':
         [
@@ -118,21 +133,8 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'help': 'debug mode',
                 }
             },
-            {
-                'keys': ['-h', '--help'],
-                'properties': {
-                    'action': 'help',
-                    'help': 'show this help message',
-                }
-            },
-            {
-                'keys': ['-v', '--version'],
-                'properties': {
-                    'action': 'version',
-                    'version': __VERSION__,
-                    'help': 'show version',
-                }
-            },
+            HELP_ARG,
+            VERSION_ARG,
         ],
 
     'pre-processing':
@@ -384,15 +386,17 @@ class EntryPoint:
 
     def main(self):
         self.set_parsers()
-        self.add_main_parser_arguments()
-        self.add_annotate_parser_arguments()
+        self.add_root_parser_args()
+        self.add_main_parser_args()
+        self.add_annotate_parser_args()
         self.run()
 
     def set_parsers(self):
         self.root_parser = argparse.ArgumentParser(
             prog=PROG,
             description=DESCRIPTION,
-            formatter_class=argparse.RawTextHelpFormatter)
+            formatter_class=argparse.RawTextHelpFormatter,
+            add_help=False)
 
         subparsers = self.root_parser.add_subparsers(
             title='commands',
@@ -411,7 +415,11 @@ class EntryPoint:
             description=f'{DESCRIPTION} - {BOLD}{CYAN}annotate mode{END}',
             add_help=False)
 
-    def add_main_parser_arguments(self):
+    def add_root_parser_args(self):
+        for arg in [HELP_ARG, VERSION_ARG]:
+            self.root_parser.add_argument(*arg['keys'], **arg['properties'])
+
+    def add_main_parser_args(self):
         self.__add_arguments(
             parser=self.main_parser,
             required_group_name='main',
@@ -426,7 +434,7 @@ class EntryPoint:
             ]
         )
 
-    def add_annotate_parser_arguments(self):
+    def add_annotate_parser_args(self):
         self.__add_arguments(
             parser=self.annotate_parser,
             required_group_name='annotate',
