@@ -1,5 +1,6 @@
+import os
 from abc import ABC
-from typing import Optional, List, IO
+from typing import Optional, List, IO, Dict, Callable
 from .tools import edit_fpath
 from .template import Processor
 from .constant import TUMOR, NORMAL
@@ -8,7 +9,11 @@ from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictio
 
 class VariantCalling(Processor):
 
-    variant_caller: str
+    DSTDIR_NAME = 'callers'
+    TN_PAIRED_MODE = 'tumor-normal paired'
+    TUMOR_ONLY_MODE = 'tumor-only'
+
+    variant_callers: List[str]
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
@@ -17,20 +22,23 @@ class VariantCalling(Processor):
     vardict_call_region_bed: Optional[str]
     variant_removal_flags: List[str]
 
-    vcf: str
+    dstdir: str
+    mode_caller_to_method: Dict[str, Dict[str, Callable]]
+    mode: str
+    vcfs: List[str]
 
     def main(
             self,
-            variant_caller: str,
+            variant_callers: List[str],
             ref_fa: str,
             tumor_bam: str,
             normal_bam: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
-            variant_removal_flags: List[str]) -> str:
+            variant_removal_flags: List[str]) -> List[str]:
 
-        self.variant_caller = variant_caller
+        self.variant_callers = variant_callers
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
@@ -39,40 +47,56 @@ class VariantCalling(Processor):
         self.vardict_call_region_bed = vardict_call_region_bed
         self.variant_removal_flags = variant_removal_flags
 
-        tumor_normal_paired = normal_bam is not None
+        self.make_dstdir()
+        self.set_mode_caller_to_method()
+        self.set_mode()
 
-        if tumor_normal_paired:
-            if variant_caller == 'mutect2':
-                self.mutect2_tn_paired()
-            elif variant_caller == 'muse':
-                self.muse()
-            elif variant_caller == 'varscan':
-                self.varscan()
-            elif variant_caller == 'vardict':
-                self.vardict_tn_paired()
-            elif variant_caller == 'lofreq':
-                self.lofreq_tn_paired()
-            elif variant_caller == 'somatic-sniper':
-                self.somatic_sniper()
+        self.vcfs = []
+        for caller in self.variant_callers:
+
+            method = self.get_method(caller)
+
+            if method is not None:
+                vcf = method()
+                dst = f'{self.dstdir}/{caller}.vcf'
+                self.call(f'mv {vcf} {dst}')
+                self.vcfs.append(dst)
+
             else:
-                raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-normal paired mode')
+                raise AssertionError(f'Variant caller "{caller}" not available for {self.mode} mode')
 
-        else:  # tumor-only
-            if variant_caller == 'mutect2':
-                self.mutect2_tumor_only()
-            elif variant_caller == 'haplotype-caller':
-                self.haplotype_caller()
-            elif variant_caller == 'vardict':
-                self.vardict_tumor_only()
-            elif variant_caller == 'lofreq':
-                self.lofreq_tumor_only()
-            else:
-                raise AssertionError(f'Variant caller "{variant_caller}" not available for tumor-only mode')
+        return self.vcfs
 
-        return self.vcf
+    def make_dstdir(self):
+        self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
+        os.makedirs(self.dstdir, exist_ok=True)
 
-    def mutect2_tn_paired(self):
-        self.vcf = Mutect2TNPaired(self.settings).main(
+    def set_mode_caller_to_method(self):
+        self.mode_caller_to_method = {
+            self.TN_PAIRED_MODE: {
+                'mutect2': self.mutect2_tn_paired,
+                'muse': self.muse,
+                'varscan': self.varscan,
+                'vardict': self.vardict_tn_paired,
+                'lofreq': self.lofreq_tn_paired,
+                'somatic-sniper': self.somatic_sniper,
+            },
+            self.TUMOR_ONLY_MODE: {
+                'mutect2': self.mutect2_tumor_only,
+                'haplotype-caller': self.haplotype_caller,
+                'vardict': self.vardict_tumor_only,
+                'lofreq': self.lofreq_tumor_only,
+            }
+        }
+
+    def set_mode(self):
+        self.mode = self.TUMOR_ONLY_MODE if (self.normal_bam is None) else self.TN_PAIRED_MODE
+
+    def get_method(self, caller: str) -> Optional[Callable]:
+        return self.mode_caller_to_method[self.mode].get(caller, None)
+
+    def mutect2_tn_paired(self) -> str:
+        return Mutect2TNPaired(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -80,65 +104,65 @@ class VariantCalling(Processor):
             germline_resource_vcf=self.germline_resource_vcf,
             variant_removal_flags=self.variant_removal_flags)
 
-    def mutect2_tumor_only(self):
-        self.vcf = Mutect2TumorOnly(self.settings).main(
+    def mutect2_tumor_only(self) -> str:
+        return Mutect2TumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
             variant_removal_flags=self.variant_removal_flags)
 
-    def haplotype_caller(self):
-        self.vcf = HaplotypeCaller(self.settings).main(
+    def haplotype_caller(self) -> str:
+        return HaplotypeCaller(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             variant_removal_flags=self.variant_removal_flags)
 
-    def muse(self):
-        self.vcf = Muse(self.settings).main(
+    def muse(self) -> str:
+        return Muse(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             variant_removal_flags=self.variant_removal_flags)
 
-    def varscan(self):
-        self.vcf = Varscan(self.settings).main(
+    def varscan(self) -> str:
+        return Varscan(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             variant_removal_flags=self.variant_removal_flags)
 
-    def vardict_tn_paired(self):
-        self.vcf = VarDictTNPaired(self.settings).main(
+    def vardict_tn_paired(self) -> str:
+        return VarDictTNPaired(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             bed=self.vardict_call_region_bed,
             variant_removal_flags=self.variant_removal_flags)
 
-    def vardict_tumor_only(self):
-        self.vcf = VarDictTumorOnly(self.settings).main(
+    def vardict_tumor_only(self) -> str:
+        return VarDictTumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             bed=self.vardict_call_region_bed,
             variant_removal_flags=self.variant_removal_flags)
 
-    def lofreq_tn_paired(self):
-        self.vcf = LoFreqTNPaired(self.settings).main(
+    def lofreq_tn_paired(self) -> str:
+        return LoFreqTNPaired(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             variant_removal_flags=self.variant_removal_flags)
 
-    def lofreq_tumor_only(self):
-        self.vcf = LoFreqTumorOnly(self.settings).main(
+    def lofreq_tumor_only(self) -> str:
+        return LoFreqTumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             variant_removal_flags=self.variant_removal_flags)
 
-    def somatic_sniper(self):
-        self.vcf = SomaticSniper(self.settings).main(
+    def somatic_sniper(self) -> str:
+        return SomaticSniper(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,

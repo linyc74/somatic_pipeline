@@ -13,6 +13,7 @@ from .map_stats import MappingStats
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
+from .variant_choosing import VariantChoosing
 
 
 class SomaticPipeline(Processor):
@@ -317,6 +318,7 @@ class VariantCallingWorkflow(Processor):
     cadd_resource: Optional[str]
     dbnsfp_resource: Optional[str]
 
+    vcfs: List[str]
     vcf: str
 
     def main(
@@ -366,6 +368,7 @@ class VariantCallingWorkflow(Processor):
         self.dbnsfp_resource = dbnsfp_resource
 
         self.variant_calling()
+        self.variant_picking()
         self.annotation()
         self.move_vcf_to_outdir()
         self.parse_vcf()
@@ -373,8 +376,8 @@ class VariantCallingWorkflow(Processor):
         self.compress_index_vcf()
 
     def variant_calling(self):
-        self.vcf = VariantCalling(self.settings).main(
-            variant_caller=self.variant_caller,
+        self.vcfs = VariantCalling(self.settings).main(
+            variant_callers=[self.variant_caller],
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -382,6 +385,12 @@ class VariantCallingWorkflow(Processor):
             germline_resource_vcf=self.germline_resource_vcf,
             vardict_call_region_bed=self.vardict_call_region_bed,
             variant_removal_flags=self.variant_removal_flags)
+
+    def variant_picking(self):
+        self.vcf = VariantChoosing(self.settings).main(
+            ref_fa=self.ref_fa,
+            vcfs=self.vcfs,
+            min_num_callers=1)
 
     def annotation(self):
         if not self.skip_variant_annotation:

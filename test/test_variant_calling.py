@@ -16,54 +16,20 @@ class TestVariantCalling(TestCase):
         self.tumor_bam = f'{self.workdir}/tumor-sorted.bam'
         self.normal_bam = f'{self.workdir}/normal-sorted.bam'
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
-    def test_mutect2_tn_paired(self):
+    def test_tn_paired(self):
+        variant_callers = [
+            'lofreq',
+            'somatic-sniper',
+            'vardict',
+            'varscan',
+            'muse',
+            'mutect2',
+        ]
         actual = VariantCalling(self.settings).main(
-            variant_caller='mutect2',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=['orientation'],
-        )
-        expected = f'{self.workdir}/mutect2-filter-mutect-calls-variant-removal.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_mutect2_tumor_only(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='mutect2',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=None,
-            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
-            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
-            vardict_call_region_bed=None,
-            variant_removal_flags=['orientation', 'panel_of_normals'],
-        )
-        expected = f'{self.workdir}/mutect2-filter-mutect-calls-variant-removal.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_haplotype_caller(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='haplotype-caller',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=None,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[]
-        )
-        expected = f'{self.workdir}/haplotype-caller-snp-indel-flagged.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_muse(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='muse',
+            variant_callers=variant_callers,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -72,12 +38,26 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/muse.vcf'
-        self.assertFileExists(expected, actual)
+        expected = [
+            f'{self.outdir}/callers/lofreq.vcf',
+            f'{self.outdir}/callers/somatic-sniper.vcf',
+            f'{self.outdir}/callers/vardict.vcf',
+            f'{self.outdir}/callers/varscan.vcf',
+            f'{self.outdir}/callers/muse.vcf',
+            f'{self.outdir}/callers/mutect2.vcf',
+        ]
+        for a, e in zip(actual, expected):
+            self.assertFileExists(e, a)
 
-    def test_varscan(self):
+    def test_tumor_only(self):
+        variant_callers = [
+            'lofreq',
+            'vardict',
+            'haplotype-caller',
+            'mutect2',
+        ]
         actual = VariantCalling(self.settings).main(
-            variant_caller='varscan',
+            variant_callers=variant_callers,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -86,13 +66,19 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/varscan.vcf'
-        self.assertFileExists(expected, actual)
+        expected = [
+            f'{self.outdir}/callers/lofreq.vcf',
+            f'{self.outdir}/callers/vardict.vcf',
+            f'{self.outdir}/callers/haplotype-caller.vcf',
+            f'{self.outdir}/callers/mutect2.vcf',
+        ]
+        for a, e in zip(actual, expected):
+            self.assertFileExists(e, a)
 
     def test_raise_assertion_error(self):
         with self.assertRaises(AssertionError):
             VariantCalling(self.settings).main(
-                variant_caller='invalid-caller',
+                variant_callers=['invalid-caller'],
                 ref_fa=self.ref_fa,
                 tumor_bam=self.tumor_bam,
                 normal_bam=self.normal_bam,
@@ -101,86 +87,3 @@ class TestVariantCalling(TestCase):
                 vardict_call_region_bed=None,
                 variant_removal_flags=[]
             )
-
-        for caller in ['muse', 'varscan']:
-            with self.assertRaises(AssertionError):
-                VariantCalling(self.settings).main(
-                    variant_caller=caller,
-                    ref_fa=self.ref_fa,
-                    tumor_bam=self.tumor_bam,
-                    normal_bam=None,
-                    panel_of_normal_vcf=None,
-                    germline_resource_vcf=None,
-                    vardict_call_region_bed=None,
-                    variant_removal_flags=[]
-                )
-
-    def test_vardict_tumor_only(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='vardict',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=None,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
-            variant_removal_flags=['NM5.25', 'PASS'],
-        )
-        expected = f'{self.workdir}/vardict-variant-removal.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_vardict_tn_paired(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='vardict',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
-            variant_removal_flags=['NM5.25', 'PASS'],
-        )
-        expected = f'{self.workdir}/vardict-variant-removal.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_lofreq_tumor_only(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='lofreq',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=None,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[],
-        )
-        expected = f'{self.workdir}/lofreq.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_lofreq_tn_paired(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='lofreq',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[],
-        )
-        expected = f'{self.workdir}/lofreq.vcf'
-        self.assertFileExists(expected, actual)
-
-    def test_somatic_sniper(self):
-        actual = VariantCalling(self.settings).main(
-            variant_caller='somatic-sniper',
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[],
-        )
-        expected = f'{self.workdir}/somatic-sniper.vcf'
-        self.assertFileExists(expected, actual)
