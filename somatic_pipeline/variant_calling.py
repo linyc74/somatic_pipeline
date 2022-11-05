@@ -392,7 +392,7 @@ class Mutect2TNPaired(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/mutect2.vcf'
         self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
         args = [
             'gatk Mutect2',
@@ -439,7 +439,7 @@ class Mutect2TumorOnly(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/mutect2.vcf'
         self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
         cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
@@ -479,7 +479,7 @@ class HaplotypeCaller(GATKBase):
 
     def haplotype_caller(self):
         log = f'{self.outdir}/gatk-HaplotypeCaller.log'
-        output = f'{self.workdir}/raw.vcf'
+        output = f'{self.workdir}/haplotype-caller.vcf'
         args = [
             'gatk HaplotypeCaller',
             f'--reference {self.ref_fa}',
@@ -660,7 +660,7 @@ class Muse(Base):
         self.call_result_txt = output + '.MuSE.txt'
 
     def muse_sump(self):
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/muse.vcf'
         log = f'{self.outdir}/MuSE-sump.log'
         cmd = self.CMD_LINEBREAK.join([
             'MuSE sump',
@@ -751,7 +751,7 @@ class Varscan(Base):
 
     def concat_snp_indel_vcfs(self):
         log = f'{self.outdir}/bcftools-merge.log'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/varscan.vcf'
         cmd = self.CMD_LINEBREAK.join([
             'bcftools concat',
             '--allow-overlaps',  # first coordinate of the next file can precede last record of the current file
@@ -827,7 +827,7 @@ class VarDictTumorOnly(VarDictBase):
 
     def run_vardict(self):
         log = f'{self.outdir}/vardict.log'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
             'vardict',
             f'-G {self.ref_fa}',
@@ -880,7 +880,7 @@ class VarDictTNPaired(VarDictBase):
 
     def run_vardict(self):
         log = f'{self.outdir}/vardict.log'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
             'vardict',
             f'-G {self.ref_fa}',
@@ -929,7 +929,7 @@ class LoFreqTumorOnly(Base):
         return self.vcf
 
     def lofreq_call_parallel(self):
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/lofreq.vcf'
         log = f'{self.outdir}/lofreq-call-parallel.log'
         args = [
             'lofreq call-parallel',
@@ -983,7 +983,7 @@ class LoFreqTNPaired(Base):
     def concat_snp_indel_vcfs(self):
         snp_vcf = f'{self.workdir}/lofreq-somatic_final.snvs.vcf.gz'
         indel_vcf = f'{self.workdir}/lofreq-somatic_final.indels.vcf.gz'
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/lofreq.vcf'
         log = f'{self.outdir}/bcftools-merge.log'
         cmd = self.CMD_LINEBREAK.join([
             'bcftools concat',
@@ -1023,7 +1023,7 @@ class SomaticSniper(Base):
         return self.vcf
 
     def run_somatic_sniper(self):
-        self.vcf = f'{self.workdir}/raw.vcf'
+        self.vcf = f'{self.workdir}/somatic-sniper.vcf'
         log = f'{self.outdir}/bam-somaticsniper.log'
         args = [
             'bam-somaticsniper',

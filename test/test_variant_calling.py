@@ -30,7 +30,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=['orientation'],
         )
-        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        expected = f'{self.workdir}/mutect2-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_mutect2_tumor_only(self):
@@ -44,7 +44,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=['orientation', 'panel_of_normals'],
         )
-        expected = f'{self.workdir}/raw-filter-mutect-calls-variant-removal.vcf'
+        expected = f'{self.workdir}/mutect2-filter-mutect-calls-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_haplotype_caller(self):
@@ -58,7 +58,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[]
         )
-        expected = f'{self.workdir}/raw-snp-indel-flagged.vcf'
+        expected = f'{self.workdir}/haplotype-caller-snp-indel-flagged.vcf'
         self.assertFileExists(expected, actual)
 
     def test_muse(self):
@@ -72,7 +72,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/muse.vcf'
         self.assertFileExists(expected, actual)
 
     def test_varscan(self):
@@ -86,7 +86,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/varscan.vcf'
         self.assertFileExists(expected, actual)
 
     def test_raise_assertion_error(self):
@@ -126,7 +126,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_removal_flags=['NM5.25', 'PASS'],
         )
-        expected = f'{self.workdir}/raw-variant-removal.vcf'
+        expected = f'{self.workdir}/vardict-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_vardict_tn_paired(self):
@@ -140,7 +140,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_removal_flags=['NM5.25', 'PASS'],
         )
-        expected = f'{self.workdir}/raw-variant-removal.vcf'
+        expected = f'{self.workdir}/vardict-variant-removal.vcf'
         self.assertFileExists(expected, actual)
 
     def test_lofreq_tumor_only(self):
@@ -154,7 +154,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/lofreq.vcf'
         self.assertFileExists(expected, actual)
 
     def test_lofreq_tn_paired(self):
@@ -168,7 +168,7 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/lofreq.vcf'
         self.assertFileExists(expected, actual)
 
     def test_somatic_sniper(self):
@@ -182,5 +182,5 @@ class TestVariantCalling(TestCase):
             vardict_call_region_bed=None,
             variant_removal_flags=[],
         )
-        expected = f'{self.workdir}/raw.vcf'
+        expected = f'{self.workdir}/somatic-sniper.vcf'
         self.assertFileExists(expected, actual)
