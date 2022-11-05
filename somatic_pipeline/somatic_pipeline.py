@@ -13,7 +13,7 @@ from .map_stats import MappingStats
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .mark_duplicates import MarkDuplicates
-from .variant_choosing import VariantChoosing
+from .variant_picking import VariantPicking
 
 
 class SomaticPipeline(Processor):
@@ -387,7 +387,7 @@ class VariantCallingWorkflow(Processor):
             variant_removal_flags=self.variant_removal_flags)
 
     def variant_picking(self):
-        self.vcf = VariantChoosing(self.settings).main(
+        self.vcf = VariantPicking(self.settings).main(
             ref_fa=self.ref_fa,
             vcfs=self.vcfs,
             min_num_callers=1)

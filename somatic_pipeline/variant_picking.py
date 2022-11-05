@@ -115,7 +115,7 @@ class VcfWriter:
         self.__fh.close()
 
 
-class VariantChoosing(Processor):
+class VariantPicking(Processor):
 
     VARIANT_KEY_COLUMNS = ['CHROM', 'POS', 'REF', 'ALT']
     INFO_CALL_ID = 'CALL'

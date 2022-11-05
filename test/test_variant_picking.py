@@ -1,4 +1,4 @@
-from somatic_pipeline.variant_choosing import VariantChoosing, BuildHeaderContigLines
+from somatic_pipeline.variant_picking import VariantPicking, BuildHeaderContigLines
 from .setup import TestCase
 
 
@@ -11,7 +11,7 @@ class TestVariantChoosing(TestCase):
         self.tear_down()
 
     def test_main(self):
-        actual = VariantChoosing(self.settings).main(
+        actual = VariantPicking(self.settings).main(
             ref_fa=f'{self.indir}/chr9.fa',
             vcfs=[
                 f'{self.indir}/lofreq.vcf',
