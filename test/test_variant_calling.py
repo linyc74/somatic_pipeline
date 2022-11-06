@@ -60,7 +60,7 @@ class TestVariantCalling(TestCase):
             variant_callers=variant_callers,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
+            normal_bam=None,
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',

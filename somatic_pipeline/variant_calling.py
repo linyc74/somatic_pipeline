@@ -47,6 +47,7 @@ class VariantCalling(Processor):
         self.vardict_call_region_bed = vardict_call_region_bed
         self.variant_removal_flags = variant_removal_flags
 
+        self.index_ref_fa_and_bams()
         self.make_dstdir()
         self.set_mode_caller_to_method()
         self.set_mode()
@@ -66,6 +67,12 @@ class VariantCalling(Processor):
                 raise AssertionError(f'Variant caller "{caller}" not available for {self.mode} mode')
 
         return self.vcfs
+
+    def index_ref_fa_and_bams(self):
+        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
+        SamtoolsIndexBam(self.settings).main(bam=self.tumor_bam)
+        if self.normal_bam is not None:
+            SamtoolsIndexBam(self.settings).main(bam=self.normal_bam)
 
     def make_dstdir(self):
         self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
@@ -180,12 +187,6 @@ class Base(Processor, ABC):
     variant_removal_flags: List[str]
 
     vcf: str
-
-    def index_ref_fa_and_bams(self):
-        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
-        SamtoolsIndexBam(self.settings).main(bam=self.tumor_bam)
-        if self.normal_bam is not None:
-            SamtoolsIndexBam(self.settings).main(bam=self.normal_bam)
 
     def remove_variants(self):
         if len(self.variant_removal_flags) > 0:
@@ -405,7 +406,6 @@ class Mutect2TNPaired(Mutect2Base):
         self.germline_resource_vcf = germline_resource_vcf
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
@@ -452,7 +452,6 @@ class Mutect2TumorOnly(Mutect2Base):
         self.germline_resource_vcf = germline_resource_vcf
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
@@ -493,7 +492,6 @@ class HaplotypeCaller(GATKBase):
         self.normal_bam = normal_bam
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.create_sequence_dictionary()
         self.haplotype_caller()
         self.filter_haplotype_variants()
@@ -661,7 +659,6 @@ class Muse(Base):
         self.normal_bam = normal_bam
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.muse_call()
         self.muse_sump()
         self.remove_variants()
@@ -716,7 +713,6 @@ class Varscan(Base):
         self.normal_bam = normal_bam
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.samtools_mpileup()
         self.varscan_somatic()
         self.compress_vcfs()
@@ -841,7 +837,6 @@ class VarDictTumorOnly(VarDictBase):
         self.variant_removal_flags = variant_removal_flags
         self.bed = bed
 
-        self.index_ref_fa_and_bams()
         if self.bed is None:
             self.build_bed_for_wgs_mode()
         self.run_vardict()
@@ -894,7 +889,6 @@ class VarDictTNPaired(VarDictBase):
         self.variant_removal_flags = variant_removal_flags
         self.bed = bed
 
-        self.index_ref_fa_and_bams()
         if self.bed is None:
             self.build_bed_for_wgs_mode()
         self.run_vardict()
@@ -946,7 +940,6 @@ class LoFreqTumorOnly(Base):
         self.normal_bam = None
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.lofreq_call_parallel()
         self.remove_variants()
 
@@ -982,7 +975,6 @@ class LoFreqTNPaired(Base):
         self.normal_bam = normal_bam
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.lofreq_somatic()
         self.concat_snp_indel_vcfs()
         self.remove_variants()
@@ -1040,7 +1032,6 @@ class SomaticSniper(Base):
         self.normal_bam = normal_bam
         self.variant_removal_flags = variant_removal_flags
 
-        self.index_ref_fa_and_bams()
         self.run_somatic_sniper()
         self.remove_variants()
 
