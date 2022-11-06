@@ -1,5 +1,7 @@
+from os.path import dirname
+from typing import Optional
+from .tools import edit_fpath
 from .template import Processor
-from .constant import TUMOR, NORMAL
 
 
 class Vcf2Maf(Processor):
@@ -7,9 +9,9 @@ class Vcf2Maf(Processor):
     SPECIES = 'homo_sapiens'
     NCBI_BUILD = 'GRCh38'
 
-    annotated_vcf: str
+    vcf: str
     ref_fa: str
-    variant_caller: str
+    dstdir: Optional[str]
 
     vcf_tumor_column: str
     vcf_normal_column: str
@@ -17,35 +19,50 @@ class Vcf2Maf(Processor):
 
     def main(
             self,
-            annotated_vcf: str,
+            vcf: str,
             ref_fa: str,
-            variant_caller: str) -> str:
+            dstdir: Optional[str]) -> str:
 
-        self.annotated_vcf = annotated_vcf
+        self.vcf = vcf
         self.ref_fa = ref_fa
-        self.variant_caller = variant_caller
+        self.dstdir = dstdir
 
-        self.set_vcf_columns()
+        self.set_tumor_normal_columns()
+        self.set_maf()
         self.execute()
 
         return self.maf
 
-    def set_vcf_columns(self):
-        if self.variant_caller == 'mutect2':
-            # Mutect2 uses tagged read group names as vcf column names
-            self.vcf_tumor_column = TUMOR
-            self.vcf_normal_column = NORMAL
-        else:
-            # hard-coded by most variant callers, e.g. MuSE and VarScan
-            self.vcf_tumor_column = 'TUMOR'
-            self.vcf_normal_column = 'NORMAL'
+    def set_tumor_normal_columns(self):
+        # Default values
+        self.vcf_tumor_column = 'T'
+        self.vcf_normal_column = 'N'
+
+        with open(self.vcf) as fh:
+            for line in fh:
+                if line.startswith('#CHROM'):
+                    last_two_columns = line.strip().split('\t')[-2:]
+                    break
+
+        for c in last_two_columns:
+            if c.lower() == 'tumor':
+                self.vcf_tumor_column = c
+            if c.lower() == 'normal':
+                self.vcf_normal_column = c
+
+    def set_maf(self):
+        self.maf = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix='.maf',
+            dstdir=dirname(self.vcf) if self.dstdir is None else self.dstdir
+        )
 
     def execute(self):
         log = f'{self.outdir}/vcf2maf.log'
-        self.maf = f'{self.outdir}/variants.maf'
         cmd = self.CMD_LINEBREAK.join([
             'vcf2maf.pl',
-            f'--input-vcf {self.annotated_vcf}',
+            f'--input-vcf {self.vcf}',
             f'--ref-fasta {self.ref_fa}',
             f'--tmp-dir {self.workdir}',
             f'--output-maf {self.maf}',

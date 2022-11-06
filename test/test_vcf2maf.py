@@ -12,16 +12,30 @@ class TestVcf2Maf(TestCase):
     def copy_and_set_files(self):
         shutil.copy(f'{self.indir}/chr9.fa', f'{self.workdir}/chr9.fa')
         self.ref_fa = f'{self.workdir}/chr9.fa'
-        self.annotated_vcf = f'{self.indir}/annotated.vcf'
 
     def tearDown(self):
         self.tear_down()
 
     def test_main(self):
-        actual = Vcf2Maf(self.settings).main(
-            annotated_vcf=self.annotated_vcf,
-            ref_fa=self.ref_fa,
-            variant_caller='mutect2',
-        )
-        expected = f'{self.indir}/variants.maf'
-        self.assertFileEqual(expected, actual)
+        for vcf in [
+            'tn-paired-lofreq.vcf',
+            'tn-paired-muse.vcf',
+            'tn-paired-mutect2.vcf',
+            'tn-paired-picked-variants.vcf',
+            'tn-paired-somatic-sniper.vcf',
+            'tn-paired-vardict.vcf',
+            'tn-paired-varscan.vcf',
+            'tumor-only-haplotype-caller.vcf',
+            'tumor-only-lofreq.vcf',
+            'tumor-only-mutect2.vcf',
+            'tumor-only-picked-variants.vcf',
+            'tumor-only-vardict.vcf',
+        ]:
+            with self.subTest(vcf=vcf):
+                actual = Vcf2Maf(self.settings).main(
+                    vcf=f'{self.indir}/{vcf}',
+                    ref_fa=self.ref_fa,
+                    dstdir=self.outdir
+                )
+                expected = f'{self.outdir}/{vcf[:-4]}.maf'
+                self.assertFileExists(expected, actual)

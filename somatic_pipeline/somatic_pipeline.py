@@ -432,14 +432,16 @@ class VariantCallingWorkflow(Processor):
         for vcf in self.vcfs + [self.vcf]:
             ParseVcf(self.settings).main(
                 vcf=vcf,
-                dstdir=None  # the same dir of input vcf
+                dstdir=None  # same dir of input vcf
             )
 
     def vcf_2_maf(self):
-        Vcf2Maf(self.settings).main(
-            annotated_vcf=self.vcf,
-            ref_fa=self.ref_fa,
-            variant_caller='mutect2')
+        for vcf in self.vcfs + [self.vcf]:
+            Vcf2Maf(self.settings).main(
+                vcf=vcf,
+                ref_fa=self.ref_fa,
+                dstdir=None  # same dir of input vcf
+            )
 
     def compress_index_vcf(self):
         for vcf in self.vcfs + [self.vcf]:

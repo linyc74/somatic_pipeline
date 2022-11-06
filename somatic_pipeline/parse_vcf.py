@@ -54,7 +54,7 @@ class ParseVcf(Processor):
             fpath=self.vcf,
             old_suffix='.vcf',
             new_suffix='.csv',
-            dstdir=self.dstdir if self.dstdir is not None else dirname(self.vcf)
+            dstdir=dirname(self.vcf) if self.dstdir is None else self.dstdir
         )
 
     def process_vcf_data(self):
