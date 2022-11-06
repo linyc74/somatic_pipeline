@@ -199,9 +199,8 @@ GROUP_NAME_TO_ARGUMENTS = {
                 'properties': {
                     'type': str,
                     'required': False,
-                    'choices': ['mutect2', 'muse', 'varscan', 'haplotype-caller', 'vardict', 'lofreq', 'somatic-sniper'],
                     'default': 'mutect2',
-                    'help': 'comma-separated variant callers: mutect2,haplotype-caller,vardict,lofreq,muse,varscan,somatic-sniper, the first four works for tumor-only mode (default: %(default)s)',
+                    'help': 'comma-separated variant callers: mutect2,haplotype-caller,vardict,lofreq,muse,varscan,somatic-sniper, the former four works for tumor-only (default: %(default)s)',
 
                 }
             },
