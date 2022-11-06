@@ -1,6 +1,7 @@
 import pandas as pd
-from os.path import exists
-from typing import Dict, Any, List, Tuple
+from os.path import exists, dirname
+from typing import Dict, Any, List, Tuple, Optional
+from .tools import edit_fpath
 from .template import Processor, Settings
 
 
@@ -9,23 +10,27 @@ class ParseVcf(Processor):
     LOG_INTERVAL = 10000  # variants
 
     vcf: str
+    dstdir: Optional[str]
 
     vcf_header: str
     info_id_to_description: Dict[str, str]
     all_columns: List[str]
+    output_csv: str
 
     def __init__(self, settings: Settings):
         super().__init__(settings)
         self.vcf_line_to_row = VcfLineToRow(self.settings).main
         self.save_data_to_csv = SaveDataToCsv(self.settings).main
 
-    def main(self, vcf: str):
+    def main(self, vcf: str, dstdir: Optional[str]):
         self.vcf = vcf
+        self.dstdir = dstdir
 
         self.logger.info(msg='Start parsing annotated VCF')
         self.set_vcf_header()
         self.set_info_id_to_description()
         self.set_all_columns()
+        self.set_output_csv()
         self.process_vcf_data()
 
     def set_vcf_header(self):
@@ -44,6 +49,14 @@ class ParseVcf(Processor):
         self.all_columns = GetAllColumns(self.settings).main(
             info_id_to_description=self.info_id_to_description)
 
+    def set_output_csv(self):
+        self.output_csv = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix='.csv',
+            dstdir=self.dstdir if self.dstdir is not None else dirname(self.vcf)
+        )
+
     def process_vcf_data(self):
         n = 0
         data: List[Dict[str, Any]]  # each dict is a row (i.e. variant)
@@ -61,7 +74,6 @@ class ParseVcf(Processor):
                     self.logger.debug(msg=f'{n} variants parsed')
                     self.__to_csv(data=data)
                     data = []  # clear up data
-
             self.__to_csv(data=data)  # last partial chunk of data
 
     def __line_to_row(self, line: str) -> Dict[str, Any]:
@@ -73,7 +85,7 @@ class ParseVcf(Processor):
         self.save_data_to_csv(
             data=data,
             all_columns=self.all_columns,
-            csv=f'{self.outdir}/variants.csv'
+            csv=self.output_csv
         )
 
 

@@ -391,7 +391,6 @@ class VariantCallingWorkflow(Processor):
         self.variant_calling()
         self.variant_picking()
         self.annotation()
-        self.move_vcf_to_outdir()
         self.parse_vcf()
         self.vcf_2_maf()
         self.compress_index_vcf()
@@ -429,13 +428,12 @@ class VariantCallingWorkflow(Processor):
                 cadd_resource=self.cadd_resource,
                 dbnsfp_resource=self.dbnsfp_resource)
 
-    def move_vcf_to_outdir(self):
-        dst = f'{self.outdir}/variants.vcf'
-        self.call(f'mv {self.vcf} {dst}')
-        self.vcf = dst
-
     def parse_vcf(self):
-        ParseVcf(self.settings).main(vcf=self.vcf)
+        for vcf in self.vcfs + [self.vcf]:
+            ParseVcf(self.settings).main(
+                vcf=vcf,
+                dstdir=None  # the same dir of input vcf
+            )
 
     def vcf_2_maf(self):
         Vcf2Maf(self.settings).main(
@@ -444,4 +442,5 @@ class VariantCallingWorkflow(Processor):
             variant_caller='mutect2')
 
     def compress_index_vcf(self):
-        BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)
+        for vcf in self.vcfs + [self.vcf]:
+            BgzipIndex(self.settings).main(vcf=vcf, keep=False)

@@ -32,7 +32,7 @@ class TestAnnotation(TestCase):
             cadd_resource=None,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
         )
-        expected = f'{self.workdir}/picked-variants-vep-clinvar.vcf'
+        expected = f'{self.outdir}/variants.vcf'
         self.assertFileExists(expected, actual)
 
 

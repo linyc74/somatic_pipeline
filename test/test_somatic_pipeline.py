@@ -26,11 +26,11 @@ class TestSomaticPipeline(TestCase):
             bqsr_known_variant_vcf=f'{self.indir}/known-variants.vcf',
             discard_bam=True,
 
-            variant_callers=['mutect2', 'lofreq'],
+            variant_callers=['mutect2', 'vardict', 'lofreq', 'muse', 'varscan', 'somatic-sniper'],
             skip_variant_calling=False,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
+            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
+            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
 
             variant_removal_flags=[],
 
@@ -69,7 +69,7 @@ class TestSomaticPipeline(TestCase):
             bqsr_known_variant_vcf=f'{self.indir}/known-variants.vcf',
             discard_bam=True,
 
-            variant_callers=['mutect2', 'lofreq'],
+            variant_callers=['mutect2', 'haplotype-caller', 'vardict', 'lofreq'],
             skip_variant_calling=False,
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',

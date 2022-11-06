@@ -15,20 +15,22 @@ class TestParseVcf(TestCase):
 
     def test_snpeff(self):
         ParseVcf(self.settings).main(
-            vcf=f'{self.indir}/snpeff.vcf'
+            vcf=f'{self.indir}/snpeff.vcf',
+            dstdir=self.workdir
         )
         self.assertDataFrameEqual(
             first=pd.read_csv(f'{self.indir}/snpeff.csv'),
-            second=pd.read_csv(f'{self.outdir}/variants.csv'),
+            second=pd.read_csv(f'{self.workdir}/snpeff.csv'),
         )
 
     def test_vep(self):
         ParseVcf(self.settings).main(
-            vcf=f'{self.indir}/vep.vcf'
+            vcf=f'{self.indir}/vep.vcf',
+            dstdir=self.workdir
         )
         self.assertDataFrameEqual(
             first=pd.read_csv(f'{self.indir}/vep.csv'),
-            second=pd.read_csv(f'{self.outdir}/variants.csv'),
+            second=pd.read_csv(f'{self.indir}/vep.csv'),
         )
 
 

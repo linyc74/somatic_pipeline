@@ -16,8 +16,8 @@ class TestVariantCalling(TestCase):
         self.tumor_bam = f'{self.workdir}/tumor-sorted.bam'
         self.normal_bam = f'{self.workdir}/normal-sorted.bam'
 
-    # def tearDown(self):
-    #     self.tear_down()
+    def tearDown(self):
+        self.tear_down()
 
     def test_tn_paired(self):
         variant_callers = [
