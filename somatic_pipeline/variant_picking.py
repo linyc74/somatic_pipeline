@@ -69,7 +69,7 @@ class VcfParser:
 class VariantPicking(Processor):
 
     VARIANT_KEY_COLUMNS = ['CHROM', 'POS', 'REF', 'ALT']
-    VCF_COLUMNS = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', NORMAL, TUMOR]
+    VCF_COLUMNS = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO']
     INFO_CALL_ID = 'CALL'
     INFO_CALL_DESCRIPTION = 'Variant callers detecting this variant'
 
@@ -105,11 +105,12 @@ class VariantPicking(Processor):
 
     def build_vcf_header(self):
         contig_lines = BuildHeaderContigLines(self.settings).main(self.ref_fa)
+        columns = '\t'.join(self.VCF_COLUMNS)
         self.vcf_header = f'''\
 ##fileformat=VCFv4.2
 {contig_lines}
 ##INFO=<ID={self.INFO_CALL_ID},Number=.,Type=String,Description="{self.INFO_CALL_DESCRIPTION}">
-#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{NORMAL}\t{TUMOR}'''
+#{columns}'''
 
     def collect_variant_dict(self):
         self.variant_to_callers = {}
