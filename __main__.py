@@ -195,13 +195,14 @@ GROUP_NAME_TO_ARGUMENTS = {
     'variant calling':
         [
             {
-                'keys': ['--variant-caller'],
+                'keys': ['--variant-callers'],
                 'properties': {
                     'type': str,
                     'required': False,
                     'choices': ['mutect2', 'muse', 'varscan', 'haplotype-caller', 'vardict', 'lofreq', 'somatic-sniper'],
                     'default': 'mutect2',
-                    'help': '"mutect2", "haplotype-caller", "vardict", "lofreq" works for tumor-only mode (default: %(default)s)',
+                    'help': 'comma-separated variant callers: mutect2,haplotype-caller,vardict,lofreq,muse,varscan,somatic-sniper, the first four works for tumor-only mode (default: %(default)s)',
+
                 }
             },
             {
@@ -249,6 +250,28 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'required': False,
                     'default': 'None',
                     'help': 'comma-separated flags for variant removal, e.g. "panel_of_normals,map_qual" (default: %(default)s)',
+                }
+            },
+        ],
+
+    'variant picking':
+        [
+            {
+                'keys': ['--min-snv-callers'],
+                'properties': {
+                    'type': int,
+                    'required': False,
+                    'default': 1,
+                    'help': 'min number of variant callers for an SNV to be picked (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--min-indel-callers'],
+                'properties': {
+                    'type': int,
+                    'required': False,
+                    'default': 1,
+                    'help': 'min number of variant callers for an indel to be picked (default: %(default)s)',
                 }
             },
         ],
@@ -429,6 +452,7 @@ class EntryPoint:
                 'pre-processing',
                 'variant calling',
                 'variant filtering',
+                'variant picking',
                 'variant annotation',
                 'copy number variation',
             ]
@@ -487,13 +511,16 @@ class EntryPoint:
                 bqsr_known_variant_vcf=args.bqsr_known_variant_vcf,
                 discard_bam=args.discard_bam,
 
-                variant_caller=args.variant_caller,
+                variant_callers=args.variant_callers,
                 skip_variant_calling=args.skip_variant_calling,
                 panel_of_normal_vcf=args.panel_of_normal_vcf,
                 germline_resource_vcf=args.germline_resource_vcf,
                 vardict_call_region_bed=args.vardict_call_region_bed,
 
                 variant_removal_flags=args.variant_removal_flags,
+
+                min_snv_callers=args.min_snv_callers,
+                min_indel_callers=args.min_indel_callers,
 
                 annotator=args.annotator,
                 skip_variant_annotation=args.skip_variant_annotation,

@@ -21,7 +21,7 @@ class TestAnnotation(TestCase):
     def test_main(self):
         actual = Annotation(self.settings).main(
             annotator='vep',
-            vcf=f'{self.indir}/raw.vcf',
+            vcf=f'{self.indir}/picked-variants.vcf',
             ref_fa=self.ref_fa,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
@@ -32,7 +32,7 @@ class TestAnnotation(TestCase):
             cadd_resource=None,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
         )
-        expected = f'{self.workdir}/raw-vep-clinvar.vcf'
+        expected = f'{self.workdir}/picked-variants-vep-clinvar.vcf'
         self.assertFileExists(expected, actual)
 
 
@@ -46,9 +46,9 @@ class TestSnpEff(TestCase):
 
     def test_main(self):
         actual = SnpEff(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf'
+            vcf=f'{self.indir}/picked-variants.vcf'
         )
-        expected = f'{self.workdir}/raw-snpeff.vcf'
+        expected = f'{self.workdir}/picked-variants-snpeff.vcf'
         self.assertFileExists(expected, actual)
 
 
@@ -62,10 +62,10 @@ class TestSnpSiftAnnotate(TestCase):
 
     def test_main(self):
         actual = SnpSiftAnnotate(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+            vcf=f'{self.indir}/picked-variants.vcf',
             resource_vcf_gz=f'{self.indir}/clinvar.vcf.gz'
         )
-        expected = f'{self.workdir}/raw-clinvar.vcf'
+        expected = f'{self.workdir}/picked-variants-clinvar.vcf'
         self.assertFileExists(expected, actual)
 
 
@@ -79,10 +79,10 @@ class TestSnpSiftDbNSFP(TestCase):
 
     def test_main(self):
         actual = SnpSiftDbNSFP(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+            vcf=f'{self.indir}/picked-variants.vcf',
             dbnsfp_txt_gz=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz'
         )
-        expected = f'{self.workdir}/raw-snpsift-dbnsfp.vcf'
+        expected = f'{self.workdir}/picked-variants-snpsift-dbnsfp.vcf'
         self.assertFileExists(expected, actual)
 
 
@@ -102,7 +102,7 @@ class TestVEP(TestCase):
 
     def test_main(self):
         actual = VEP(self.settings).main(
-            vcf=f'{self.indir}/raw.vcf',
+            vcf=f'{self.indir}/picked-variants.vcf',
             ref_fa=self.ref_fa,
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
@@ -110,7 +110,7 @@ class TestVEP(TestCase):
             cadd_resource=None,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
         )
-        expected = f'{self.workdir}/raw-vep.vcf'
+        expected = f'{self.workdir}/picked-variants-vep.vcf'
         self.assertEqual(expected, actual)
         self.assertFileExists(expected, actual)
 

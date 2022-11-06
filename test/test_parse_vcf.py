@@ -259,7 +259,7 @@ class TestUnrollVEPAnnotation(TestCase):
 
 class TestPandasDataStructure(TestCase):
     """
-    To understand how to append rows without using df.append(), which is extremely slow
+    To understand how to append rows without using variant_df.append(), which is extremely slow
     """
 
     def test_list_of_dict(self):

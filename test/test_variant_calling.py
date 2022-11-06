@@ -33,10 +33,10 @@ class TestVariantCalling(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[],
+            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
+            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
         )
         expected = [
             f'{self.outdir}/callers/lofreq.vcf',
@@ -61,10 +61,10 @@ class TestVariantCalling(TestCase):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            panel_of_normal_vcf=None,
-            germline_resource_vcf=None,
-            vardict_call_region_bed=None,
-            variant_removal_flags=[],
+            panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
+            germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
+            vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
         )
         expected = [
             f'{self.outdir}/callers/lofreq.vcf',

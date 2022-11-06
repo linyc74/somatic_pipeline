@@ -38,7 +38,7 @@ class SomaticPipeline(Processor):
     normal_bam: Optional[str]
 
     # variant calling
-    variant_caller: str
+    variant_callers: List[str]
     skip_variant_calling: bool
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
@@ -46,6 +46,10 @@ class SomaticPipeline(Processor):
 
     # variant filtering
     variant_removal_flags: List[str]
+
+    # variant picking
+    min_snv_callers: int
+    min_indel_callers: int
 
     # annotation
     annotator: str
@@ -80,13 +84,16 @@ class SomaticPipeline(Processor):
             bqsr_known_variant_vcf: Optional[str],
             discard_bam: bool,
 
-            variant_caller: str,
+            variant_callers: List[str],
             skip_variant_calling: bool,
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
             variant_removal_flags: List[str],
+
+            min_snv_callers: int,
+            min_indel_callers: int,
 
             annotator: str,
             skip_variant_annotation: bool,
@@ -117,13 +124,16 @@ class SomaticPipeline(Processor):
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
         self.discard_bam = discard_bam
 
-        self.variant_caller = variant_caller
+        self.variant_callers = variant_callers
         self.skip_variant_calling = skip_variant_calling
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
         self.variant_removal_flags = variant_removal_flags
+
+        self.min_snv_callers = min_snv_callers
+        self.min_indel_callers = min_indel_callers
 
         self.annotator = annotator
         self.skip_variant_annotation = skip_variant_annotation
@@ -185,11 +195,13 @@ class SomaticPipeline(Processor):
                 ref_fa=self.ref_fa,
                 tumor_bam=self.tumor_bam,
                 normal_bam=self.normal_bam,
-                variant_caller=self.variant_caller,
+                variant_callers=self.variant_callers,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
                 vardict_call_region_bed=self.vardict_call_region_bed,
                 variant_removal_flags=self.variant_removal_flags,
+                min_snv_callers=self.min_snv_callers,
+                min_indel_callers=self.min_indel_callers,
                 annotator=self.annotator,
                 skip_variant_annotation=self.skip_variant_annotation,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
@@ -300,12 +312,15 @@ class VariantCallingWorkflow(Processor):
     tumor_bam: str
     normal_bam: Optional[str]
 
-    variant_caller: str
+    variant_callers: List[str]
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
     vardict_call_region_bed: Optional[str]
 
     variant_removal_flags: List[str]
+
+    min_snv_callers: int
+    min_indel_callers: int
 
     annotator: str
     skip_variant_annotation: bool
@@ -327,12 +342,15 @@ class VariantCallingWorkflow(Processor):
             tumor_bam: str,
             normal_bam: Optional[str],
 
-            variant_caller: str,
+            variant_callers: List[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
             variant_removal_flags: List[str],
+
+            min_snv_callers: int,
+            min_indel_callers: int,
 
             annotator: str,
             skip_variant_annotation: bool,
@@ -349,12 +367,15 @@ class VariantCallingWorkflow(Processor):
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
 
-        self.variant_caller = variant_caller
+        self.variant_callers = variant_callers
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
         self.variant_removal_flags = variant_removal_flags
+
+        self.min_snv_callers = min_snv_callers
+        self.min_indel_callers = min_indel_callers
 
         self.annotator = annotator
         self.skip_variant_annotation = skip_variant_annotation
@@ -377,7 +398,7 @@ class VariantCallingWorkflow(Processor):
 
     def variant_calling(self):
         self.vcfs = VariantCalling(self.settings).main(
-            variant_callers=[self.variant_caller],
+            variant_callers=self.variant_callers,
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
@@ -390,7 +411,8 @@ class VariantCallingWorkflow(Processor):
         self.vcf = VariantPicking(self.settings).main(
             ref_fa=self.ref_fa,
             vcfs=self.vcfs,
-            min_num_callers=1)
+            min_snv_callers=self.min_snv_callers,
+            min_indel_callers=self.min_indel_callers)
 
     def annotation(self):
         if not self.skip_variant_annotation:
@@ -419,7 +441,7 @@ class VariantCallingWorkflow(Processor):
         Vcf2Maf(self.settings).main(
             annotated_vcf=self.vcf,
             ref_fa=self.ref_fa,
-            variant_caller=self.variant_caller)
+            variant_caller='mutect2')
 
     def compress_index_vcf(self):
         BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)

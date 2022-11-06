@@ -29,13 +29,16 @@ class Run:
             bqsr_known_variant_vcf: str,
             discard_bam: bool,
 
-            variant_caller: str,
+            variant_callers: str,
             skip_variant_calling: bool,
             panel_of_normal_vcf: str,
             germline_resource_vcf: str,
             vardict_call_region_bed: str,
 
             variant_removal_flags: str,
+
+            min_snv_callers: int,
+            min_indel_callers: int,
 
             annotator: str,
             skip_variant_annotation: bool,
@@ -69,13 +72,16 @@ class Run:
             bqsr_known_variant_vcf=None if bqsr_known_variant_vcf.lower() == 'none' else bqsr_known_variant_vcf,
             discard_bam=discard_bam,
 
-            variant_caller=variant_caller,
+            variant_callers=variant_callers.split(','),
             skip_variant_calling=skip_variant_calling,
             panel_of_normal_vcf=None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf,
             germline_resource_vcf=None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf,
             vardict_call_region_bed=None if vardict_call_region_bed.lower() == 'none' else vardict_call_region_bed,
 
             variant_removal_flags=[] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(','),
+
+            min_snv_callers=min_snv_callers,
+            min_indel_callers=min_indel_callers,
 
             annotator=annotator,
             skip_variant_annotation=skip_variant_annotation,

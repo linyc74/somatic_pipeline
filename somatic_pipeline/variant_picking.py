@@ -1,6 +1,7 @@
 import gzip
+import pandas as pd
 from os.path import basename
-from typing import List, IO, Optional, Dict, Any, Tuple
+from typing import List, IO, Optional, Dict, Tuple
 from .template import Processor
 from .constant import TUMOR, NORMAL
 
@@ -65,85 +66,50 @@ class VcfParser:
         self.__fh.close()
 
 
-class VcfWriter:
-
-    header: Optional[str]
-    columns: List[str]
-
-    __fh: IO
-
-    def __init__(self, vcf: str):
-        self.__fh = open(vcf, 'w')
-        self.header = None
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-
-    def write_header(self, header: str):
-        assert self.header is None
-        self.header = header.strip()
-        self.__assert_header_format()
-        self.__set_columns()
-        self.__fh.write(self.header + '\n')
-
-    def __assert_header_format(self):
-        header_lines = self.header.splitlines()
-
-        for line in header_lines[:-1]:
-            assert line.startswith('##')
-
-        last_line = header_lines[-1]
-        assert last_line.startswith('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO')
-
-    def __set_columns(self):
-        last_line = self.header.splitlines()[-1]
-        self.columns = last_line[1:].split('\t')
-
-    def write(self, variant: Dict[str, Any]):
-        assert self.header is not None  # header must have been written
-        assert set(variant.keys()) == set(self.columns)
-
-        # values need to follow the order of self.columns
-        values = [variant[c] for c in self.columns]
-
-        self.__fh.write('\t'.join(map(str, values)) + '\n')
-
-    def close(self):
-        self.__fh.close()
-
-
 class VariantPicking(Processor):
 
     VARIANT_KEY_COLUMNS = ['CHROM', 'POS', 'REF', 'ALT']
+    VCF_COLUMNS = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', NORMAL, TUMOR]
     INFO_CALL_ID = 'CALL'
     INFO_CALL_DESCRIPTION = 'Variant callers detecting this variant'
 
     ref_fa: str
     vcfs: List[str]
-    min_num_callers: int
+    min_snv_callers: int
+    min_indel_callers: int
 
+    vcf_header: str
     variant_to_callers: Dict[Tuple, List[str]]
-    header: str
+    variant_df: pd.DataFrame
     out_vcf: str
 
     def main(
             self,
             ref_fa: str,
             vcfs: List[str],
-            min_num_callers: int) -> str:
+            min_snv_callers: int,
+            min_indel_callers: int) -> str:
 
         self.ref_fa = ref_fa
         self.vcfs = vcfs
-        self.min_num_callers = min_num_callers
+        self.min_snv_callers = min_snv_callers
+        self.min_indel_callers = min_indel_callers
 
+        self.build_vcf_header()
         self.collect_variant_dict()
-        self.set_header()
+        self.build_variant_df()
+        self.sort_variant_df()
         self.write_vcf()
 
         return self.out_vcf
+
+    def build_vcf_header(self):
+        contig_lines = BuildHeaderContigLines(self.settings).main(self.ref_fa)
+        self.vcf_header = f'''\
+##fileformat=VCFv4.2
+{contig_lines}
+##INFO=<ID={self.INFO_CALL_ID},Number=.,Type=String,Description="{self.INFO_CALL_DESCRIPTION}">
+#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{NORMAL}\t{TUMOR}'''
 
     def collect_variant_dict(self):
         self.variant_to_callers = {}
@@ -158,28 +124,54 @@ class VariantPicking(Processor):
     def __get_filename(self, path: str) -> str:
         return basename(path).split('.')[0]
 
-    def set_header(self):
-        contig_lines = BuildHeaderContigLines(self.settings).main(self.ref_fa)
-        self.header = f'''\
-##fileformat=VCFv4.2
-{contig_lines}
-##INFO=<ID={self.INFO_CALL_ID},Number=.,Type=String,Description="{self.INFO_CALL_DESCRIPTION}">
-#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{NORMAL}\t{TUMOR}'''
+    def build_variant_df(self):
+        data = []
+        for variant, callers in self.variant_to_callers.items():
+            chrom, pos, ref, alt = variant
+
+            first_alt = alt.split(',')[0].split('/')[0]
+            is_snv = len(ref) == len(first_alt)
+            satisfy_snv = len(callers) >= self.min_snv_callers
+
+            is_indel = not is_snv
+            satisfy_indel = len(callers) >= self.min_indel_callers
+
+            if (is_snv and satisfy_snv) or (is_indel and satisfy_indel):
+                v = {c: '.' for c in self.VCF_COLUMNS}  # empty dict
+                v['CHROM'] = chrom
+                v['POS'] = int(pos)
+                v['REF'] = ref
+                v['ALT'] = alt
+                c = ','.join(callers)
+                v['INFO'] = f'CALL={c}'
+                data.append(v)
+
+        self.variant_df = pd.DataFrame(data=data, columns=self.VCF_COLUMNS)
+
+    def sort_variant_df(self):
+        chrom_to_order = GetChromToOrder(self.settings).main(self.ref_fa)
+
+        self.variant_df['order'] = self.variant_df['CHROM'].map(chrom_to_order)
+
+        self.variant_df = self.variant_df.sort_values(
+            by=['order', 'POS'],
+            ascending=[True, True]
+        ).drop(
+            columns='order'
+        )
 
     def write_vcf(self):
-        self.out_vcf = f'{self.outdir}/variants.vcf'
-        with VcfWriter(self.out_vcf) as writer:
-            writer.write_header(self.header)
-            for variant, callers in self.variant_to_callers.items():
-                if len(callers) >= self.min_num_callers:
-                    v = {c: '.' for c in writer.columns}  # empty dict
-                    v['CHROM'] = variant[0]
-                    v['POS'] = variant[1]
-                    v['REF'] = variant[2]
-                    v['ALT'] = variant[3]
-                    c = ','.join(callers)
-                    v['INFO'] = f'CALL={c}'
-                    writer.write(v)
+        self.out_vcf = f'{self.workdir}/picked-variants.vcf'
+
+        with open(self.out_vcf, 'w') as writer:
+            writer.write(self.vcf_header + '\n')
+
+        self.variant_df.to_csv(
+            self.out_vcf,
+            mode='a',
+            sep='\t',
+            header=False,
+            index=False)
 
 
 class BuildHeaderContigLines(Processor):
@@ -213,3 +205,24 @@ class BuildHeaderContigLines(Processor):
             for contig_id, length in self.contig_id_length.items()
         ]
         self.contig_lines = '\n'.join(lines)
+
+
+class GetChromToOrder(Processor):
+
+    ref_fa: str
+
+    chrom_to_order: Dict[str, int]
+
+    def main(self, ref_fa: str) -> Dict[str, int]:
+        self.ref_fa = ref_fa
+
+        self.chrom_to_order = {}
+        current = 0
+        with open(self.ref_fa) as fh:
+            for line in fh:
+                if line.startswith('>'):
+                    chrom = line[1:].strip().split(' ')[0]
+                    self.chrom_to_order[chrom] = current
+                    current += 1
+
+        return self.chrom_to_order

@@ -229,7 +229,7 @@ class RemoveVariants(Processor):
     def write_to_output_vcf(self):
         total, passed = 0, 0
         for line in self.reader:
-            if line.startswith('#'):  # header
+            if line.startswith('#'):  # vcf_header
                 self.writer.write(line)
                 continue
 
