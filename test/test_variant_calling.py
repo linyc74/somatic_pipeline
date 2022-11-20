@@ -36,6 +36,7 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            variant_flagging_criteria='low_depth:DP<20',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
         )
         expected = [
@@ -64,6 +65,7 @@ class TestVariantCalling(TestCase):
             panel_of_normal_vcf=f'{self.indir}/22_0830_combine_pon_chr9.vcf.gz',
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
+            variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
         )
         expected = [
@@ -85,5 +87,6 @@ class TestVariantCalling(TestCase):
                 panel_of_normal_vcf=None,
                 germline_resource_vcf=None,
                 vardict_call_region_bed=None,
+                variant_flagging_criteria=None,
                 variant_removal_flags=[]
             )

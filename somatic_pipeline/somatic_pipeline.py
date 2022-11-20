@@ -45,6 +45,7 @@ class SomaticPipeline(Processor):
     vardict_call_region_bed: Optional[str]
 
     # variant filtering
+    variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
 
     # variant picking
@@ -90,6 +91,7 @@ class SomaticPipeline(Processor):
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
+            variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
 
             min_snv_callers: int,
@@ -130,6 +132,7 @@ class SomaticPipeline(Processor):
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
+        self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
 
         self.min_snv_callers = min_snv_callers
@@ -199,6 +202,7 @@ class SomaticPipeline(Processor):
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
                 vardict_call_region_bed=self.vardict_call_region_bed,
+                variant_flagging_criteria=self.variant_flagging_criteria,
                 variant_removal_flags=self.variant_removal_flags,
                 min_snv_callers=self.min_snv_callers,
                 min_indel_callers=self.min_indel_callers,
@@ -317,6 +321,7 @@ class VariantCallingWorkflow(Processor):
     germline_resource_vcf: Optional[str]
     vardict_call_region_bed: Optional[str]
 
+    variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
 
     min_snv_callers: int
@@ -347,6 +352,7 @@ class VariantCallingWorkflow(Processor):
             germline_resource_vcf: Optional[str],
             vardict_call_region_bed: Optional[str],
 
+            variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
 
             min_snv_callers: int,
@@ -372,6 +378,7 @@ class VariantCallingWorkflow(Processor):
         self.germline_resource_vcf = germline_resource_vcf
         self.vardict_call_region_bed = vardict_call_region_bed
 
+        self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
 
         self.min_snv_callers = min_snv_callers
@@ -404,6 +411,7 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
             vardict_call_region_bed=self.vardict_call_region_bed,
+            variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 
     def variant_picking(self):

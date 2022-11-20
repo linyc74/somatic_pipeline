@@ -1,8 +1,8 @@
-from somatic_pipeline.variant_flagging import VariantFlagging, flag_variant, parse_criterion
+from somatic_pipeline.variant_flagging import FlagVariants, flag_variant, parse_criterion
 from .setup import TestCase
 
 
-class TestVariantFlagging(TestCase):
+class TestFlagVariants(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -11,17 +11,17 @@ class TestVariantFlagging(TestCase):
         self.tear_down()
 
     def test_mutect2(self):
-        actual = VariantFlagging(self.settings).main(
+        actual = FlagVariants(self.settings).main(
             vcf=f'{self.indir}/mutect2.vcf',
-            flag_with_info_key='DP_25: 25<=DP<=25'
+            variant_flagging_criteria='DP_25: 25<=DP<=25'
         )
         expected = f'{self.workdir}/mutect2-flagged.vcf'
         self.assertFileExists(expected, actual)
 
     def test_tiny(self):
-        actual = VariantFlagging(self.settings).main(
+        actual = FlagVariants(self.settings).main(
             vcf=f'{self.indir}/tiny.vcf',
-            flag_with_info_key='LOW_DP: DP<20, HIGH_MQ: MQ>=30'
+            variant_flagging_criteria='LOW_DP: DP<20, HIGH_MQ: MQ>=30'
         )
         expected = f'{self.indir}/tiny-flagged.vcf'
         self.assertFileEqual(expected, actual)

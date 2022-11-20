@@ -243,6 +243,15 @@ GROUP_NAME_TO_ARGUMENTS = {
     'variant filtering':
         [
             {
+                'keys': ['--variant-flagging-criteria'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'default': 'None',
+                    'help': 'comma-separated flagging criteria, e.g. "low_depth: DP<20, mid_qual: 20<=MQ<=40, high_af: AF>0.02" (default: %(default)s)',
+                }
+            },
+            {
                 'keys': ['--variant-removal-flags'],
                 'properties': {
                     'type': str,
@@ -516,6 +525,7 @@ class EntryPoint:
                 germline_resource_vcf=args.germline_resource_vcf,
                 vardict_call_region_bed=args.vardict_call_region_bed,
 
+                variant_flagging_criteria=args.variant_flagging_criteria,
                 variant_removal_flags=args.variant_removal_flags,
 
                 min_snv_callers=args.min_snv_callers,

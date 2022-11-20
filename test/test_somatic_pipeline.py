@@ -32,6 +32,7 @@ class TestSomaticPipeline(TestCase):
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
 
+            variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=[],
 
             min_snv_callers=1,
@@ -75,6 +76,7 @@ class TestSomaticPipeline(TestCase):
             germline_resource_vcf=f'{self.indir}/af-only-gnomad.hg38.chr9.vcf.gz',
             vardict_call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
 
+            variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=['panel_of_normals', 'map_qual'],
 
             min_snv_callers=1,

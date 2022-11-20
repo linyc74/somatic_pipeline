@@ -21,10 +21,10 @@ class Criterion:
         return f"Criterion(key='{self.key}', range={self.range}, equal_max={self.equal_max}, equal_min={self.equal_min})"
 
 
-class VariantFlagging(Processor):
+class FlagVariants(Processor):
 
     vcf: str
-    flag_with_info_key: str
+    variant_flagging_criteria: str
 
     parser: VcfParser
     writer: VcfWriter
@@ -35,13 +35,13 @@ class VariantFlagging(Processor):
     def main(
             self,
             vcf: str,
-            flag_with_info_key: str) -> str:
+            variant_flagging_criteria: str) -> str:
 
         self.vcf = vcf
-        self.flag_with_info_key = flag_with_info_key.replace(' ', '')
+        self.variant_flagging_criteria = variant_flagging_criteria.replace(' ', '')
 
         self.open_files()
-        self.unpack_flag_with_info_key()
+        self.unpack_variant_flagging_criteria()
         self.write_header()
         self.flag_variants()
         self.close_files()
@@ -57,16 +57,23 @@ class VariantFlagging(Processor):
             dstdir=self.workdir)
         self.writer = VcfWriter(self.output_vcf)
 
-    def unpack_flag_with_info_key(self):
+    def unpack_variant_flagging_criteria(self):
         self.new_header_lines = []
         self.flag_to_criterion = {}
 
-        for item in self.flag_with_info_key.split(','):
+        for item in self.variant_flagging_criteria.split(','):
             flag, criterion = item.split(':')
 
             self.new_header_lines.append(f'##FILTER=<ID={flag},Description="{criterion}">')
 
             self.flag_to_criterion[flag] = parse_criterion(s=criterion)
+
+        self.__log()
+
+    def __log(self):
+        t = '\n'.join(self.new_header_lines)
+        msg = f'Flag variants in "{self.vcf}" with criteria:\n{t}'
+        self.logger.info(msg)
 
     def write_header(self):
         lines = self.parser.header.splitlines()
