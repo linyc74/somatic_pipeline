@@ -1,4 +1,4 @@
-from somatic_pipeline.variant_flagging import FlagVariants, flag_variant, parse_criterion
+from somatic_pipeline.variant_filtering import FlagVariants, flag_variant, parse_criterion, RemoveVariants
 from .setup import TestCase
 
 
@@ -87,3 +87,20 @@ class TestFunctions(TestCase):
             with self.subTest(criterion=criterion, expected=expected):
                 actual = parse_criterion(s=criterion)
                 self.assertEqual(expected, repr(actual))
+
+
+class TestRemoveVariants(TestCase):
+
+    def setUp(self):
+        self.set_up(py_path=__file__)
+
+    def tearDown(self):
+        self.tear_down()
+
+    def test_main(self):
+        actual = RemoveVariants(self.settings).main(
+            vcf=f'{self.indir}/tiny-flagged.vcf',
+            flags=['LOW_DP']
+        )
+        expected = f'{self.indir}/tiny-flagged-variant-removal.vcf'
+        self.assertFileEqual(expected, actual)

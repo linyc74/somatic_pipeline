@@ -1,10 +1,10 @@
 import os
 from abc import ABC
-from typing import Optional, List, IO, Dict, Callable
+from typing import Optional, List, Dict, Callable
 from .tools import edit_fpath
 from .template import Processor
 from .constant import TUMOR, NORMAL
-from .variant_flagging import FlagVariants
+from .variant_filtering import FlagVariants, RemoveVariants
 from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam
 
 
@@ -213,71 +213,6 @@ class Base(Processor, ABC):
             self.vcf = RemoveVariants(self.settings).main(
                 vcf=self.vcf,
                 flags=self.variant_removal_flags)
-
-
-class RemoveVariants(Processor):
-
-    vcf: str
-    flags: List[str]
-
-    output_vcf: str
-    reader: IO
-    writer: IO
-
-    def main(self, vcf: str, flags: List[str]) -> str:
-
-        self.vcf = vcf
-        self.flags = flags
-
-        self.set_output_vcf()
-        self.open_files()
-        self.write_to_output_vcf()
-        self.close_files()
-
-        return self.output_vcf
-
-    def set_output_vcf(self):
-        self.output_vcf = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix='-variant-removal.vcf',
-            dstdir=self.workdir)
-
-    def open_files(self):
-        self.reader = open(self.vcf)
-        self.writer = open(self.output_vcf, 'w')
-
-    def write_to_output_vcf(self):
-        total, passed = 0, 0
-        for line in self.reader:
-            if line.startswith('#'):  # vcf_header
-                self.writer.write(line)
-                continue
-
-            # variant line
-            total += 1
-            if self.__passed(line):
-                passed += 1
-                self.writer.write(line)
-
-        self.__log_result(total, passed)
-
-    def __passed(self, line: str) -> bool:
-        variant_flags = line.split('\t')[6].split(';')
-        red_flags = set(variant_flags).intersection(set(self.flags))
-        return len(red_flags) == 0
-
-    def __log_result(self, total: int, passed: int):
-        percentage = passed / total * 100 if total > 0 else 0.
-        msg = f'''\
-Remove variants having any one of the following flags: {', '.join(self.flags)}
-Total variants: {total}
-Remaining variants: {passed} ({percentage:.2f}%)'''
-        self.logger.info(msg)
-
-    def close_files(self):
-        self.reader.close()
-        self.writer.close()
 
 
 #
