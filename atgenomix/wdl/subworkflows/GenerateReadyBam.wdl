@@ -2,7 +2,7 @@ version 1.0
 
 # WORKFLOW DEFINITION
 
-# Generate a analysis-ready bam file
+# Generate a analysis-ready bam file and a comprehensive statistics report
 workflow GenerateReadyBam {
     input {
         String sampleName
@@ -32,7 +32,7 @@ workflow GenerateReadyBam {
     call Sort { 
         input:
             inputBam = BwaMem.outputBam,
-            sampleName=sampleName
+            sampleName = sampleName
     }
 
     call MarkDuplicates {
@@ -66,6 +66,12 @@ workflow GenerateReadyBam {
         input:
             inputBam = ApplyBqsr.outputBam,
             sampleName = sampleName
+    }
+
+    output {
+        File outputBam = ApplyBqsr.outputBam
+        File outputBamIndex = ApplyBqsr.outputBamIndex
+        File outputStats = BamStats.outputbamStats
     }
 }
 
@@ -236,6 +242,6 @@ task BamStats {
     }
  
     output {
-        File bamStats = "~{sampleName}_stats.txt"
+        File outputbamStats = "~{sampleName}_stats.txt"
     }
 }
