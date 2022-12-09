@@ -6,10 +6,10 @@ version 1.0
 workflow GenerateReadyBam {
     input {
         String sampleName
-        File refFasta
-        File refFastaFai
-        File refFastaDict
-        File refFastaGzi
+        File refFa
+        File refFai
+        File refDict
+        File refFaGzi
         File refAmb
         File refAnn
         File refBwt
@@ -20,8 +20,8 @@ workflow GenerateReadyBam {
     call BwaMem {
         input:
             sampleName = sampleName,
-            refFasta = refFasta,
-            refFastaFai = refFastaFai,
+            refFa = refFa,
+            refFai = refFai,
             refAmb = refAmb,
             refAnn = refAnn,
             refBwt = refBwt,
@@ -31,47 +31,47 @@ workflow GenerateReadyBam {
 
     call Sort { 
         input:
-            inputBam = BwaMem.outputBam,
+            inFileBam = BwaMem.outFileBam,
             sampleName = sampleName
     }
 
     call MarkDuplicates {
         input:
-            inputBam = Sort.outputBam,
+            inFileBam = Sort.outFileBam,
             sampleName = sampleName
     }
 
     call BaseRecalibrator {
         input:
-            inputBam = MarkDuplicates.outputBam,
+            inFileBam = MarkDuplicates.outFileBam,
             sampleName = sampleName,
-            refFasta = refFasta,
-            refFastaFai = refFastaFai,
-            refFastaDict = refFastaDict,
-            refFastaGzi = refFastaGzi
+            refFa = refFa,
+            refFai = refFai,
+            refDict = refDict,
+            refFaGzi = refFaGzi
     }
 
     call ApplyBqsr {
         input:
-            inputBam = MarkDuplicates.outputBam,
-            recalibrationTable = BaseRecalibrator.outputRecalibrationTable,
+            inFileBam = MarkDuplicates.outFileBam,
+            inFileRecalibrationTable = BaseRecalibrator.outFileRecalibrationTable,
             sampleName = sampleName,
-            refFasta = refFasta,
-            refFastaFai = refFastaFai,
-            refFastaDict = refFastaDict,
-            refFastaGzi = refFastaGzi
+            refFa = refFa,
+            refFai = refFai,
+            refDict = refDict,
+            refFaGzi = refFaGzi
     }
 
     call BamStats {
         input:
-            inputBam = ApplyBqsr.outputBam,
+            inFileBam = ApplyBqsr.outFileBam,
             sampleName = sampleName
     }
 
     output {
-        File outputBam = ApplyBqsr.outputBam
-        File outputBamIndex = ApplyBqsr.outputBamIndex
-        File outputStats = BamStats.outputbamStats
+        File outputBam = ApplyBqsr.outFileBam
+        File outputBamIndex = ApplyBqsr.outFileBamIndex
+        File outputStats = BamStats.outFileBamStats
     }
 }
 
@@ -81,10 +81,10 @@ workflow GenerateReadyBam {
 # Align reads using bwa mem and output a bam file
 task BwaMem {
     input {
-        File inputFastqR1
-        File inputFastqR2
-        File refFasta
-        File refFastaFai
+        File inFileFastqR1
+        File inFileFastqR2
+        File refFa
+        File refFai
         File refAmb
         File refAnn
         File refBwt
@@ -99,9 +99,9 @@ task BwaMem {
         bwa mem \
         -t ~{threads} \
         -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{sampleName}" \
-        ~{refFasta} \
-        ~{inputFastqR1} \
-        ~{inputFastqR2} \
+        ~{refFa} \
+        ~{inFileFastqR1} \
+        ~{inFileFastqR2} \
         | \
         samtools view -b - > ~{sampleName}.bam  
     >>>
@@ -111,20 +111,20 @@ task BwaMem {
     }
  
     output {
-        File outputBam = "~{sampleName}.bam"
+        File outFileBam = "~{sampleName}.bam"
     }
 }
 
 # Sort reads within bam using samtools
 task Sort {
     input {
-        File inputBam
+        File inFileBam
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
-        samtools sort ~{inputBam} > ~{sampleName}.bam
+        samtools sort ~{inFileBam} > ~{sampleName}.bam
     >>>
  
     runtime {
@@ -132,21 +132,21 @@ task Sort {
     }
  
     output {
-        File outputBam = "~{sampleName}.bam"
+        File outFileBam = "~{sampleName}.bam"
     }
 }
 
 # Mark duplicate reads using GATK
 task MarkDuplicates {
     input {
-        File inputBam
+        File inFileBam
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
         gatk MarkDuplicates \
-        --INPUT ~{inputBam} \
+        --INPUT ~{inFileBam} \
         --OUTPUT ~{sampleName}.bam \
         --METRICS_FILE ~{sampleName}_metrics.txt \
         --REMOVE_DUPLICATES false
@@ -157,30 +157,30 @@ task MarkDuplicates {
     }
  
     output {
-        File outputBam = "~{sampleName}.bam"
-        File outputMetrics = "~{sampleName}_metrics.txt"
+        File outFileBam = "~{sampleName}.bam"
+        File outFileMetrics = "~{sampleName}_metrics.txt"
     }
 }
 
 # GATK BQSR step1. Generates recalibration table for Base Quality Score Recalibration
 task BaseRecalibrator {
     input {
-        File dbsnpVcf
-        File dbsnpVcfIndex
-        File inputBam
-        File refFasta
-        File refFastaFai
-        File refFastaDict
-        File refFastaGzi
+        File inFileDbsnpVcf
+        File inFileDbsnpVcfIndex
+        File inFileBam
+        File refFa
+        File refFai
+        File refDict
+        File refFaGzi
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
         gatk BaseRecalibrator \
-        --input ~{inputBam} \
-        --reference ~{refFasta} \
-        --known-sites ~{dbsnpVcf} \
+        --input ~{inFileBam} \
+        --reference ~{refFa} \
+        --known-sites ~{inFileDbsnpVcf} \
         --output ~{sampleName}.recalibration.table
     >>>
  
@@ -189,28 +189,28 @@ task BaseRecalibrator {
     }
  
     output {
-        File outputRecalibrationTable = '~{sampleName}.recalibration.table'
+        File outFileRecalibrationTable = '~{sampleName}.recalibration.table'
     }
 }
 
 # GATK BQSR step2. Apply base quality score recalibration
 task ApplyBqsr {
     input {
-        File inputBam
-        File recalibrationTable
-        File refFasta
-        File refFastaFai
-        File refFastaDict
-        File refFastaGzi
+        File inFileBam
+        File inFileRecalibrationTable
+        File refFa
+        File refFai
+        File refDict
+        File refFaGzi
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
         gatk ApplyBQSR \
-        --input ~{inputBam} \
-        --reference ~{refFasta} \
-        --bqsr-recal-file ~{recalibrationTable} \
+        --input ~{inFileBam} \
+        --reference ~{refFa} \
+        --bqsr-recal-file ~{inFileRecalibrationTable} \
         --output ~{sampleName}.bam
 
     >>>
@@ -220,21 +220,21 @@ task ApplyBqsr {
     }
  
     output {
-        File outputBam = "~{sampleName}.bam"
-        File outputBamIndex = "~{sampleName}.bai"
+        File outFileBam = "~{sampleName}.bam"
+        File outFileBamIndex = "~{sampleName}.bai"
     }
 }
 
 # Generate a comprehensive statistics report from bam file using samtools
 task BamStats {
     input {
-        File inputBam
+        File inFileBam
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
-        samtools stats ~{inputBam} > ~{sampleName}_stats.txt
+        samtools stats ~{inFileBam} > ~{sampleName}_stats.txt
     >>>
  
     runtime {
@@ -242,6 +242,6 @@ task BamStats {
     }
  
     output {
-        File outputbamStats = "~{sampleName}_stats.txt"
+        File outFileBamStats = "~{sampleName}_stats.txt"
     }
 }
