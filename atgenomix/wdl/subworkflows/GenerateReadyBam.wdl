@@ -5,7 +5,10 @@ version 1.0
 # Generate a analysis-ready bam file and a comprehensive statistics report
 workflow GenerateReadyBam {
     input {
-        String sampleName
+        File inFileFastqR1
+        File inFileFastqR2
+        File inFileDbsnpVcf
+        File inFileDbsnpVcfIndex
         File refFa
         File refFai
         File refDict
@@ -15,11 +18,14 @@ workflow GenerateReadyBam {
         File refBwt
         File refPac
         File refSa
+        String sampleName
     }
 
     call BwaMem {
         input:
             sampleName = sampleName,
+            inFileFastqR1 = inFileFastqR1,
+            inFileFastqR2 = inFileFastqR2,
             refFa = refFa,
             refFai = refFai,
             refAmb = refAmb,
@@ -45,6 +51,8 @@ workflow GenerateReadyBam {
         input:
             inFileBam = MarkDuplicates.outFileBam,
             sampleName = sampleName,
+            inFileDbsnpVcf = inFileDbsnpVcf,
+            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
