@@ -1,5 +1,7 @@
 version 1.0
 
+import "GeneralTask.wdl" as general
+
 # WORKFLOW DEFINITION
 
 # Generate a analysis-ready bam file and a comprehensive statistics report
@@ -13,14 +15,16 @@ workflow GenerateReadyBam {
         File refFai
         File refDict
         File refFaGzi
-        File refAmb
-        File refAnn
-        File refBwt
-        File refPac
-        File refSa
         String sampleName
+        BwaIndex bwaIndex
     }
 
+    File refAmb = bwaIndex.refAmb  
+    File refAnn = bwaIndex.refAnn
+    File refBwt = bwaIndex.refBwt
+    File refPac = bwaIndex.refPac
+    File refSa = bwaIndex.refSa
+    
     call BwaMem {
         input:
             sampleName = sampleName,
@@ -28,11 +32,7 @@ workflow GenerateReadyBam {
             inFileFastqR2 = inFileFastqR2,
             refFa = refFa,
             refFai = refFai,
-            refAmb = refAmb,
-            refAnn = refAnn,
-            refBwt = refBwt,
-            refPac = refPac,
-            refSa = refSa
+            bwaIndex = bwaIndex
     }
 
     call Sort { 
@@ -93,13 +93,9 @@ task BwaMem {
         File inFileFastqR2
         File refFa
         File refFai
-        File refAmb
-        File refAnn
-        File refBwt
-        File refPac
-        File refSa
         Int threads = 2
         String sampleName
+        BwaIndex bwaIndex
     }
  
     command <<<

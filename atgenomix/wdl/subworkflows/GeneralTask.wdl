@@ -5,8 +5,8 @@ version 1.0
 # Fastq preprocessing using Trim Galore with paired-end option
 task TrimGalore {
     input {
-        File inFileFastqR1
-        File inFileFastqR2
+        File inFileFastqR1_PAR
+        File inFileFastqR2_PAR
         Int cores = 2
         Int discardReadLength = 20
         Int maxNcount = 0
@@ -30,8 +30,8 @@ task TrimGalore {
         --gzip \
         --output_dir out \
         --basename ~{sampleName} \
-        ~{inFileFastqR1} \
-        ~{inFileFastqR2}
+        ~{inFileFastqR1_PAR} \
+        ~{inFileFastqR2_PAR}
     >>>
  
     runtime {
@@ -46,4 +46,14 @@ task TrimGalore {
         File outFileZipR1 = "out/~{sampleName}_val_1_fastqc.zip"
         File outFileZipR2 = "out/~{sampleName}_val_2_fastqc.zip"
     }
+}
+
+# Struct
+
+struct BwaIndex {
+        File refAmb
+        File refAnn
+        File refBwt
+        File refPac
+        File refSa
 }
