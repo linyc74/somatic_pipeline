@@ -2,6 +2,120 @@ version 1.0
 
 # TASK DEFINITIONS
 
+# Compress vcf file using bgzip and index using tabix 
+task BgzipTabix {
+    input {
+        File inFileVcf
+        Int threads = 16
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        bgzip \
+        --threads ~{threads} \
+        --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}.vcf.gz
+    >>>
+ 
+    output {
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}.vcf.tbi"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
+# Compress vcf file using bgzip and index using bcftools 
+task BgzipBcftoolsIndex {
+    input {
+        File inFileVcf
+        Int threads = 16
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        bgzip \
+        --threads ~{threads} \
+        --force \
+        --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
+        bcftools index \
+        --force \
+        --threads ~{threads} \
+        ~{sampleName}.vcf.gz
+    >>>
+ 
+    output {
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}.vcf.tbi"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
+# Concatenate SNV.vcf and INDEL.vcf using bcftools
+task Concat {
+    input {
+        File inFileSnvVcf
+        File inFileIndelvcf
+        Int threads = 16
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        bcftools concat \
+        --alllow-overlaps \
+        --threads ~{threads} \ 
+        --output-type v \
+        --output ~{sampleName}.vcf \ 
+        ~{inFileSnvVcf} \
+        ~{inFileIndelvcf}
+    >>>
+ 
+    output {
+        File outFileVcf = "~{sampleName}.vcf"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
+# Generate text pileup output for a bam file using samtools
+task Mpileup {
+    input {
+        File inFileBam
+        File refFa
+        File refFai
+        File refFaGzi
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        samtools mpileup \
+        --fasta-ref ~{refFa} \
+        --output ~{sampleName}_pileup.txt \
+        ~{inFileBam}
+    >>>
+ 
+    output {
+        File outFilePileup = "~{sampleName}_pileup.txt"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
 # Fastq preprocessing using Trim Galore with paired-end option
 task TrimGalore {
     input {
