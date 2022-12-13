@@ -1,6 +1,6 @@
 version 1.0
 
-import "VarscanSomaticCallingProcess.wdl" as varscan
+import "VarscanSomaticCallingProcess.wdl" as varscanProcess
 
 # WORKFLOW DEFINITION
 
@@ -17,7 +17,7 @@ workflow TNpairedVariantsCalling {
         String sampleName
     }
  
-    call varscan {
+    call varscanProcess.VarscanSomaticCallingProcess as varscan {
         input:
             inFileTumorBam = inFileTumorBam,
             inFileNormalBam = inFileNormalBam,
@@ -29,13 +29,13 @@ workflow TNpairedVariantsCalling {
             sampleName = sampleName
     }
  
-#    output {
-#        File outFile = TaskName.outFile
-#    }
+    output {
+        File outFileVarscanVcf = varscan.outFileVcf
+    }
 }
 
 
 
 # TASK DEFINITIONS
 
-'task start here'
+#'task start here'

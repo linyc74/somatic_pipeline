@@ -63,8 +63,14 @@ workflow VarscanSomaticCallingProcess {
             sampleName = sampleName
     }
 
+    call general.PythonVariantFilter as filter {
+        input:
+            inFileVcf = concat.outFileVcf,
+            sampleName = sampleName
+    }
+
     output {
-        File outFile = concat.outFileVcf
+        File outFileVcf = filter.outFileVcf
     }
 }
 
