@@ -64,7 +64,7 @@ task BgzipBcftoolsIndex {
 task Concat {
     input {
         File inFileSnvVcf
-        File inFileIndelvcf
+        File inFileIndelVcf
         Int threads = 16
         String sampleName
     }
@@ -77,7 +77,7 @@ task Concat {
         --output-type v \
         --output ~{sampleName}.vcf \ 
         ~{inFileSnvVcf} \
-        ~{inFileIndelvcf}
+        ~{inFileIndelVcf}
     >>>
  
     output {
