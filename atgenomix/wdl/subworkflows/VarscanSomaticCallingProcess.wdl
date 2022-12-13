@@ -57,7 +57,9 @@ workflow VarscanSomaticCallingProcess {
     call general.Concat as concat {
         input:
             inFileSnvVcf = snpCompressIndex.outFileVcfGz,
+            inFileSnvVcfIndex = snpCompressIndex.outFileVcfIndex,
             inFileIndelVcf = indelCompressIndex.outFileVcfGz,
+            infileIndelVcfIndex = indelCompressIndex.outFileVcfIndex,
             sampleName = sampleName
     }
 

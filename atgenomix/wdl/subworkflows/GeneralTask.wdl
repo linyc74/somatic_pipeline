@@ -22,7 +22,7 @@ task BgzipTabix {
  
     output {
         File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.tbi"
+        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
     }
  
     runtime {
@@ -52,7 +52,7 @@ task BgzipBcftoolsIndex {
  
     output {
         File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.tbi"
+        File outFileVcfIndex = "~{sampleName}.vcf.gz.csi"
     }
  
     runtime {
@@ -64,7 +64,9 @@ task BgzipBcftoolsIndex {
 task Concat {
     input {
         File inFileSnvVcf
+        File inFileSnvVcfIndex
         File inFileIndelVcf
+        File infileIndelVcfIndex
         Int threads = 16
         String sampleName
     }
