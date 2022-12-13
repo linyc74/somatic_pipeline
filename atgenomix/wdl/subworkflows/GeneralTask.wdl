@@ -118,6 +118,33 @@ task Mpileup {
     }
 }
 
+# Generate a filtered vcf using the self maintained python code
+task PythonVariantFilter {
+    input {
+        File inFileVcf
+        String flaggingCriteria = "\"LOW_DP: DP<20, HIGH_MQ: MQ>=30\""
+        String removalFlags = "panel_of_normal,LOW_DP"
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        python variant filtering \
+        --input-vcf ~{inFileVcf} \
+        --output-vcf ~{sampleName}_filtered.vcf \
+        --variant-flagging-criteria ~{flaggingCriteria}  \
+        --variant-removal-flags ~{removalFlags}
+    >>>
+ 
+    output {
+        File outFileVcf = "~{sampleName}_filtered.vcf"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
 # Fastq preprocessing using Trim Galore with paired-end option
 task TrimGalore {
     input {
@@ -127,7 +154,7 @@ task TrimGalore {
         Int discardReadLength = 20
         Int maxNcount = 0
         Int trimQuality = 20
-        String fastqcArg = "--threads 16"
+        String fastqcArg = "\"--threads 16\""
         String sampleName
     }
  
