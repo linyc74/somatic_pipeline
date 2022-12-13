@@ -15,6 +15,7 @@ workflow GenerateReadyBam {
         File refFai
         File refDict
         File refFaGzi
+        String libraryKit
         String sampleName
         BwaIndex bwaIndex
     }
@@ -27,12 +28,13 @@ workflow GenerateReadyBam {
     
     call BwaMem {
         input:
-            sampleName = sampleName,
             inFileFastqR1 = inFileFastqR1,
             inFileFastqR2 = inFileFastqR2,
             refFa = refFa,
             refFai = refFai,
-            bwaIndex = bwaIndex
+            bwaIndex = bwaIndex,
+            libraryKit = libraryKit,
+            sampleName = sampleName
     }
 
     call Sort { 
@@ -94,6 +96,7 @@ task BwaMem {
         File refFa
         File refFai
         Int threads = 2
+        String libraryKit
         String sampleName
         BwaIndex bwaIndex
     }
@@ -102,7 +105,7 @@ task BwaMem {
         set -e -o pipefail
         bwa mem \
         -t ~{threads} \
-        -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{sampleName}" \
+        -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{libraryKit}" \
         ~{refFa} \
         ~{inFileFastqR1} \
         ~{inFileFastqR2} \
