@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3:4.10.3
+FROM continuumio/miniconda3:4.12.0
 
 # create conda env & install packages
 RUN conda create -n somatic \
@@ -15,8 +15,7 @@ RUN conda create -n somatic \
     bcftools=1.8 \
     vcf2maf=1.6.21 \
  && conda install -c anaconda -n somatic \
-    pandas=1.3.5 \
- && conda clean --all --yes
+    pandas=1.3.5
 
 # activate somatic env
 # for identical commands (e.g. pip), somatic overrides default environment
@@ -40,19 +39,27 @@ ENV PATH /snpEff/exec:$PATH
 
 
 
-# --- cnvkit ---
-# dependency for cnvkit
-ARG d=/opt/conda/envs/somatic/lib/
-RUN conda install -c conda-forge -n somatic r-base=3.2.2 \
- && conda install -c bioconda -n somatic bioconductor-dnacopy=1.44.0 \
- && ln -s ${d}libreadline.so.8.1 ${d}libreadline.so.6 \
- && ln -s ${d}libncursesw.so.6.2 ${d}libncurses.so.5 \
- && conda install -c anaconda -n somatic pomegranate=0.14.4 \
- && conda clean --all --yes
+# --- R ---
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \ 
+    software-properties-common \
+    dirmngr \
+ && wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
+ && add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" \
+ && apt-get install -y --no-install-recommends \
+    r-base-dev=4.0.4-1
 
-# install cnvkit, the pip used is in 'somatic' env
-RUN pip install --upgrade pip \
- && pip install --no-cache-dir cnvkit==0.9.9
+
+
+# --- cnvkit ---
+# the pip used is in 'somatic' env
+RUN Rscript -e 'install.packages("BiocManager", version="3.16")' \
+ && Rscript -e 'BiocManager::install("DNAcopy")' \
+ && conda install -c anaconda -n somatic \
+    pomegranate=0.14.4 \
+ && pip install --upgrade pip \
+ && pip install --no-cache-dir \
+    cnvkit==0.9.9
 
 
 
@@ -104,6 +111,13 @@ RUN conda install -c bioconda -n somatic \
 
 # extra vardict path
 ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
+
+
+
+# clean up
+RUN apt-get autoremove \
+ && apt-get clean \
+ && conda clean --all --yes
 
 
 
