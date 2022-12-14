@@ -41,7 +41,7 @@ ENV PATH /snpEff/exec:$PATH
 
 # --- R ---
 RUN apt-get update \
- && apt-get install -y --no-install-recommends \ 
+ && apt-get install -y --no-install-recommends \
     software-properties-common \
     dirmngr \
  && wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
