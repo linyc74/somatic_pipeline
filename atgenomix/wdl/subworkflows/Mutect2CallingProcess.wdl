@@ -8,21 +8,25 @@ import "GeneralTask.wdl" as general
 workflow Mutect2CallingProcess {
     input {
         File inFileTumorBam
-        File inFileNormalBam
+        File inFileTumorBamIndex
+        File? inFileNormalBam
+        File? inFileNormalBamIndex
         File inFilePON
         File refFa
         File refFai
         File refFaGzi
         File refDict
         String tumorSampleName
-        String normalSampleName
+        String? normalSampleName
         String sampleName
     }
  
     call Mutect2 {
         input:
             inFileTumorBam = inFileTumorBam,
+            inFileTumorBamIndex = inFileTumorBamIndex,
             inFileNormalBam = inFileNormalBam,
+            inFileNormalBamIndex = inFileNormalBamIndex,
             inFilePON = inFilePON,
             refFa = refFa,
             refFai = refFai,
@@ -67,15 +71,18 @@ workflow Mutect2CallingProcess {
 task Mutect2 {
     input {
         File inFileTumorBam
-        File inFileNormalBam
+        File inFileTumorBamIndex
+        File? inFileNormalBam
+        File? inFileNormalBamIndex
         File inFilePON
+        File inFilePONindex
         File refFa
         File refFai
         File refFaGzi
         File refDict
         Int threads = 16
         String tumorSampleName
-        String normalSampleName
+        String? normalSampleName
         String sampleName
     }
  
@@ -84,9 +91,9 @@ task Mutect2 {
         gatk Mutect2 \
         --reference ~{refFa} \
         --input ~{inFileTumorBam} \
-        --input ~{inFileNormalBam} \
+        ~{"--input " + inFileNormalBam} \
         --tumor-sample ~{tumorSampleName} \
-        --normal-sample ~{normalSampleName} \
+        ~{"--normal-sample " + normalSampleName} \
         --output ~{sampleName}.vcf \
         --native-pair-hmm-threads ~{threads} \
         --f1r2-tar-gz ~{sampleName}_f1r2.tar.gz \
