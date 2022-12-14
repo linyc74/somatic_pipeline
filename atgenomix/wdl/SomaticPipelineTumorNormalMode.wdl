@@ -70,7 +70,7 @@ workflow SomaticPipelineTumorNormalMode {
             bwaIndex = bwaIndex     
     }
 
-    call caller.TNpairedVariantsCalling as callVcf {
+    call caller.TNpairedVariantsCalling as variantCalling {
         input:
             inFileTumorBam = tumorBam.outputBam,
             inFileNormalBam = normalBam.outputBam,

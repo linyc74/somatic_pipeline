@@ -4,7 +4,7 @@ import "GeneralTask.wdl" as general
 
 # WORKFLOW DEFINITION
 
-# Call somatic variants using VarScan
+# Generate a VarScan processed ready vcf
 workflow VarscanSomaticCallingProcess {
     input {
         File inFileTumorBam
