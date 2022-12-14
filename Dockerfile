@@ -21,6 +21,9 @@ RUN conda create -n somatic \
 # for identical commands (e.g. pip), somatic overrides default environment
 ENV PATH /opt/conda/envs/somatic/bin:$PATH
 
+# system lib is prioritized over somatic env lib
+ENV LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:/opt/conda/envs/somatic/lib:$LD_LIBRARY_PATH
+
 # bcftools dependency issue
 ARG d=/opt/conda/envs/somatic/lib/
 RUN ln -s ${d}libcrypto.so.1.1 ${d}libcrypto.so.1.0.0
@@ -65,7 +68,7 @@ RUN Rscript -e 'install.packages("BiocManager", version="3.16")' \
 
 # --- vep ---
 # perl dependency for vep
-# perl build must be "h470a237_0" to avoid bad version (hard-coded gcc path)
+# perl build must be "5.26.2=h470a237_0" to avoid bad version (hard-coded gcc path)
 RUN conda install -c conda-forge -n somatic \
     perl=5.26.2=h470a237_0 \
     gcc=12.1.0 \
@@ -77,10 +80,12 @@ RUN conda install -c conda-forge -n somatic \
  && cpan Try::Tiny
 
 # install vep
+# include "--NO_UPDATE" so that the installation process will not be disrupted by update check
+# disruption of installation will result in missing perl modules (e.g. Bio/EnsEMBL/Registry.pm) and plugins 
 RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
  && unzip 106.zip \
  && cd ensembl-vep-release-106 \
- && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB \
+ && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB --NO_UPDATE \
  && cd .. \
  && rm 106.zip
 
@@ -94,9 +99,6 @@ ENV PATH /ensembl-vep-release-106:$PATH
 RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
  && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
  && rm lofreq_star-2.1.5_linux-x86-64.tgz
-
-# lofreq depends on libhts.so.3
-ENV LD_LIBRARY_PATH=/opt/conda/envs/somatic/lib:$LD_LIBRARY_PATH
 
 # make lofreq executable
 ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
