@@ -28,37 +28,21 @@ python somatic_pipeline \
 
 ## Environment
 
-Required packages:
+Dependencies:
 - `trim-galore`
 - `bwa`
 - `bowtie2`
 - `samtools`
 - `bcftools`
+- `bedtools`
 - `GATK`
 - `MuSE`
 - `VarScan`
+- `LoFreq`
+- `SomaticSniper`
+- `VarDictJava`
 - `SnpEff`
+- `VEP`
+- `CNVkit`
+- `vcf2maf`
 - `pandas`
-
-Create a conda environment `somatic` and install packages:
-
-```bash
-conda create --name somatic
-conda activate somatic
-conda install -c bioconda trim-galore bwa bowtie2 samtools bcftools gatk4 muse varscan
-pip install pandas
-```
-
-Install SnpEff:
-
-```bash
-mkdir ~/opt
-cd ~/opt
-
-wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip
-unzip snpEff_latest_core.zip
-rm snpEff_latest_core.zip
-
-# Add snpEff to PATH variable
-export PATH=$PATH:$HOME/opt/snpEff/exec
-```
