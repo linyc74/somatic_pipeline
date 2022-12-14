@@ -38,9 +38,6 @@ RUN conda install -c conda-forge unzip=6.0 \
 # make snpeff executable
 ENV PATH /snpEff/exec:$PATH
 
-# download pre-build snpeff database
-RUN snpeff download -verbose GRCh38.99
-
 
 
 # --- cnvkit ---
