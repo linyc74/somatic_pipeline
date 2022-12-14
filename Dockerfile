@@ -103,14 +103,27 @@ ENV PATH /lofreq_star-2.1.5_linux-x86-64/bin:$PATH
 
 
 
-# --- vardict & somatic-sniper ---
+# --- somatic-sniper ---
 RUN conda install -c bioconda -n somatic \
-    vardict=2019.06.04 \
     bedtools=2.30.0 \
     somatic-sniper=1.0.5.0
 
-# extra vardict path
-ENV PATH /opt/conda/envs/somatic/share/vardict-2019.06.04-0:$PATH
+
+
+# --- vardict ---
+RUN apt-get install -y dos2unix \
+ && git clone --recursive https://github.com/AstraZeneca-NGS/VarDictJava.git \
+ && cd VarDictJava \
+ && dos2unix gradlew \
+ && ./gradlew distTar \
+ && tar -xf build/distributions/VarDict-1.8.3.tar \
+ && cp -r VarDict-1.8.3 / \
+ && cd .. \
+ && rm -rf VarDictJava \
+ && dos2unix /VarDict-1.8.3/bin/*.pl \
+ && dos2unix /VarDict-1.8.3/bin/*.R
+
+ENV PATH=/VarDict-1.8.3/bin:$PATH
 
 
 

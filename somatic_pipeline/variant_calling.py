@@ -815,11 +815,12 @@ class VarDictTumorOnly(VarDictBase):
         log = f'{self.outdir}/vardict.log'
         self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
-            'vardict',
+            'VarDict',
             f'-G {self.ref_fa}',
             f'-f {self.ALLELE_FREQ_THRESHOLD}',
             f'-N {TUMOR}',
             f'-b {self.tumor_bam}',
+            f'-th {self.threads}',
             '-c 1',  # column for chromosome
             '-S 2',  # column for region start
             '-E 3',  # column for region end
@@ -869,11 +870,12 @@ class VarDictTNPaired(VarDictBase):
         log = f'{self.outdir}/vardict.log'
         self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
-            'vardict',
+            'VarDict',
             f'-G {self.ref_fa}',
             f'-f {self.ALLELE_FREQ_THRESHOLD}',
             f'-N {TUMOR}',
             f'-b "{self.tumor_bam}|{self.normal_bam}"',
+            f'-th {self.threads}',
             '-c 1',  # column for chromosome
             '-S 2',  # column for region start
             '-E 3',  # column for region end
