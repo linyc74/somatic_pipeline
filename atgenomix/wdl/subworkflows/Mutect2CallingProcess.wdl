@@ -12,6 +12,7 @@ workflow Mutect2CallingProcess {
         File? inFileNormalBam
         File? inFileNormalBamIndex
         File inFilePON
+        File inFileIntervalBed
         File refFa
         File refFai
         File refFaGzi
@@ -28,6 +29,7 @@ workflow Mutect2CallingProcess {
             inFileNormalBam = inFileNormalBam,
             inFileNormalBamIndex = inFileNormalBamIndex,
             inFilePON = inFilePON,
+            inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,
@@ -76,6 +78,7 @@ task Mutect2 {
         File? inFileNormalBamIndex
         File inFilePON
         File inFilePONindex
+        File inFileIntervalBed
         File refFa
         File refFai
         File refFaGzi
@@ -90,6 +93,7 @@ task Mutect2 {
         set -e -o pipefail
         gatk Mutect2 \
         --reference ~{refFa} \
+        --intervals ~{inFileIntervalBed} \
         --input ~{inFileTumorBam} \
         ~{"--input " + inFileNormalBam} \
         --tumor-sample ~{tumorSampleName} \
@@ -149,7 +153,7 @@ task FilterMutectCalls {
         gatk FilterMutectCalls \
         --variant ~{inFileVcf} \
         --reference ~{refFa} \
-        --ouptput ~{sampleName}_filtered.vcf \
+        --output ~{sampleName}_filtered.vcf \
         --filtering-stats ~{sampleName}_filter-stats.tsv \
         --orientation-bias-artifact-priors ~{inFileArtifactPriors} \
         --create-output-variant-index false
