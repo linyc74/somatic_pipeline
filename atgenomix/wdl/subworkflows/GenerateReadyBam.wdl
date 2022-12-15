@@ -15,6 +15,7 @@ workflow GenerateReadyBam {
         File refFai
         File refDict
         File refFaGzi
+        Int bwaThreads
         String libraryKit
         String sampleName
         BwaIndex bwaIndex
@@ -32,6 +33,7 @@ workflow GenerateReadyBam {
             inFileFastqR2 = inFileFastqR2,
             refFa = refFa,
             refFai = refFai,
+            threads = bwaThreads,
             bwaIndex = bwaIndex,
             libraryKit = libraryKit,
             sampleName = sampleName

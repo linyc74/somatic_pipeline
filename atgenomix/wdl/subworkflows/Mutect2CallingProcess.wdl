@@ -17,6 +17,7 @@ workflow Mutect2CallingProcess {
         File refFai
         File refFaGzi
         File refDict
+        Int m2HmmThreads
         String tumorSampleName
         String? normalSampleName
         String sampleName
@@ -34,6 +35,7 @@ workflow Mutect2CallingProcess {
             refFai = refFai,
             refFaGzi = refFaGzi,
             refDict = refDict,
+            threads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName

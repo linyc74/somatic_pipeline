@@ -12,6 +12,8 @@ workflow TNpairedVariantsCalling {
         File refFa
         File refFai
         File refFaGzi
+        Int bgzipIndexThreads
+        Int concatThreads
         String tumorSampleName
         String normalSampleName
         String sampleName
@@ -24,6 +26,8 @@ workflow TNpairedVariantsCalling {
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,
+            bgzipIndexThreads = bgzipIndexThreads,
+            concatThreads = concatThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
