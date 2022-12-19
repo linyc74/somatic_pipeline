@@ -76,7 +76,7 @@ RUN cd /usr/local/seqslab \
     && ln -s `pwd`/gatk /usr/local/bin/gatk
 
 # Install MuSE
-RUN cd /usr/local/seqslab 
+RUN cd /usr/local/seqslab \
     && wget https://github.com/wwylab/MuSE/archive/refs/tags/v1.0-rc.tar.gz \
     && tar zxvf v1.0-rc.tar.gz \
     && rm v1.0-rc.tar.gz \
