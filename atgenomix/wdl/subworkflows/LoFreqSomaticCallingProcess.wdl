@@ -57,7 +57,7 @@ workflow LoFreqSomaticCallingProcess {
 
 # TASK DEFINITIONS
 
-# 'Task description'
+# Call somatic variants in matched tumor/normal pairs using Lofreq
 task LoFreqSomatic {
     input {
         File inFileTumorBam
