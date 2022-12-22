@@ -12,6 +12,7 @@ workflow Mutect2CallingProcess {
         File? inFileNormalBam
         File? inFileNormalBamIndex
         File inFilePON
+        File inFilePONindex
         File inFileIntervalBed
         File refFa
         File refFai
@@ -30,6 +31,7 @@ workflow Mutect2CallingProcess {
             inFileNormalBam = inFileNormalBam,
             inFileNormalBamIndex = inFileNormalBamIndex,
             inFilePON = inFilePON,
+            inFilePONindex = inFilePONindex,
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
