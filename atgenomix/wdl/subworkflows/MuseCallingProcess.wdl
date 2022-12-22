@@ -65,13 +65,13 @@ task MuseCall {
         set -e -o pipefail
         muse call \
         -f ~{refFa} \
-        -O ~{sampleName}_MuseResult \
+        -O ~{sampleName} \
         ~{inFileTumorBam} \
         ~{inFileNormalBam}
     >>>
  
     output {
-        File outFileMuseResult = "~{sampleName}_MuseResult"
+        File outFileMuseResult = "~{sampleName}.MuSE.txt"
     }
  
     runtime {

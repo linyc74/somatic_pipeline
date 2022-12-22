@@ -15,6 +15,9 @@ workflow SomaticPipelineTumorNormalMode {
         File inFileNormalFastqR2
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
+        File inFileIntervalBed
+        File inFilePON
+        File inFilePONindex
         File refFa
         File refFai
         File refDict
@@ -73,10 +76,16 @@ workflow SomaticPipelineTumorNormalMode {
     call caller.TNpairedVariantsCalling as variantCalling {
         input:
             inFileTumorBam = tumorBam.outputBam,
+            inFileTumorBamIndex = tumorBam.outputBamIndex,
             inFileNormalBam = normalBam.outputBam,
+            inFileNormalBamIndex = normalBam.outputBamIndex,
+            inFileIntervalBed = inFileIntervalBed,
+            inFilePON = inFilePON,
+            inFilePONindex = inFilePONindex,
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,
+            refDict = refDict,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
