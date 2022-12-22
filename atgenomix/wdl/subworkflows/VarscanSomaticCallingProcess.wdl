@@ -9,6 +9,7 @@ workflow VarscanSomaticCallingProcess {
     input {
         File inFileTumorBam
         File inFileNormalBam
+        File inFileIntervalBed
         File refFa
         File refFai
         File refFaGzi
@@ -22,6 +23,7 @@ workflow VarscanSomaticCallingProcess {
     call general.Mpileup as tumorMpileup {
         input:
             inFileBam = inFileTumorBam,
+            inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,
@@ -31,6 +33,7 @@ workflow VarscanSomaticCallingProcess {
     call general.Mpileup as normalMpileup {
         input:
             inFileBam = inFileNormalBam,
+            inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,

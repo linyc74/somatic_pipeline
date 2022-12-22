@@ -95,6 +95,7 @@ task Concat {
 task Mpileup {
     input {
         File inFileBam
+        File inFileIntervalBed
         File refFa
         File refFai
         File refFaGzi
@@ -105,6 +106,7 @@ task Mpileup {
         set -e -o pipefail
         samtools mpileup \
         --fasta-ref ~{refFa} \
+        --positions ~{inFileIntervalBed} \
         --output ~{sampleName}_pileup.txt \
         ~{inFileBam}
     >>>
@@ -129,7 +131,7 @@ task PythonVariantFilter {
  
     command <<<
         set -e -o pipefail
-        python variant filtering \
+        python /usr/local/seqslab/variant filtering \
         --input-vcf ~{inFileVcf} \
         --output-vcf ~{sampleName}_filtered.vcf \
         --variant-flagging-criteria ~{flaggingCriteria}  \
