@@ -95,7 +95,7 @@ task VarscanSomatic {
  
     command <<<
         set -e -o pipefail
-        varscan somatic \
+        java -jar /usr/local/seqslab/VarScan.v2.3.7.jar  somatic \
         ~{inFileNormalPileup} \
         ~{inFileTumorPileup} \
         --output-snp ~{sampleName}_snp.vcf \

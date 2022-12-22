@@ -63,7 +63,7 @@ task MuseCall {
  
     command <<<
         set -e -o pipefail
-        MuSE call \
+        muse call \
         -f ~{refFa} \
         -O ~{sampleName}_MuseResult \
         ~{inFileTumorBam} \
@@ -88,7 +88,7 @@ task MuseSump {
  
     command <<<
         set -e -o pipefail
-        MuSE sump \
+        muse sump \
         -I ~{inFileMuseResult} \
         -E \
         -O ~{sampleName}.vcf
