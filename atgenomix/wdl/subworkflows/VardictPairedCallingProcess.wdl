@@ -34,12 +34,25 @@ workflow VardictPairedCallingProcess {
             minimumAF = minimumAF,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
+    }
+
+    call TestsomaticR {
+        input:
+            inFileVardictStep1 = VardictPaired.outFileResult
+    }
+
+    call Var2Vcf {
+        input:
+            inFileVardictStep2 = TestsomaticR.outFileResult,
+            minimumAF = minimumAF,
+            tumorSampleName = tumorSampleName,
+            normalSampleName = normalSampleName,
             sampleName = sampleName
     }
 
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = VardictPaired.outFileVcf,
+            inFileVcf = Var2Vcf.outFileVcf,
             sampleName = sampleName
     }    
  
@@ -52,7 +65,7 @@ workflow VardictPairedCallingProcess {
 
 # TASK DEFINITIONS
 
-# Call variants using VarDict paired variant calling mode
+# Call variants using VarDict paired variant calling mode step1:vardict
 task VardictPaired {
     input {
         File inFileTumorBam
@@ -66,12 +79,11 @@ task VardictPaired {
         Float minimumAF = 0.01
         String tumorSampleName
         String normalSampleName
-        String sampleName
     }
  
     command <<<
         set -e -o pipefail
-        vardict \
+        VarDict \
         -G ~{refFa} \
         -f ~{minimumAF} \
         -N ~{tumorSampleName} \
@@ -80,14 +92,60 @@ task VardictPaired {
         -S 2 \
         -E 3 \
         -g 4 \
-        ~{inFileIntervalBed} > test.txt \
+        ~{inFileIntervalBed} \
+        1> VardictStep1
+    >>>
+ 
+    output {
+        File outFileResult = "VardictStep1"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
+# Call variants using VarDict paired variant calling mode step2:testsomatic.R
+task TestsomaticR {
+    input {
+        File inFileVardictStep1
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        cat ~{inFileVardictStep1} \
         | \
         testsomatic.R \
+        1> VardictStep2 
+    >>>
+ 
+    output {
+        File outFileResult = "VardictStep2"
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
+# Call variants using VarDict paired variant calling mode step3:var2vcf
+task Var2Vcf {
+    input {
+        File inFileVardictStep2
+        Float minimumAF = 0.01
+        String tumorSampleName
+        String normalSampleName
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        cat ~{inFileVardictStep2} \
         | \
         var2vcf_paired.pl \
         -N "~{tumorSampleName} | ~{normalSampleName}" \
         -f ~{minimumAF} \
-        1 > ~{sampleName}.vcf
+        1> ~{sampleName}.vcf
     >>>
  
     output {
@@ -98,4 +156,50 @@ task VardictPaired {
         docker: 'nycu:latest'
     }
 }
-  
+
+# Call variants using VarDict paired variant calling mode
+# task VardictPaired {
+#     input {
+#         File inFileTumorBam
+#         File inFileTumorBamIndex
+#         File inFileNormalBam
+#         File inFileNormalBamIndex
+#         File inFileIntervalBed
+#         File refFa
+#         File refFai
+#         File refFaGzi
+#         Float minimumAF = 0.01
+#         String tumorSampleName
+#         String normalSampleName
+#         String sampleName
+#     }
+ 
+#     command <<<
+#         set -e -o pipefail
+#         vardict \
+#         -G ~{refFa} \
+#         -f ~{minimumAF} \
+#         -N ~{tumorSampleName} \
+#         -b "~{inFileTumorBam} | ~{inFileNormalBam}" \
+#         -c 1 \
+#         -S 2 \
+#         -E 3 \
+#         -g 4 \
+#         ~{inFileIntervalBed} \
+#         | \
+#         testsomatic.R \
+#         | \
+#         var2vcf_paired.pl \
+#         -N "~{tumorSampleName} | ~{normalSampleName}" \
+#         -f ~{minimumAF} \
+#         1 > ~{sampleName}.vcf
+#     >>>
+ 
+#     output {
+#         File outFileVcf = "~{sampleName}.vcf"
+#     }
+ 
+#     runtime {
+#         docker: 'nycu:latest'
+#     }
+# }
