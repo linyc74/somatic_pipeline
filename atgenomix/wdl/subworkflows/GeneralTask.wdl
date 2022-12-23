@@ -75,9 +75,9 @@ task Concat {
         set -e -o pipefail
         bcftools concat \
         --allow-overlaps \
-        --threads ~{threads} \ 
+        --threads ~{threads} \
         --output-type v \
-        --output ~{sampleName}.vcf \ 
+        --output ~{sampleName}.vcf \
         ~{inFileSnvVcf} \
         ~{inFileIndelVcf}
     >>>
