@@ -410,7 +410,7 @@ class VariantCallingWorkflow(Processor):
             normal_bam=self.normal_bam,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
-            vardict_call_region_bed=self.vardict_call_region_bed,
+            call_region_bed=self.vardict_call_region_bed,
             variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 

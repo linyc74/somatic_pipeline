@@ -20,7 +20,7 @@ class VariantCalling(Processor):
     normal_bam: Optional[str]
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
-    vardict_call_region_bed: Optional[str]
+    call_region_bed: Optional[str]
     variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
 
@@ -37,7 +37,7 @@ class VariantCalling(Processor):
             normal_bam: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
-            vardict_call_region_bed: Optional[str],
+            call_region_bed: Optional[str],
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str]) -> List[str]:
 
@@ -47,7 +47,7 @@ class VariantCalling(Processor):
         self.normal_bam = normal_bam
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
-        self.vardict_call_region_bed = vardict_call_region_bed
+        self.call_region_bed = call_region_bed
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
 
@@ -138,6 +138,7 @@ class VariantCalling(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
+            call_region_bed=self.call_region_bed,
             variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 
@@ -154,7 +155,7 @@ class VariantCalling(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
-            bed=self.vardict_call_region_bed,
+            bed=self.call_region_bed,
             variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 
@@ -162,7 +163,7 @@ class VariantCalling(Processor):
         return VarDictTumorOnly(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
-            bed=self.vardict_call_region_bed,
+            bed=self.call_region_bed,
             variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 
@@ -198,6 +199,7 @@ class Base(Processor, ABC):
     ref_fa: str
     tumor_bam: str
     normal_bam: Optional[str]
+    call_region_bed: str
     variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
 
@@ -613,20 +615,26 @@ class Muse(Base):
             ref_fa: str,
             tumor_bam: str,
             normal_bam: str,
+            call_region_bed: str,
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str]) -> str:
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
+        self.call_region_bed = call_region_bed
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
 
+        self.clean_up_call_region_bed()
         self.muse_call()
         self.muse_sump()
         self.flag_and_remove_variants()
 
         return self.vcf
+
+    def clean_up_call_region_bed(self):
+        self.call_region_bed = CleanUpCallRegionBed(self.settings).main(self.call_region_bed)
 
     def muse_call(self):
         log = f'{self.outdir}/MuSE-call.log'
@@ -635,6 +643,7 @@ class Muse(Base):
             'MuSE call',
             f'-f {self.ref_fa}',
             f'-O {output}',
+            f'-l {self.call_region_bed}',
             self.tumor_bam,
             self.normal_bam,
             f'1> {log}',
@@ -655,6 +664,28 @@ class Muse(Base):
             f'2> {log}',
         ])
         self.call(cmd)
+
+
+class CleanUpCallRegionBed(Processor):
+
+    bed: str
+    output_bed: str
+
+    def main(self, bed: str):
+        self.bed = bed
+
+        self.output_bed = f'{self.workdir}/call-region.bed'
+
+        self.logger.info(f'Cleaning up call region BED file by only using the first 3 fields:\n"{self.bed}" --> "{self.output_bed}"')
+
+        with open(self.bed) as reader:
+            with open(self.output_bed, 'w') as writer:
+                for line in reader:
+                    items = line.strip().split('\t')
+                    new_line = '\t'.join(items[0:3])
+                    writer.write(new_line + '\n')
+
+        return self.output_bed
 
 
 class Varscan(Base):
