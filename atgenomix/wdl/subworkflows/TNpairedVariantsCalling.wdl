@@ -127,7 +127,6 @@ workflow TNpairedVariantsCalling {
         File outFileLofreqVcf = lofreq.outFileVcf
         File outFileMuseVcf = muse.outFileVcf
         File outFileMutect2Vcf = mutect2.outFileVcf
-        File outFileMutect2FilterStats = mutect2.outFileFilterStats
         File outFileVardictVcf = vardict.outFileVcf
         File outFileVarscanVcf = varscan.outFileVcf
     }

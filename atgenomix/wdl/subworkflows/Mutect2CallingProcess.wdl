@@ -50,8 +50,9 @@ workflow Mutect2CallingProcess {
 
     call FilterMutectCalls {
         input:
-            inFileVcf = Mutect2.outFileVcf,
             inFileArtifactPriors = LearnReadOrientationModel.outFileArtifactPriors,
+            inFileVcf = Mutect2.outFileVcf,
+            inFileVcfStats = Mutect2.outFileVcfStats,
             refFa = refFa,
             refFai = refFai,
             refFaGzi = refFaGzi,
@@ -67,7 +68,6 @@ workflow Mutect2CallingProcess {
 
     output {
         File outFileVcf = filter.outFileVcf
-        File outFileFilterStats = FilterMutectCalls.outFileFilterStats
     }
 }
 
@@ -115,6 +115,7 @@ task Mutect2 {
     output {
         File outFileVcf = "~{sampleName}.vcf"
         File outFileF1R2 = "~{sampleName}_f1r2.tar.gz"
+        File outFileVcfStats =  "~{sampleName}.vcf.stats"
     }
 }
 
@@ -143,8 +144,9 @@ task LearnReadOrientationModel {
 # Filter variants using GATK FilterMutectCalls
 task FilterMutectCalls {
     input {
-        File inFileVcf
         File inFileArtifactPriors
+        File inFileVcf
+        File inFileVcfStats
         File refFa
         File refFai
         File refFaGzi
@@ -158,7 +160,7 @@ task FilterMutectCalls {
         --variant ~{inFileVcf} \
         --reference ~{refFa} \
         --output ~{sampleName}_filtered.vcf \
-        --filtering-stats ~{sampleName}_filter-stats.tsv \
+        --filtering-stats ~{inFileVcfStats} \
         --orientation-bias-artifact-priors ~{inFileArtifactPriors} \
         --create-output-variant-index false
     >>>
@@ -169,6 +171,5 @@ task FilterMutectCalls {
  
     output {
         File outFileVcf = "~{sampleName}_filtered.vcf"
-        File outFileFilterStats = "~{sampleName}_filter-stats.tsv"
     }
 }
