@@ -87,7 +87,7 @@ task VardictPaired {
         -G ~{refFa} \
         -f ~{minimumAF} \
         -N ~{tumorSampleName} \
-        -b "~{inFileTumorBam} | ~{inFileNormalBam}" \
+        -b "~{inFileTumorBam}|~{inFileNormalBam}" \
         -c 1 \
         -S 2 \
         -E 3 \
