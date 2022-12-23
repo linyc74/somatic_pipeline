@@ -38,7 +38,7 @@ RUN cd /usr/local/seqslab \
     && rm fastqc_v0.11.9.zip \
     && cd FastQC/ \
     && chmod 755 fastqc \
-       ln -s `pwd`/fastqc /usr/local/bin/fastqc
+    && ln -s `pwd`/fastqc /usr/local/bin/fastqc
 
 # Install cutadapt v4.2
 RUN python3 -m pip install cutadapt==4.2
@@ -75,51 +75,57 @@ RUN cd /usr/local/seqslab \
     && cd gatk-4.2.4.1 \
     && ln -s `pwd`/gatk /usr/local/bin/gatk
 
-# Install MuSE
+# Install MuSE v1.0rc
 RUN cd /usr/local/seqslab \
     && wget https://github.com/wwylab/MuSE/archive/refs/tags/v1.0-rc.tar.gz \
     && tar zxvf v1.0-rc.tar.gz \
     && rm v1.0-rc.tar.gz \
     && cd MuSE-1.0-rc \
     && make \
-    ln -s `pwd`/MuSE /usr/local/bin/muse
+    && ln -s `pwd`/MuSE /usr/local/bin/muse
 
-# Install VarDict
-RUN apt-get install -y dos2unix \
-    && cd /usr/local/seqslab \
-    && git clone --recursive https://github.com/AstraZeneca-NGS/VarDictJava.git \
-    && cd VarDictJava \
-    && dos2unix gradlew \
-    && ./gradlew distTar \
-    && tar -xf build/distributions/VarDict-1.8.3.tar \
-    && cp -r VarDict-1.8.3 .. \
-    && cd .. \
-    && rm -rf VarDictJava \
-    && dos2unix ./VarDict-1.8.3/bin/*.pl \
-    && dos2unix ./VarDict-1.8.3/bin/*.R \
-    && ln -sr ./VarDict-1.8.3/bin/* /usr/local/bin
+# Install VarDict v1.6
+#RUN cd /usr/local/seqslab \
+#    && wget https://github.com/AstraZeneca-NGS/VarDict/archive/refs/tags/v1.6.tar.gz \
+#    && tar zxvf v1.6.tar.gz \
+#    && rm v1.6.tar.gz \
+#    && cd VarDict-1.6 \
+#    && ln -s `pwd`/vardict /usr/local/bin \
+#    && ln -s `pwd`/vardict.pl /usr/local/bin \
+#    && ln -s `pwd`/testsomatic.R /usr/local/bin \
+#    && ln -s `pwd`/teststrandbias.R /usr/local/bin \
+#    && ln -s `pwd`/var2vcf_paired.pl /usr/local/bin \
+#    && ln -s `pwd`/var2vcf_valid.pl /usr/local/bin
 
-# Install LoFreq
+# Install VarDictJava v1.8.3 
+RUN cd /usr/local/seqslab \
+    && wget https://github.com/AstraZeneca-NGS/VarDictJava/releases/download/v1.8.3/VarDict-1.8.3.tar \
+    && tar xvf VarDict-1.8.3.tar \
+    && rm VarDict-1.8.3.tar \
+    && cd VarDict-1.8.3 \
+    && ln -sr ./bin/* /usr/local/bin
+
+# Install LoFreq v2.1.5
 RUN cd /usr/local/seqslab \
     && wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz \
     && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
     && rm lofreq_star-2.1.5_linux-x86-64.tgz \
     && mv lofreq_star-2.1.5_linux-x86-64/bin/* /usr/local/bin
 
-# Install somatic-sniper
+# Install somatic-sniper v1.0.5.0
 RUN cd /usr/local/seqslab \
     && wget https://github.com/genome/somatic-sniper/archive/refs/tags/v1.0.5.0.tar.gz \
     && tar zxvf v1.0.5.0.tar.gz \
     && rm v1.0.5.0.tar.gz \
     && cd somatic-sniper-1.0.5.0 \
-    && mkdir somatic-sniper/build \
-    && cd somatic-sniper/build \
+    && mkdir build \
+    && cd build \
     && cmake ../ \
     && make deps \
     && make -j \
     && ln -s `pwd`/bin/bam-somaticsniper /usr/local/bin
 
-# Install bedtools
+# Install bedtools v2.30.0
 RUN cd /usr/local/seqslab \
     && wget https://github.com/arq5x/bedtools2/releases/download/v2.30.0/bedtools-2.30.0.tar.gz \
     && tar -zxvf bedtools-2.30.0.tar.gz \
@@ -128,10 +134,18 @@ RUN cd /usr/local/seqslab \
     && make \
     && ln -sr ./bin/* /usr/local/bin
 
-# Install VarScan
-COPY env/VarScan.v2.3.7.jar /usr/local/seqslab
-RUN cd /usr/local/seqlab \
-    && java -jar VarScan.v2.3.7.jar
+# Install VarScan v2.3.7
+COPY pkg/VarScan.v2.3.7.jar /usr/local/seqslab
+
+# Install NYCU python CLI tool
+RUN cd /usr/local/seqslab \
+    && git clone https://github.com/linyc74/variant.git
+
+# Install vcf2maf v1.6.21
+#RUN cd /usr/local/seqslab \
+#    && wget https://github.com/mskcc/vcf2maf/archive/refs/tags/v1.6.21.tar.gz \
+#    && tar -zxvf v1.6.21.tar.gz \
+#    && rm v1.6.21.tar.gz
 
 # Install SnpEff
 #RUN cd ~ \
