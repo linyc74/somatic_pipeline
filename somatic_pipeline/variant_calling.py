@@ -883,7 +883,7 @@ class VarDictTNPaired(VarDictBase):
             self.bed,
             f'2> {log}',
             '|',
-            'teststrandbias.R',
+            'testsomatic.R',
             f'2> {log}',
             '|',
             'var2vcf_paired.pl',
