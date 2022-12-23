@@ -33,7 +33,7 @@ class Run:
             skip_variant_calling: bool,
             panel_of_normal_vcf: str,
             germline_resource_vcf: str,
-            vardict_call_region_bed: str,
+            call_region_bed: str,
 
             variant_flagging_criteria: str,
             variant_removal_flags: str,
@@ -75,9 +75,9 @@ class Run:
 
             variant_callers=variant_callers.split(','),
             skip_variant_calling=skip_variant_calling,
+            call_region_bed=None if call_region_bed.lower() == 'none' else call_region_bed,
             panel_of_normal_vcf=None if panel_of_normal_vcf.lower() == 'none' else panel_of_normal_vcf,
             germline_resource_vcf=None if germline_resource_vcf.lower() == 'none' else germline_resource_vcf,
-            vardict_call_region_bed=None if vardict_call_region_bed.lower() == 'none' else vardict_call_region_bed,
 
             variant_flagging_criteria=None if variant_flagging_criteria.lower() == 'none' else variant_flagging_criteria,
             variant_removal_flags=[] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(','),

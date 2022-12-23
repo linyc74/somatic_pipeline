@@ -40,9 +40,9 @@ class SomaticPipeline(Processor):
     # variant calling
     variant_callers: List[str]
     skip_variant_calling: bool
+    call_region_bed: Optional[str]
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
-    vardict_call_region_bed: Optional[str]
 
     # variant filtering
     variant_flagging_criteria: Optional[str]
@@ -87,9 +87,9 @@ class SomaticPipeline(Processor):
 
             variant_callers: List[str],
             skip_variant_calling: bool,
+            call_region_bed: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
-            vardict_call_region_bed: Optional[str],
 
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
@@ -128,9 +128,9 @@ class SomaticPipeline(Processor):
 
         self.variant_callers = variant_callers
         self.skip_variant_calling = skip_variant_calling
+        self.call_region_bed = call_region_bed
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
-        self.vardict_call_region_bed = vardict_call_region_bed
 
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
@@ -199,9 +199,9 @@ class SomaticPipeline(Processor):
                 tumor_bam=self.tumor_bam,
                 normal_bam=self.normal_bam,
                 variant_callers=self.variant_callers,
+                call_region_bed=self.call_region_bed,
                 panel_of_normal_vcf=self.panel_of_normal_vcf,
                 germline_resource_vcf=self.germline_resource_vcf,
-                vardict_call_region_bed=self.vardict_call_region_bed,
                 variant_flagging_criteria=self.variant_flagging_criteria,
                 variant_removal_flags=self.variant_removal_flags,
                 min_snv_callers=self.min_snv_callers,
@@ -317,9 +317,9 @@ class VariantCallingWorkflow(Processor):
     normal_bam: Optional[str]
 
     variant_callers: List[str]
+    call_region_bed: Optional[str]
     panel_of_normal_vcf: Optional[str]
     germline_resource_vcf: Optional[str]
-    vardict_call_region_bed: Optional[str]
 
     variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
@@ -348,9 +348,9 @@ class VariantCallingWorkflow(Processor):
             normal_bam: Optional[str],
 
             variant_callers: List[str],
+            call_region_bed: Optional[str],
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
-            vardict_call_region_bed: Optional[str],
 
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
@@ -374,9 +374,9 @@ class VariantCallingWorkflow(Processor):
         self.normal_bam = normal_bam
 
         self.variant_callers = variant_callers
+        self.call_region_bed = call_region_bed
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
-        self.vardict_call_region_bed = vardict_call_region_bed
 
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
@@ -408,9 +408,9 @@ class VariantCallingWorkflow(Processor):
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
+            call_region_bed=self.call_region_bed,
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
-            call_region_bed=self.vardict_call_region_bed,
             variant_flagging_criteria=self.variant_flagging_criteria,
             variant_removal_flags=self.variant_removal_flags)
 

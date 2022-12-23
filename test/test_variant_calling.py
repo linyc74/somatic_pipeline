@@ -21,12 +21,12 @@ class TestVariantCalling(TestCase):
 
     def test_tn_paired(self):
         variant_callers = [
-            # 'lofreq',
-            # 'somatic-sniper',
-            # 'vardict',
-            # 'varscan',
+            'lofreq',
+            'somatic-sniper',
+            'vardict',
+            'varscan',
             'muse',
-            # 'mutect2',
+            'mutect2',
         ]
         actual = VariantCalling(self.settings).main(
             variant_callers=variant_callers,
@@ -40,12 +40,12 @@ class TestVariantCalling(TestCase):
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
         )
         expected = [
-            # f'{self.outdir}/callers/lofreq.vcf',
-            # f'{self.outdir}/callers/somatic-sniper.vcf',
-            # f'{self.outdir}/callers/vardict.vcf',
-            # f'{self.outdir}/callers/varscan.vcf',
+            f'{self.outdir}/callers/lofreq.vcf',
+            f'{self.outdir}/callers/somatic-sniper.vcf',
+            f'{self.outdir}/callers/vardict.vcf',
+            f'{self.outdir}/callers/varscan.vcf',
             f'{self.outdir}/callers/muse.vcf',
-            # f'{self.outdir}/callers/mutect2.vcf',
+            f'{self.outdir}/callers/mutect2.vcf',
         ]
         for a, e in zip(actual, expected):
             self.assertFileExists(e, a)

@@ -212,6 +212,15 @@ GROUP_NAME_TO_ARGUMENTS = {
                 }
             },
             {
+                'keys': ['--call-region-bed'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'default': 'None',
+                    'help': 'variant calling region bed file (vardict, muse, lofreq, mutect2, haplotype-caller) (default: %(default)s)',
+                }
+            },
+            {
                 'keys': ['--panel-of-normal-vcf'],
                 'properties': {
                     'type': str,
@@ -227,15 +236,6 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'required': False,
                     'default': 'None',
                     'help': 'germline resource VCF file for Mutect2 to estimate prior probability (default: %(default)s)',
-                }
-            },
-            {
-                'keys': ['--vardict-call-region-bed'],
-                'properties': {
-                    'type': str,
-                    'required': False,
-                    'default': 'None',
-                    'help': 'variant calling region bed file (WES) for VarDict (default: %(default)s)',
                 }
             },
         ],
@@ -521,9 +521,9 @@ class EntryPoint:
 
                 variant_callers=args.variant_callers,
                 skip_variant_calling=args.skip_variant_calling,
+                call_region_bed=args.call_region_bed,
                 panel_of_normal_vcf=args.panel_of_normal_vcf,
                 germline_resource_vcf=args.germline_resource_vcf,
-                vardict_call_region_bed=args.vardict_call_region_bed,
 
                 variant_flagging_criteria=args.variant_flagging_criteria,
                 variant_removal_flags=args.variant_removal_flags,
