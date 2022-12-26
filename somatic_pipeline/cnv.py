@@ -70,8 +70,8 @@ class CleanUpBed(Processor):
     def set_output_bed(self):
         self.output_bed = edit_fpath(
             fpath=self.bed,
-            old_suffix='.call_region_bed',
-            new_suffix='-clean.call_region_bed',
+            old_suffix='.bed',
+            new_suffix='-clean.bed',
             dstdir=self.workdir)
 
     def clean_up(self):
@@ -182,8 +182,8 @@ class CNVkitReportAutoBinSize(Processor):
             self.tumor_bam,
             '--method hybrid',
             f'--targets {self.exome_target_bed}',
-            f'--target-output-call_region_bed {self.workdir}/cnvkit-autobin-target.call_region_bed',
-            f'--antitarget-output-call_region_bed {self.workdir}/cnvkit-autobin-antitarget.call_region_bed',
+            f'--target-output-bed {self.workdir}/cnvkit-autobin-target.bed',
+            f'--antitarget-output-bed {self.workdir}/cnvkit-autobin-antitarget.bed',
             f'1> {log}',
             f'2> {log}',
         ])
