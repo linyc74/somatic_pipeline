@@ -11,6 +11,11 @@ workflow GenerateReadyBam {
         File inFileFastqR2
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
+        File refAmb
+        File refAnn
+        File refBwt
+        File refPac
+        File refSa
         File refFa
         File refFai
         File refDict
@@ -18,23 +23,20 @@ workflow GenerateReadyBam {
         Int bwaThreads
         String libraryKit
         String sampleName
-        BwaIndex bwaIndex
     }
-
-    File refAmb = bwaIndex.refAmb  
-    File refAnn = bwaIndex.refAnn
-    File refBwt = bwaIndex.refBwt
-    File refPac = bwaIndex.refPac
-    File refSa = bwaIndex.refSa
     
     call BwaMem {
         input:
             inFileFastqR1 = inFileFastqR1,
             inFileFastqR2 = inFileFastqR2,
+            refAmb = refAmb,
+            refAnn = refAnn,
+            refBwt = refBwt,
+            refPac = refPac,
+            refSa = refSa,
             refFa = refFa,
             refFai = refFai,
             threads = bwaThreads,
-            bwaIndex = bwaIndex,
             libraryKit = libraryKit,
             sampleName = sampleName
     }
@@ -95,12 +97,16 @@ task BwaMem {
     input {
         File inFileFastqR1
         File inFileFastqR2
+        File refAmb
+        File refAnn
+        File refBwt
+        File refPac
+        File refSa
         File refFa
         File refFai
         Int threads = 2
         String libraryKit
         String sampleName
-        BwaIndex bwaIndex
     }
  
     command <<<

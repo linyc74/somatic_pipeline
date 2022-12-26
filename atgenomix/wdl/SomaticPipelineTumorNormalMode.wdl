@@ -18,6 +18,11 @@ workflow SomaticPipelineTumorNormalMode {
         File inFileIntervalBed
         File inFilePON
         File inFilePONindex
+        File refAmb
+        File refAnn
+        File refBwt
+        File refPac
+        File refSa
         File refFa
         File refFai
         File refDict
@@ -26,7 +31,6 @@ workflow SomaticPipelineTumorNormalMode {
         String tumorSampleName = 'tumor'
         String normalSampleName = 'normal'
         String sampleName
-        BwaIndex bwaIndex
     }
  
     call general.TrimGalore as trimTumorFastq {
@@ -49,13 +53,17 @@ workflow SomaticPipelineTumorNormalMode {
             inFileFastqR2 = trimTumorFastq.outFileFastqR2,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+            refAmb = refAmb,
+            refAnn = refAnn,
+            refBwt = refBwt,
+            refPac = refPac,
+            refSa = refSa,
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
             refFaGzi = refFaGzi,
             libraryKit = libraryKit,
-            sampleName = tumorSampleName,
-            bwaIndex = bwaIndex
+            sampleName = tumorSampleName
     }
 
     call mapper.GenerateReadyBam as normalBam {
@@ -64,13 +72,17 @@ workflow SomaticPipelineTumorNormalMode {
             inFileFastqR2 = trimNormalFastq.outFileFastqR2,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+            refAmb = refAmb,
+            refAnn = refAnn,
+            refBwt = refBwt,
+            refPac = refPac,
+            refSa = refSa,
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
             refFaGzi = refFaGzi,
             libraryKit = libraryKit,
-            sampleName = normalSampleName,
-            bwaIndex = bwaIndex     
+            sampleName = normalSampleName   
     }
 
     call caller.TNpairedVariantsCalling as variantCalling {

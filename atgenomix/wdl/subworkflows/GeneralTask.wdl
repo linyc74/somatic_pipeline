@@ -192,13 +192,3 @@ task TrimGalore {
         File outFileZipR2 = "out/~{sampleName}_val_2_fastqc.zip"
     }
 }
-
-# Struct
-
-struct BwaIndex {
-        File refAmb
-        File refAnn
-        File refBwt
-        File refPac
-        File refSa
-}
