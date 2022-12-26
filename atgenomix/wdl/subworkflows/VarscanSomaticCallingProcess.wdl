@@ -12,7 +12,6 @@ workflow VarscanSomaticCallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         Int bgzipIndexThreads
         Int concatThreads
         String tumorSampleName
@@ -26,7 +25,6 @@ workflow VarscanSomaticCallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             sampleName = tumorSampleName
     }
  
@@ -36,7 +34,6 @@ workflow VarscanSomaticCallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             sampleName = normalSampleName
     }
 

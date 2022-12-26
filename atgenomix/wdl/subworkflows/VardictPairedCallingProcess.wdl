@@ -14,7 +14,6 @@ workflow VardictPairedCallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         Float minimumAF = 0.01
         String tumorSampleName
         String normalSampleName
@@ -30,7 +29,6 @@ workflow VardictPairedCallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             minimumAF = minimumAF,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
@@ -75,7 +73,6 @@ task VardictPaired {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         Float minimumAF = 0.01
         String tumorSampleName
         String normalSampleName
@@ -167,7 +164,6 @@ task Var2Vcf {
 #         File inFileIntervalBed
 #         File refFa
 #         File refFai
-#         File refFaGzi
 #         Float minimumAF = 0.01
 #         String tumorSampleName
 #         String normalSampleName

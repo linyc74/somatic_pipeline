@@ -13,7 +13,6 @@ workflow MuseCallingProcess {
         File inFileNormalBamIndex
         File refFa
         File refFai
-        File refFaGzi
         String sampleName
     }
  
@@ -25,7 +24,6 @@ workflow MuseCallingProcess {
             inFileNormalBamIndex = inFileNormalBamIndex,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             sampleName = sampleName
     }
 
@@ -57,7 +55,6 @@ task MuseCall {
         File inFileNormalBamIndex
         File refFa
         File refFai
-        File refFaGzi
         String sampleName
     }
  

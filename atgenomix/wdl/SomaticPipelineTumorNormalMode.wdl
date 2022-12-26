@@ -26,7 +26,6 @@ workflow SomaticPipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        File refFaGzi
         String libraryKit = 'NA'
         String tumorSampleName = 'tumor'
         String normalSampleName = 'normal'
@@ -61,7 +60,6 @@ workflow SomaticPipelineTumorNormalMode {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            refFaGzi = refFaGzi,
             libraryKit = libraryKit,
             sampleName = tumorSampleName
     }
@@ -80,7 +78,6 @@ workflow SomaticPipelineTumorNormalMode {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            refFaGzi = refFaGzi,
             libraryKit = libraryKit,
             sampleName = normalSampleName   
     }
@@ -96,7 +93,6 @@ workflow SomaticPipelineTumorNormalMode {
             inFilePONindex = inFilePONindex,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             refDict = refDict,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,

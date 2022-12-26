@@ -21,7 +21,6 @@ workflow TNpairedVariantsCalling {
         File inFilePONindex
         File refFa
         File refFai
-        File refFaGzi
         File refDict
         Float minimumAF
         Int bgzipIndexThreads
@@ -39,7 +38,6 @@ workflow TNpairedVariantsCalling {
             inFileNormalBam = inFileNormalBam,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
@@ -54,7 +52,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             concatThreads = concatThreads,
             lofreqThreads = lofreqThreads,
             sampleName = sampleName
@@ -68,7 +65,6 @@ workflow TNpairedVariantsCalling {
             inFileNormalBamIndex = inFileNormalBamIndex,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             sampleName = sampleName
     }
 
@@ -83,7 +79,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             refDict = refDict,
             m2HmmThreads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
@@ -100,7 +95,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             minimumAF = minimumAF,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
@@ -114,7 +108,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             bgzipIndexThreads = bgzipIndexThreads,
             concatThreads = concatThreads,
             tumorSampleName = tumorSampleName,

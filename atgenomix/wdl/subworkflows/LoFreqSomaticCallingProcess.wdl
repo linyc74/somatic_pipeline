@@ -14,7 +14,6 @@ workflow LoFreqSomaticCallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         Int concatThreads
         Int lofreqThreads
         String sampleName
@@ -29,7 +28,6 @@ workflow LoFreqSomaticCallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             lofreqThreads = lofreqThreads,
             sampleName = sampleName
     }
@@ -67,7 +65,6 @@ task LoFreqSomatic {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         Int lofreqThreads
         String sampleName
     }

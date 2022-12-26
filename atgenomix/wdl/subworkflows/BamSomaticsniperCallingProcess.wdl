@@ -11,7 +11,6 @@ workflow BamSomaticsniperCallingProcess {
         File inFileNormalBam
         File refFa
         File refFai
-        File refFaGzi
         String tumorSampleName
         String normalSampleName
         String sampleName
@@ -23,7 +22,6 @@ workflow BamSomaticsniperCallingProcess {
             inFileNormalBam = inFileNormalBam,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
@@ -49,7 +47,6 @@ task BamSomaticsniper {
         File inFileNormalBam
         File refFa
         File refFai
-        File refFaGzi
         String tumorSampleName
         String normalSampleName
         String sampleName

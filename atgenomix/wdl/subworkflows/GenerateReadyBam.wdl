@@ -19,7 +19,6 @@ workflow GenerateReadyBam {
         File refFa
         File refFai
         File refDict
-        File refFaGzi
         Int bwaThreads
         String libraryKit
         String sampleName
@@ -61,8 +60,7 @@ workflow GenerateReadyBam {
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refFa = refFa,
             refFai = refFai,
-            refDict = refDict,
-            refFaGzi = refFaGzi
+            refDict = refDict
     }
 
     call ApplyBqsr {
@@ -72,8 +70,7 @@ workflow GenerateReadyBam {
             sampleName = sampleName,
             refFa = refFa,
             refFai = refFai,
-            refDict = refDict,
-            refFaGzi = refFaGzi
+            refDict = refDict
     }
 
     call BamStats {
@@ -186,7 +183,6 @@ task BaseRecalibrator {
         File refFa
         File refFai
         File refDict
-        File refFaGzi
         String sampleName
     }
  
@@ -216,7 +212,6 @@ task ApplyBqsr {
         File refFa
         File refFai
         File refDict
-        File refFaGzi
         String sampleName
     }
  

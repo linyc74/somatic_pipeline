@@ -16,7 +16,6 @@ workflow Mutect2CallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         File refDict
         Int m2HmmThreads
         String tumorSampleName
@@ -35,7 +34,6 @@ workflow Mutect2CallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             refDict = refDict,
             threads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
@@ -55,7 +53,6 @@ workflow Mutect2CallingProcess {
             inFileVcfStats = Mutect2.outFileVcfStats,
             refFa = refFa,
             refFai = refFai,
-            refFaGzi = refFaGzi,
             refDict = refDict,   
             sampleName = sampleName     
     }
@@ -85,7 +82,6 @@ task Mutect2 {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         File refDict
         Int threads = 16
         String tumorSampleName
@@ -149,7 +145,6 @@ task FilterMutectCalls {
         File inFileVcfStats
         File refFa
         File refFai
-        File refFaGzi
         File refDict
         String sampleName
     }

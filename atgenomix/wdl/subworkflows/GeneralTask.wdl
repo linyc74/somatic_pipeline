@@ -98,7 +98,6 @@ task Mpileup {
         File inFileIntervalBed
         File refFa
         File refFai
-        File refFaGzi
         String sampleName
     }
  
