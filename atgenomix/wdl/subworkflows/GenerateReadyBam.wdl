@@ -80,9 +80,9 @@ workflow GenerateReadyBam {
     }
 
     output {
-        File outputBam = ApplyBqsr.outFileBam
-        File outputBamIndex = ApplyBqsr.outFileBamIndex
-        File outputStats = BamStats.outFileBamStats
+        File outFileBam = ApplyBqsr.outFileBam
+        File outFileBamIndex = ApplyBqsr.outFileBamIndex
+        File outFileStats = BamStats.outFileBamStats
     }
 }
 

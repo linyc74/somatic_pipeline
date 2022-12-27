@@ -3,6 +3,7 @@ version 1.0
 import "subworkflows/GeneralTask.wdl" as general
 import "subworkflows/GenerateReadyBam.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
+import "subworkflows/PickAndAnnotate.wdl" as annotate
 
 # WORKFLOW DEFINITION
 
@@ -18,6 +19,7 @@ workflow SomaticPipelineTumorNormalMode {
         File inFileIntervalBed
         File inFilePON
         File inFilePONindex
+        File inPathPCGRref
         File refAmb
         File refAnn
         File refBwt
@@ -84,10 +86,10 @@ workflow SomaticPipelineTumorNormalMode {
 
     call caller.TNpairedVariantsCalling as variantCalling {
         input:
-            inFileTumorBam = tumorBam.outputBam,
-            inFileTumorBamIndex = tumorBam.outputBamIndex,
-            inFileNormalBam = normalBam.outputBam,
-            inFileNormalBamIndex = normalBam.outputBamIndex,
+            inFileTumorBam = tumorBam.outFileBam,
+            inFileTumorBamIndex = tumorBam.outFileBamIndex,
+            inFileNormalBam = normalBam.outFileBam,
+            inFileNormalBamIndex = normalBam.outFileBamIndex,
             inFileIntervalBed = inFileIntervalBed,
             inFilePON = inFilePON,
             inFilePONindex = inFilePONindex,
@@ -98,11 +100,27 @@ workflow SomaticPipelineTumorNormalMode {
             normalSampleName = normalSampleName,
             sampleName = sampleName
     }
-#    output {
-#        File outputFile = TaskName.outputFile
-#    }
+
+    call annotate.PickAndAnnotate as vcfAnnotate {
+        input:
+            inFileVcfSS = variantCalling.outFileBamsomaticsniperVcf,
+            inFileVcfMU = variantCalling.outFileMuseVcf,
+            inFileVcfM2 = variantCalling.outFileMutect2Vcf,
+            inFileVcfLF = variantCalling.outFileLofreqVcf,
+            inFileVcfVD = variantCalling.outFileVardictVcf,
+            infileVcfVS = variantCalling.outFileVarscanVcf,
+            inPathPCGRref = inPathPCGRref,
+            refFa = refFa,
+            sampleName = sampleName
+    }
+    
+    output {
+        File outFileVcf = vcfAnnotate.outFileVcf
+        File outFileVcfIndex = vcfAnnotate.outFileVcfIndex
+        File outFileMaf = vcfAnnotate.outFileMaf
+        File outFileFlexdbHtml = vcfAnnotate.outFileFlexdbHtml
+        File outFileHtml = vcfAnnotate.outFileHtml
+    }
 }
-
-
 
 # TASK DEFINITIONS
