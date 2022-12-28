@@ -141,6 +141,30 @@ COPY pkg/VarScan.v2.3.7.jar /usr/local/seqslab
 RUN cd /usr/local/seqslab \
     && git clone https://github.com/linyc74/variant.git
 
+# Inatall PCGR
+ARG MINI_VERSION=4.11.0-0
+ARG MINI_URL=https://github.com/conda-forge/miniforge/releases/download/${MINI_VERSION}/Mambaforge-${MINI_VERSION}-Linu
+x-x86_64.sh
+
+RUN curl --silent -L "${MINI_URL}" -o "mambaforge.sh" && \
+    /bin/bash mambaforge.sh -b -p /opt/mambaforge/ && \
+    rm mambaforge.sh
+
+ENV PATH="/opt/mambaforge/bin:$PATH"
+
+ENV PCGR_VERSION="1.1.0"
+ENV PCGR_REPO="https://raw.githubusercontent.com/sigven/pcgr/v${PCGR_VERSION}/conda/env/lock/"
+ENV PLATFORM="linux"
+
+RUN mamba create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock && \
+    mamba create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock && \
+    mamba clean --all --force-pkgs-dirs --yes
+
+ARG PCGR_ENV_NAME="pcgr"
+# pcgr env is activated by default
+ENV PATH="/opt/mambaforge/envs/${PCGR_ENV_NAME}/bin:${PATH}"
+ENV CONDA_PREFIX="/opt/mambaforge/envs/${PCGR_ENV_NAME}"
+
 # Install vcf2maf v1.6.21
 #RUN cd /usr/local/seqslab \
 #    && wget https://github.com/mskcc/vcf2maf/archive/refs/tags/v1.6.21.tar.gz \
