@@ -143,8 +143,7 @@ RUN cd /usr/local/seqslab \
 
 # Inatall PCGR
 ARG MINI_VERSION=4.11.0-0
-ARG MINI_URL=https://github.com/conda-forge/miniforge/releases/download/${MINI_VERSION}/Mambaforge-${MINI_VERSION}-Linu
-x-x86_64.sh
+ARG MINI_URL=https://github.com/conda-forge/miniforge/releases/download/${MINI_VERSION}/Mambaforge-${MINI_VERSION}-Linux-x86_64.sh
 
 RUN curl --silent -L "${MINI_URL}" -o "mambaforge.sh" && \
     /bin/bash mambaforge.sh -b -p /opt/mambaforge/ && \
