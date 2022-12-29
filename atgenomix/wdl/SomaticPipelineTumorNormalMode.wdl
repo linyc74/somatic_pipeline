@@ -37,13 +37,15 @@ workflow SomaticPipelineTumorNormalMode {
     call general.TrimGalore as trimTumorFastq {
         input:
             sampleName = tumorSampleName,
-            inFileFastqs = inFileTumorFastqs
+            inFileFastqR1 = inFileTumorFastqs[0],
+            inFileFastqR2 = inFileTumorFastqs[1]
     }
 
     call general.TrimGalore as trimNormalFastq {
         input:
             sampleName = normalSampleName,
-            inFileFastqs = inFileNormalFastqs
+            inFileFastqR1 = inFileNormalFastqs[0],
+            inFileFastqR2 = inFileNormalFastqs[1]
     }
 
     call mapper.GenerateReadyBam as tumorBam {

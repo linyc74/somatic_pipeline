@@ -149,7 +149,8 @@ task PythonVariantFilter {
 # Fastq preprocessing using Trim Galore with paired-end option
 task TrimGalore {
     input {
-        Array[File] inFileFastqs
+        File inFileFastqR1
+        File inFileFastqR2
         Int cores = 2
         Int discardReadLength = 20
         Int maxNcount = 0
@@ -173,8 +174,8 @@ task TrimGalore {
         --gzip \
         --output_dir out \
         --basename ~{sampleName} \
-        inFileFastqs[0] \
-        inFileFastqs[1]
+        ~{inFileFastqR1} \
+        ~{inFileFastqR2}
     >>>
  
     runtime {
