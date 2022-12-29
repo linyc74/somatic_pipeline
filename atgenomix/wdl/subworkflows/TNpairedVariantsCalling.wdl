@@ -17,8 +17,10 @@ workflow TNpairedVariantsCalling {
         File inFileNormalBam
         File inFileNormalBamIndex
         File inFileIntervalBed
-        File inFilePON
-        File inFilePONindex
+        File inFileGermlineResource
+        File inFileGermlineResourceIndex
+        File? inFilePON
+        File? inFilePONindex
         File refFa
         File refFai
         File refDict
@@ -74,6 +76,8 @@ workflow TNpairedVariantsCalling {
             inFileTumorBamIndex = inFileTumorBamIndex,
             inFileNormalBam = inFileNormalBam,
             inFileNormalBamIndex = inFileNormalBamIndex,
+            inFileGermlineResource = inFileGermlineResource,
+            inFileGermlineResourceIndex = inFileGermlineResourceIndex,
             inFilePON = inFilePON,
             inFilePONindex = inFilePONindex,
             inFileIntervalBed = inFileIntervalBed,

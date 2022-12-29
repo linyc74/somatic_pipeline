@@ -15,6 +15,8 @@ workflow SomaticPipelineTumorNormalMode {
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
         File inFileIntervalBed
+        File inFileGermlineResource
+        File inFileGermlineResourceIndex
         File inFilePON
         File inFilePONindex
         File inDirPCGRref
@@ -85,6 +87,8 @@ workflow SomaticPipelineTumorNormalMode {
             inFileNormalBam = normalBam.outFileBam,
             inFileNormalBamIndex = normalBam.outFileBamIndex,
             inFileIntervalBed = inFileIntervalBed,
+            inFileGermlineResource = inFileGermlineResource,
+            inFileGermlineResourceIndex = inFileGermlineResourceIndex,
             inFilePON = inFilePON,
             inFilePONindex = inFilePONindex,
             refFa = refFa,
