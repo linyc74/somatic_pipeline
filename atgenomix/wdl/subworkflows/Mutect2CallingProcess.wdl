@@ -11,8 +11,10 @@ workflow Mutect2CallingProcess {
         File inFileTumorBamIndex
         File? inFileNormalBam
         File? inFileNormalBamIndex
-        File inFilePON
-        File inFilePONindex
+        File? inFileGermlineResource
+        File? inFileGermlineResourceIndex
+        File? inFilePON
+        File? inFilePONindex
         File inFileIntervalBed
         File refFa
         File refFai
@@ -21,6 +23,7 @@ workflow Mutect2CallingProcess {
         String tumorSampleName
         String? normalSampleName
         String sampleName
+        String? extraArgs
     }
  
     call Mutect2 {
@@ -29,6 +32,7 @@ workflow Mutect2CallingProcess {
             inFileTumorBamIndex = inFileTumorBamIndex,
             inFileNormalBam = inFileNormalBam,
             inFileNormalBamIndex = inFileNormalBamIndex,
+            inFileGermlineResource = inFileGermlineResource,
             inFilePON = inFilePON,
             inFilePONindex = inFilePONindex,
             inFileIntervalBed = inFileIntervalBed,
@@ -38,7 +42,8 @@ workflow Mutect2CallingProcess {
             threads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
-            sampleName = sampleName
+            sampleName = sampleName,
+            extraArgs = extraArgs
     }
 
     call LearnReadOrientationModel {
@@ -64,6 +69,7 @@ workflow Mutect2CallingProcess {
     }
 
     output {
+        File outFileM2filterVcf = FilterMutectCalls.outFileVcf
         File outFileVcf = filter.outFileVcf
     }
 }
@@ -77,8 +83,10 @@ task Mutect2 {
         File inFileTumorBamIndex
         File? inFileNormalBam
         File? inFileNormalBamIndex
-        File inFilePON
-        File inFilePONindex
+        File? inFileGermlineResource
+        File? inFileGermlineResourceIndex
+        File? inFilePON
+        File? inFilePONindex
         File inFileIntervalBed
         File refFa
         File refFai
@@ -87,6 +95,7 @@ task Mutect2 {
         String tumorSampleName
         String? normalSampleName
         String sampleName
+        String? extraArgs
     }
  
     command <<<
@@ -101,7 +110,9 @@ task Mutect2 {
         --output ~{sampleName}.vcf \
         --native-pair-hmm-threads ~{threads} \
         --f1r2-tar-gz ~{sampleName}_f1r2.tar.gz \
-        --panel-of-normals ~{inFilePON}
+        ~{"--germline-resource " + inFileGermlineResource} \
+        ~{"--panel-of-normals " + inFilePON} \
+        ~{extraArgs}
     >>>
  
     runtime {
