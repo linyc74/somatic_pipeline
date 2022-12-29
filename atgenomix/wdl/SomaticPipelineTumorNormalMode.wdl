@@ -31,7 +31,7 @@ workflow SomaticPipelineTumorNormalMode {
         String libraryKit = 'NA'
         String tumorSampleName = 'tumor'
         String normalSampleName = 'normal'
-        String sampleName
+        String finalOutputName
     }
  
     call general.TrimGalore as trimTumorFastq {
@@ -98,7 +98,7 @@ workflow SomaticPipelineTumorNormalMode {
             refDict = refDict,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
-            sampleName = sampleName
+            sampleName = finalOutputName
     }
 
     call annotate.PickAndAnnotate as vcfAnnotate {
@@ -111,7 +111,7 @@ workflow SomaticPipelineTumorNormalMode {
             infileVcfVS = variantCalling.outFileVarscanVcf,
             inDirPCGRref = inDirPCGRref,
             refFa = refFa,
-            sampleName = sampleName
+            sampleName = finalOutputName
     }
     
     output {

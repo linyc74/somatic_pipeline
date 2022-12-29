@@ -16,7 +16,7 @@ workflow CreateMutect2PoN {
         File refFa
         File refFai
         File refDict
-        String sampleName
+        String normalSampleName
         String extraArgs = "--max-mnp-distance 0"
         String ponName
     }
@@ -30,15 +30,15 @@ workflow CreateMutect2PoN {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                tumorSampleName = sampleName,
-                sampleName = sampleName,
+                tumorSampleName = normalSampleName,
+                sampleName = normalSampleName,
                 extraArgs = extraArgs
         }
 
         call general.BgzipTabix {
             input:
                 inFileVcf = M2ForPoN.outFileM2filterVcf,
-                sampleName = sampleName
+                sampleName = normalSampleName
         }
     }
 
