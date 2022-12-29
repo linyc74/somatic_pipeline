@@ -7,8 +7,7 @@ import "GeneralTask.wdl" as general
 # Generate a analysis-ready bam file and a comprehensive statistics report
 workflow GenerateReadyBam {
     input {
-        File inFileFastqR1
-        File inFileFastqR2
+        Array[File] inFileFastqs
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
         File refAmb
@@ -26,8 +25,8 @@ workflow GenerateReadyBam {
     
     call BwaMem {
         input:
-            inFileFastqR1 = inFileFastqR1,
-            inFileFastqR2 = inFileFastqR2,
+            inFileFastqR1 = inFileFastqs[0],
+            inFileFastqR2 = inFileFastqs[1],
             refAmb = refAmb,
             refAnn = refAnn,
             refBwt = refBwt,

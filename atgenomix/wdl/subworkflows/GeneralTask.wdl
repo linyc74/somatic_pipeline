@@ -149,8 +149,7 @@ task PythonVariantFilter {
 # Fastq preprocessing using Trim Galore with paired-end option
 task TrimGalore {
     input {
-        File inFileFastqR1_PAR
-        File inFileFastqR2_PAR
+        Array[File] inFileFastqs
         Int cores = 2
         Int discardReadLength = 20
         Int maxNcount = 0
@@ -174,8 +173,8 @@ task TrimGalore {
         --gzip \
         --output_dir out \
         --basename ~{sampleName} \
-        ~{inFileFastqR1_PAR} \
-        ~{inFileFastqR2_PAR}
+        inFileFastqs[0] \
+        inFileFastqs[1]
     >>>
  
     runtime {
@@ -183,11 +182,12 @@ task TrimGalore {
     }
  
     output {
-        File outFileFastqR1 = "out/~{sampleName}_val_1.fq.gz"
-        File outFileFastqR2 = "out/~{sampleName}_val_2.fq.gz"
-        File outFileHtmlR1 = "out/~{sampleName}_val_1_fastqc.html"
-        File outFileHtmlR2 = "out/~{sampleName}_val_2_fastqc.html"
-        File outFileZipR1 = "out/~{sampleName}_val_1_fastqc.zip"
-        File outFileZipR2 = "out/~{sampleName}_val_2_fastqc.zip"
+        Array[File] outFileFastqs = glob("out/*.fq.gz")
+        Array[File] outFileHtmls = glob("out/*.fastqc.html")
+        Array[File] outFileZips = glob("out/*.fastqc.zip")
+        # File outFileHtmlR1 = "out/~{sampleName}_val_1_fastqc.html"
+        # File outFileHtmlR2 = "out/~{sampleName}_val_2_fastqc.html"
+        # File outFileZipR1 = "out/~{sampleName}_val_1_fastqc.zip"
+        # File outFileZipR2 = "out/~{sampleName}_val_2_fastqc.zip"
     }
 }

@@ -10,10 +10,8 @@ import "subworkflows/PickAndAnnotate.wdl" as annotate
 # NYCU Dentistry somatic pipeline in Tumor-Normal paired mode
 workflow SomaticPipelineTumorNormalMode {
     input {
-        File inFileTumorFastqR1
-        File inFileTumorFastqR2
-        File inFileNormalFastqR1
-        File inFileNormalFastqR2
+        Array[File] inFileTumorFastqs
+        Array[File] inFileNormalFastqs
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
         File inFileIntervalBed
@@ -28,30 +26,27 @@ workflow SomaticPipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        String libraryKit = 'NA'
-        String tumorSampleName = 'tumor'
-        String normalSampleName = 'normal'
+        String libraryKit
+        String tumorSampleName
+        String normalSampleName
         String finalOutputName
     }
  
     call general.TrimGalore as trimTumorFastq {
         input:
             sampleName = tumorSampleName,
-            inFileFastqR1_PAR = inFileTumorFastqR1,
-            inFileFastqR2_PAR = inFileTumorFastqR2
+            inFileFastqs = inFileTumorFastqs
     }
 
     call general.TrimGalore as trimNormalFastq {
         input:
             sampleName = normalSampleName,
-            inFileFastqR1_PAR = inFileNormalFastqR1,
-            inFileFastqR2_PAR = inFileNormalFastqR2            
-    }    
+            inFileFastqs = inFileNormalFastqs
+    }
 
     call mapper.GenerateReadyBam as tumorBam {
         input:
-            inFileFastqR1 = trimTumorFastq.outFileFastqR1,
-            inFileFastqR2 = trimTumorFastq.outFileFastqR2,
+            inFileFastqs = trimTumorFastq.outFileFastqs,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
@@ -68,8 +63,7 @@ workflow SomaticPipelineTumorNormalMode {
 
     call mapper.GenerateReadyBam as normalBam {
         input:
-            inFileFastqR1 = trimNormalFastq.outFileFastqR1,
-            inFileFastqR2 = trimNormalFastq.outFileFastqR2,
+            inFileFastqs = trimTumorFastq.outFileFastqs,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
