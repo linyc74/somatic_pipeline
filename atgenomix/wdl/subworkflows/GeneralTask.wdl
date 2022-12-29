@@ -132,13 +132,13 @@ task PythonVariantFilter {
         set -e -o pipefail
         python /usr/local/seqslab/variant filtering \
         --input-vcf ~{inFileVcf} \
-        --output-vcf ~{sampleName}_filtered.vcf \
+        --output-vcf ~{sampleName}_Pyfiltered.vcf \
         --variant-flagging-criteria ~{flaggingCriteria}  \
         --variant-removal-flags ~{removalFlags}
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}_filtered.vcf"
+        File outFileVcf = "~{sampleName}_Pyfiltered.vcf"
     }
  
     runtime {

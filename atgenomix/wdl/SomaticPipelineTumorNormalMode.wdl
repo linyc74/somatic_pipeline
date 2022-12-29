@@ -19,7 +19,7 @@ workflow SomaticPipelineTumorNormalMode {
         File inFileIntervalBed
         File inFilePON
         File inFilePONindex
-        File inPathPCGRref
+        File inDirPCGRref
         File refAmb
         File refAnn
         File refBwt
@@ -109,7 +109,7 @@ workflow SomaticPipelineTumorNormalMode {
             inFileVcfLF = variantCalling.outFileLofreqVcf,
             inFileVcfVD = variantCalling.outFileVardictVcf,
             infileVcfVS = variantCalling.outFileVarscanVcf,
-            inPathPCGRref = inPathPCGRref,
+            inDirPCGRref = inDirPCGRref,
             refFa = refFa,
             sampleName = sampleName
     }

@@ -13,7 +13,7 @@ workflow PickAndAnnotate {
         File inFileVcfLF
         File inFileVcfVD
         File infileVcfVS
-        File inPathPCGRref
+        File inDirPCGRref
         File refFa
         String sampleName
     }
@@ -40,7 +40,7 @@ workflow PickAndAnnotate {
         input:
             inFileVcfGz = vcfCompressIndex.outFileVcfGz,
             inFileVcfIndex = vcfCompressIndex.outFileVcfIndex,
-            inPathPCGRref = inPathPCGRref,
+            inDirPCGRref = inDirPCGRref,
             sampleName = sampleName
     }
  
@@ -97,7 +97,7 @@ task PCGR {
     input {
         File inFileVcfGz
         File inFileVcfIndex
-        File inPathPCGRref
+        File inDirPCGRref
         String sampleName
     }
  
@@ -105,7 +105,7 @@ task PCGR {
         set -e -o pipefail
         pcgr \
         --input_vcf ~{inFileVcfGz} \
-        --pcgr_dir ~{inPathPCGRref} \
+        --pcgr_dir ~{inDirPCGRref} \
         --output_dir pcgr_output \
         --genome_assembly grch38 \
         --sample_id ~{sampleName} \
