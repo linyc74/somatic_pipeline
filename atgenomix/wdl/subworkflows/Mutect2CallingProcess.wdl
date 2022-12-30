@@ -110,6 +110,7 @@ task Mutect2 {
         --output ~{sampleName}.vcf \
         --native-pair-hmm-threads ~{threads} \
         --f1r2-tar-gz ~{sampleName}_f1r2.tar.gz \
+        --max-reads-per-alignment-start 0 \
         ~{"--germline-resource " + inFileGermlineResource} \
         ~{"--panel-of-normals " + inFilePON} \
         ~{extraArgs}
