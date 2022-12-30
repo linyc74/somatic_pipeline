@@ -40,7 +40,6 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[File] iFNFs = inFileNormalFastqs[i]
         String tSN = tumorSampleName[i]
         String nSN = normalSampleName[i]
-        String fON = finalOutputName[i]
 
         call mapper.TNpairedMapping as generateBam {
             input:
@@ -84,7 +83,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         File iFNBI = generateBam.outFileNormalBamIndex[i]
         String tSN2 = tumorSampleName[i]
         String nSN2 = normalSampleName[i]
-        String fON2 = finalOutputName[i]
+        String fON = finalOutputName[i]
 
         call caller.TNpairedVariantsCalling as variantCalling {
             input:
@@ -102,7 +101,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refDict = refDict,
                 tumorSampleName = tSN2,
                 normalSampleName = nSN2,
-                sampleName = fON2,
+                sampleName = fON,
                 vardictMinimumAF = vardictMinimumAF
         }
         
@@ -116,7 +115,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 infileVcfVS = variantCalling.outFileVarscanPyVcfGz,
                 inDirPCGRref = inDirPCGRref,
                 refFa = refFa,
-                sampleName = fON2
+                sampleName = fON
     }
     }
 
