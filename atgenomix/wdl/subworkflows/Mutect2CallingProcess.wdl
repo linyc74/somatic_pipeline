@@ -19,7 +19,6 @@ workflow Mutect2CallingProcess {
         File refFa
         File refFai
         File refDict
-        Int m2HmmThreads
         String tumorSampleName
         String? normalSampleName
         String sampleName
@@ -39,7 +38,6 @@ workflow Mutect2CallingProcess {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            threads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName,
@@ -91,7 +89,6 @@ task Mutect2 {
         File refFa
         File refFai
         File refDict
-        Int threads = 16
         String tumorSampleName
         String? normalSampleName
         String sampleName
@@ -108,7 +105,6 @@ task Mutect2 {
         --tumor-sample ~{tumorSampleName} \
         ~{"--normal-sample " + normalSampleName} \
         --output ~{sampleName}.vcf \
-        --native-pair-hmm-threads ~{threads} \
         --f1r2-tar-gz ~{sampleName}_f1r2.tar.gz \
         --max-reads-per-alignment-start 0 \
         ~{"--germline-resource " + inFileGermlineResource} \

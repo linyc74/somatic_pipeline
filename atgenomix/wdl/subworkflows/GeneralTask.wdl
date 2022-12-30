@@ -6,14 +6,12 @@ version 1.0
 task BgzipTabix {
     input {
         File inFileVcf
-        Int threads = 16
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
         bgzip \
-        --threads ~{threads} \
         --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
         tabix \
         --preset vcf \
@@ -34,19 +32,16 @@ task BgzipTabix {
 task BgzipBcftoolsIndex {
     input {
         File inFileVcf
-        Int threads = 16
         String sampleName
     }
  
     command <<<
         set -e -o pipefail
         bgzip \
-        --threads ~{threads} \
         --force \
         --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
         bcftools index \
         --force \
-        --threads ~{threads} \
         ~{sampleName}.vcf.gz
     >>>
  
@@ -67,7 +62,6 @@ task Concat {
         File inFileSnvVcfIndex
         File inFileIndelVcf
         File infileIndelVcfIndex
-        Int threads = 16
         String sampleName
     }
  
@@ -75,7 +69,6 @@ task Concat {
         set -e -o pipefail
         bcftools concat \
         --allow-overlaps \
-        --threads ~{threads} \
         --output-type v \
         --output ~{sampleName}.vcf \
         ~{inFileSnvVcf} \
@@ -152,9 +145,6 @@ task TrimGalore {
         File inFileFastqR1
         File inFileFastqR2
         Int cores = 2
-        Int discardReadLength = 20
-        Int maxNcount = 0
-        Int trimQuality = 20
         String fastqcArg = "\"--threads 16\""
         String sampleName
     }
@@ -163,13 +153,13 @@ task TrimGalore {
         set -e -o pipefail
         trim_galore \
         --paired \
-        --quality ~{trimQuality} \
+        --quality 20 \
         --phred33 \
         --cores ~{cores} \
         --fastqc_args ~{fastqcArg} \
         --illumina \
-        --length ~{discardReadLength} \
-        --max_n ~{maxNcount} \
+        --length 20 \
+        --max_n 0 \
         --trim-n \
         --gzip \
         --output_dir out \

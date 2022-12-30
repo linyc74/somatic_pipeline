@@ -24,11 +24,7 @@ workflow TNpairedVariantsCalling {
         File refFa
         File refFai
         File refDict
-        Float minimumAF
-        Int bgzipIndexThreads
-        Int concatThreads
-        Int lofreqThreads
-        Int m2HmmThreads
+        Float vardictMinimumAF
         String tumorSampleName
         String normalSampleName
         String sampleName
@@ -54,8 +50,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            concatThreads = concatThreads,
-            lofreqThreads = lofreqThreads,
             sampleName = sampleName
     }
 
@@ -84,7 +78,6 @@ workflow TNpairedVariantsCalling {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            m2HmmThreads = m2HmmThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
@@ -99,7 +92,7 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            minimumAF = minimumAF,
+            minimumAF = vardictMinimumAF,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName
@@ -112,8 +105,6 @@ workflow TNpairedVariantsCalling {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            bgzipIndexThreads = bgzipIndexThreads,
-            concatThreads = concatThreads,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = sampleName

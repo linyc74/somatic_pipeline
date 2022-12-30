@@ -12,8 +12,6 @@ workflow VarscanSomaticCallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        Int bgzipIndexThreads
-        Int concatThreads
         String tumorSampleName
         String normalSampleName
         String sampleName
@@ -47,14 +45,12 @@ workflow VarscanSomaticCallingProcess {
     call general.BgzipBcftoolsIndex as snpCompressIndex {
         input:
             inFileVcf = VarscanSomatic.outFileSnpVcf,
-            threads = bgzipIndexThreads,
             sampleName = sampleName  
     }
 
     call general.BgzipBcftoolsIndex as indelCompressIndex {
         input:
             inFileVcf = VarscanSomatic.outFileIndelVcf,
-            threads = bgzipIndexThreads,
             sampleName = sampleName  
     }
 
@@ -64,7 +60,6 @@ workflow VarscanSomaticCallingProcess {
             inFileSnvVcfIndex = snpCompressIndex.outFileVcfIndex,
             inFileIndelVcf = indelCompressIndex.outFileVcfGz,
             infileIndelVcfIndex = indelCompressIndex.outFileVcfIndex,
-            threads = concatThreads,
             sampleName = sampleName
     }
 

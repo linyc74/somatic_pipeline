@@ -14,8 +14,6 @@ workflow LoFreqSomaticCallingProcess {
         File inFileIntervalBed
         File refFa
         File refFai
-        Int concatThreads
-        Int lofreqThreads
         String sampleName
     }
  
@@ -28,7 +26,6 @@ workflow LoFreqSomaticCallingProcess {
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
-            lofreqThreads = lofreqThreads,
             sampleName = sampleName
     }
 
@@ -38,7 +35,6 @@ workflow LoFreqSomaticCallingProcess {
             inFileSnvVcfIndex = LoFreqSomatic.outFileSnvVcfIndex,
             inFileIndelVcf = LoFreqSomatic.outFileIndelVcf,
             infileIndelVcfIndex = LoFreqSomatic.outFileIndelVcfIndex,
-            threads = concatThreads,
             sampleName = sampleName
     }
 
@@ -65,7 +61,6 @@ task LoFreqSomatic {
         File inFileIntervalBed
         File refFa
         File refFai
-        Int lofreqThreads
         String sampleName
     }
  
@@ -75,7 +70,7 @@ task LoFreqSomatic {
         --normal ~{inFileTumorBam} \
         --tumor ~{inFileNormalBam} \
         --ref ~{refFa} \
-        --threads ~{lofreqThreads} \
+        --threads 4 \
         --call-indels \
         -l ~{inFileIntervalBed} \
         -o ~{sampleName}

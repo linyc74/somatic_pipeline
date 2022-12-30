@@ -1,6 +1,5 @@
 version 1.0
 
-import "subworkflows/GeneralTask.wdl" as general
 import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
@@ -28,6 +27,7 @@ workflow SomaticPipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
+        Float vardictMinimumAF = 0.01
         String libraryKit
         String tumorSampleName
         String normalSampleName
@@ -69,7 +69,8 @@ workflow SomaticPipelineTumorNormalMode {
             refDict = refDict,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
-            sampleName = finalOutputName
+            sampleName = finalOutputName,
+            vardictMinimumAF = vardictMinimumAF
     }
 
     call annotate.PickAndAnnotate as vcfAnnotate {
