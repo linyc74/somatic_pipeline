@@ -58,7 +58,7 @@ workflow TNpairedMapping {
 
     call generateBam.GenerateReadyBam as normalBam {
         input:
-            inFileFastqs = trimTumorFastq.outFileFastqs,
+            inFileFastqs = trimNormalFastq.outFileFastqs,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
