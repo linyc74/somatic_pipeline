@@ -1,7 +1,7 @@
 version 1.0
 
-import "subworkflows/GeneralTask.wdl" as general
-import "subworkflows/GenerateReadyBam.wdl" as generateBam
+import "GeneralTask.wdl" as general
+import "GenerateReadyBam.wdl" as generateBam
 
 # WORKFLOW DEFINITION
 

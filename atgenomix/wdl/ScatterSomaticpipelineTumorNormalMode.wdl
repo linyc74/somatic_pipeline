@@ -1,6 +1,6 @@
 version 1.0
 
-import "SomaticpipelineTumorNormalMode.wdl" as main
+import "SomaticPipelineTumorNormalMode.wdl" as main
 
 # WORKFLOW DEFINITION
 
