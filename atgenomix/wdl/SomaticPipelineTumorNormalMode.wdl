@@ -75,12 +75,12 @@ workflow SomaticPipelineTumorNormalMode {
 
     call annotate.PickAndAnnotate as vcfAnnotate {
         input:
-            inFileVcfSS = variantCalling.outFileBamsomaticsniperVcf,
-            inFileVcfMU = variantCalling.outFileMuseVcf,
-            inFileVcfM2 = variantCalling.outFileMutect2Vcf,
-            inFileVcfLF = variantCalling.outFileLofreqVcf,
-            inFileVcfVD = variantCalling.outFileVardictVcf,
-            infileVcfVS = variantCalling.outFileVarscanVcf,
+            inFileVcfSS = variantCalling.outFileBamsomaticsniperPyVcfGz,
+            inFileVcfMU = variantCalling.outFileMusePyVcfGz,
+            inFileVcfM2 = variantCalling.outFileMutect2PyVcfGz,
+            inFileVcfLF = variantCalling.outFileLofreqPyVcfGz,
+            inFileVcfVD = variantCalling.outFileVardictPyVcfGz,
+            infileVcfVS = variantCalling.outFileVarscanPyVcfGz,
             inDirPCGRref = inDirPCGRref,
             refFa = refFa,
             sampleName = finalOutputName
@@ -93,12 +93,35 @@ workflow SomaticPipelineTumorNormalMode {
         File outFileNormalBamIndex = generateBam.outFileNormalBamIndex
         File outFileTumorRawBam = generateBam.outFileTumorRawBam
         File outFileNormalRawBam = generateBam.outFileNormalRawBam
-        File outFileVcf = vcfAnnotate.outFileVcf
-        File outFileVcfIndex = vcfAnnotate.outFileVcfIndex
+        File outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
+        File outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
+        File outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz
+        File outFileLofreqPyVcfIndex = variantCalling.outFileLofreqPyVcfIndex
+        File outFileMusePyVcfGz = variantCalling.outFileMusePyVcfGz
+        File outFileMusePyVcfIndex = variantCalling.outFileMusePyVcfIndex
+        File outFileMutect2PyVcfGz = variantCalling.outFileMutect2PyVcfGz
+        File outFileMutect2PyVcfIndex = variantCalling.outFileMutect2PyVcfIndex
+        File outFileVardictPyVcfGz = variantCalling.outFileVardictPyVcfGz
+        File outFileVardictPyVcfIndex = variantCalling.outFileVardictPyVcfIndex
+        File outFileVarscanPyVcfGz = variantCalling.outFileVarscanPyVcfGz
+        File outFileVarscanPyVcfIndex = variantCalling.outFileVarscanPyVcfIndex
+        File outFileBamsomaticsniperVcfGz = variantCalling.outFileBamsomaticsniperVcfGz
+        File outFileBamsomaticsniperVcfIndex = variantCalling.outFileBamsomaticsniperVcfIndex
+        File outFileLofreqVcfGz = variantCalling.outFileLofreqVcfGz
+        File outFileLofreqVcfIndex = variantCalling.outFileLofreqVcfIndex
+        File outFileMuseVcfGz = variantCalling.outFileMuseVcfGz
+        File outFileMuseVcfIndex = variantCalling.outFileMuseVcfIndex
+        File outFileMutect2VcfGz = variantCalling.outFileMutect2VcfGz
+        File outFileMutect2VcfIndex = variantCalling.outFileMutect2VcfIndex
+        File outFileVardictVcfGz = variantCalling.outFileVardictVcfGz
+        File outFileVardictVcfIndex = variantCalling.outFileVardictVcfIndex
+        File outFileVarscanVcfGz = variantCalling.outFileVarscanVcfGz
+        File outFileVarscanVcfIndex = variantCalling.outFileVarscanVcfIndex
+        File outFileAnnotatedVcf = vcfAnnotate.outFileVcf
+        File outFileAnnotatedVcfIndex = vcfAnnotate.outFileVcfIndex
         File outFileMaf = vcfAnnotate.outFileMaf
-        File outFileFlexdbHtml = vcfAnnotate.outFileFlexdbHtml
-        File outFileHtml = vcfAnnotate.outFileHtml
+        File outFilePCGRflexdbHtml = vcfAnnotate.outFileFlexdbHtml
+        File outFilePCGRhtml = vcfAnnotate.outFileHtml
     }
 }
 
-# TASK DEFINITIONS

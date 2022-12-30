@@ -63,14 +63,29 @@ workflow VarscanSomaticCallingProcess {
             sampleName = sampleName
     }
 
+    call general.BgzipTabix as compressVcf {
+        input:
+            inFileVcf = concat.outFileVcf,
+            sampleName = sampleName
+    }
+
     call general.PythonVariantFilter as filter {
         input:
             inFileVcf = concat.outFileVcf,
             sampleName = sampleName
     }
 
+    call general.BgzipTabix as compressPyVcf {
+        input:
+            inFileVcf = filter.outFileVcf,
+            sampleName = sampleName
+    }
+
     output {
-        File outFileVcf = filter.outFileVcf
+        File outFileVcfGz = compressVcf.outFileVcfGz
+        File outFileVcfIndex = compressVcf.outFileVcfIndex
+        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
+        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
     }
 }
 

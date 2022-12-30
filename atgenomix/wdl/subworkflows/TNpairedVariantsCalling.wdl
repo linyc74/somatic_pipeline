@@ -111,17 +111,29 @@ workflow TNpairedVariantsCalling {
     }
  
     output {
-        File outFileBamsomaticsniperVcf = bamsomaticsniper.outFileVcf
-        File outFileLofreqVcf = lofreq.outFileVcf
-        File outFileMuseVcf = muse.outFileVcf
-        File outFileMutect2Vcf = mutect2.outFileVcf
-        File outFileVardictVcf = vardict.outFileVcf
-        File outFileVarscanVcf = varscan.outFileVcf
+        File outFileBamsomaticsniperPyVcfGz = bamsomaticsniper.outFilePythonFilterVcfGz
+        File outFileBamsomaticsniperPyVcfIndex = bamsomaticsniper.outFilePythonFilterVcfIndex
+        File outFileLofreqPyVcfGz = lofreq.outFilePythonFilterVcfGz
+        File outFileLofreqPyVcfIndex = lofreq.outFilePythonFilterVcfIndex
+        File outFileMusePyVcfGz = muse.outFilePythonFilterVcfGz
+        File outFileMusePyVcfIndex = muse.outFilePythonFilterVcfIndex
+        File outFileMutect2PyVcfGz = mutect2.outFilePythonFilterVcfGz
+        File outFileMutect2PyVcfIndex = mutect2.outFilePythonFilterVcfIndex
+        File outFileVardictPyVcfGz = vardict.outFilePythonFilterVcfGz
+        File outFileVardictPyVcfIndex = vardict.outFilePythonFilterVcfIndex
+        File outFileVarscanPyVcfGz = varscan.outFilePythonFilterVcfGz
+        File outFileVarscanPyVcfIndex = varscan.outFilePythonFilterVcfIndex
+        File outFileBamsomaticsniperVcfGz = bamsomaticsniper.outFileVcfGz
+        File outFileBamsomaticsniperVcfIndex = bamsomaticsniper.outFileVcfIndex
+        File outFileLofreqVcfGz = lofreq.outFileVcfGz
+        File outFileLofreqVcfIndex = lofreq.outFileVcfIndex
+        File outFileMuseVcfGz = muse.outFileVcfGz
+        File outFileMuseVcfIndex = muse.outFileVcfIndex
+        File outFileMutect2VcfGz = mutect2.outFileVcfGz
+        File outFileMutect2VcfIndex = mutect2.outFileVcfIndex
+        File outFileVardictVcfGz = vardict.outFileVcfGz
+        File outFileVardictVcfIndex = vardict.outFileVcfIndex
+        File outFileVarscanVcfGz = varscan.outFileVcfGz
+        File outFileVarscanVcfIndex = varscan.outFileVcfIndex
     }
 }
-
-
-
-# TASK DEFINITIONS
-
-#'task start here'
