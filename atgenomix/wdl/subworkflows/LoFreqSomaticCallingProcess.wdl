@@ -85,7 +85,7 @@ task LoFreqSomatic {
         --normal ~{inFileTumorBam} \
         --tumor ~{inFileNormalBam} \
         --ref ~{refFa} \
-        --threads 4 \
+        --threads 1 \
         --call-indels \
         -l ~{inFileIntervalBed} \
         -o ~{sampleName}
