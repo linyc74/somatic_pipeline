@@ -105,8 +105,8 @@ workflow ScatterSomaticpipelineTumorNormalMode {
         Array[File] outFileVardictVcfIndex = SomaticPipelineTumorNormalMode.outFileVardictVcfIndex
         Array[File] outFileVarscanVcfGz = SomaticPipelineTumorNormalMode.outFileVarscanVcfGz
         Array[File] outFileVarscanVcfIndex = SomaticPipelineTumorNormalMode.outFileVarscanVcfIndex
-        Array[File] outFileAnnotatedVcf = SomaticPipelineTumorNormalMode.outFileAnnotatedVcf
-        Array[File] outFileAnnotatedVcfIndex = SomaticPipelineTumorNormalMode.outFileAnnotatedVcfIndex
+        Array[File] outFilePCGRannotatedVcf = SomaticPipelineTumorNormalMode.outFilePCGRannotatedVcf
+        Array[File] outFilePCGRannotatedVcfIndex = SomaticPipelineTumorNormalMode.outFilePCGRannotatedVcfIndex
         Array[File] outFileMaf = SomaticPipelineTumorNormalMode.outFileMaf
         Array[File] outFilePCGRflexdbHtml = SomaticPipelineTumorNormalMode.outFilePCGRflexdbHtml
         Array[File] outFilePCGRhtml = SomaticPipelineTumorNormalMode.outFilePCGRhtml

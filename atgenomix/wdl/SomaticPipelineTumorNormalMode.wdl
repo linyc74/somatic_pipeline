@@ -125,10 +125,10 @@ workflow SomaticPipelineTumorNormalMode {
         File outFileVardictVcfIndex = variantCalling.outFileVardictVcfIndex
         File outFileVarscanVcfGz = variantCalling.outFileVarscanVcfGz
         File outFileVarscanVcfIndex = variantCalling.outFileVarscanVcfIndex
-        File outFileAnnotatedVcf = vcfAnnotate.outFileVcf
-        File outFileAnnotatedVcfIndex = vcfAnnotate.outFileVcfIndex
+        File outFilePCGRannotatedVcf = vcfAnnotate.outFilePCGRannotatedVcf
+        File outFilePCGRannotatedVcfIndex = vcfAnnotate.outFilePCGRannotatedVcfIndex
         File outFileMaf = vcfAnnotate.outFileMaf
-        File outFilePCGRflexdbHtml = vcfAnnotate.outFileFlexdbHtml
-        File outFilePCGRhtml = vcfAnnotate.outFileHtml
+        File outFilePCGRflexdbHtml = vcfAnnotate.outFilePCGRflexdbHtml
+        File outFilePCGRhtml = vcfAnnotate.outFilePCGRhtml
     }
 }

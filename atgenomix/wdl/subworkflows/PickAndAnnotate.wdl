@@ -45,11 +45,11 @@ workflow PickAndAnnotate {
     }
  
     output {
-        File outFileVcf = PCGR.outFileVcf
-        File outFileVcfIndex = PCGR.outFileVcfIndex
+        File outFilePCGRannotatedVcf = PCGR.outFileVcf
+        File outFilePCGRannotatedVcfIndex = PCGR.outFileVcfIndex
         File outFileMaf = PCGR.outFileMaf
-        File outFileFlexdbHtml = PCGR.outFileFlexdbHtml
-        File outFileHtml = PCGR.outFileHtml       
+        File outFilePCGRflexdbHtml = PCGR.outFileFlexdbHtml
+        File outFilePCGRhtml = PCGR.outFileHtml       
     }
 }
 
