@@ -104,7 +104,7 @@ task BwaMem {
     command <<<
         set -e -o pipefail
         bwa mem \
-        -t 4
+        -t 4 \
         -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{libraryKit}" \
         ~{refFa} \
         ~{inFileFastqR1} \
