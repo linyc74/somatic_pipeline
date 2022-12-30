@@ -1,7 +1,7 @@
 version 1.0
 
 import "subworkflows/GeneralTask.wdl" as general
-import "subworkflows/GenerateReadyBam.wdl" as mapper
+import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
 
@@ -33,24 +33,11 @@ workflow SomaticPipelineTumorNormalMode {
         String normalSampleName
         String finalOutputName
     }
- 
-    call general.TrimGalore as trimTumorFastq {
-        input:
-            sampleName = tumorSampleName,
-            inFileFastqR1 = inFileTumorFastqs[0],
-            inFileFastqR2 = inFileTumorFastqs[1]
-    }
 
-    call general.TrimGalore as trimNormalFastq {
+    call mapper.TNpairedMapping as generateBam {
         input:
-            sampleName = normalSampleName,
-            inFileFastqR1 = inFileNormalFastqs[0],
-            inFileFastqR2 = inFileNormalFastqs[1]
-    }
-
-    call mapper.GenerateReadyBam as tumorBam {
-        input:
-            inFileFastqs = trimTumorFastq.outFileFastqs,
+            inFileTumorFastqs = inFileTumorFastqs,
+            inFileNormalFastqs = inFileNormalFastqs,
             inFileDbsnpVcf = inFileDbsnpVcf,
             inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
@@ -62,32 +49,16 @@ workflow SomaticPipelineTumorNormalMode {
             refFai = refFai,
             refDict = refDict,
             libraryKit = libraryKit,
-            sampleName = tumorSampleName
-    }
-
-    call mapper.GenerateReadyBam as normalBam {
-        input:
-            inFileFastqs = trimTumorFastq.outFileFastqs,
-            inFileDbsnpVcf = inFileDbsnpVcf,
-            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
-            refAmb = refAmb,
-            refAnn = refAnn,
-            refBwt = refBwt,
-            refPac = refPac,
-            refSa = refSa,
-            refFa = refFa,
-            refFai = refFai,
-            refDict = refDict,
-            libraryKit = libraryKit,
-            sampleName = normalSampleName   
+            tumorSampleName = tumorSampleName,
+            normalSampleName = normalSampleName
     }
 
     call caller.TNpairedVariantsCalling as variantCalling {
         input:
-            inFileTumorBam = tumorBam.outFileBam,
-            inFileTumorBamIndex = tumorBam.outFileBamIndex,
-            inFileNormalBam = normalBam.outFileBam,
-            inFileNormalBamIndex = normalBam.outFileBamIndex,
+            inFileTumorBam = generateBam.outFileTumorBam,
+            inFileTumorBamIndex = generateBam.outFileTumorBamIndex,
+            inFileNormalBam = generateBam.outFileNormalBam,
+            inFileNormalBamIndex = generateBam.outFileNormalBamIndex,
             inFileIntervalBed = inFileIntervalBed,
             inFileGermlineResource = inFileGermlineResource,
             inFileGermlineResourceIndex = inFileGermlineResourceIndex,
@@ -115,6 +86,12 @@ workflow SomaticPipelineTumorNormalMode {
     }
     
     output {
+        File outFileTumorBam = generateBam.outFileTumorBam
+        File outFileNormalBam = generateBam.outFileNormalBam
+        File outFileTumorBamIndex = generateBam.outFileTumorBamIndex
+        File outFileNormalBamIndex = generateBam.outFileNormalBamIndex
+        File outFileTumorRawBam = generateBam.outFileTumorRawBam
+        File outFileNormalRawBam = generateBam.outFileNormalRawBam
         File outFileVcf = vcfAnnotate.outFileVcf
         File outFileVcfIndex = vcfAnnotate.outFileVcfIndex
         File outFileMaf = vcfAnnotate.outFileMaf
