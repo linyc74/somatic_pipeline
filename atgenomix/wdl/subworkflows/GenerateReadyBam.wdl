@@ -1,7 +1,5 @@
 version 1.0
 
-import "GeneralTask.wdl" as general
-
 # WORKFLOW DEFINITION
 
 # Generate a analysis-ready bam file and a comprehensive statistics report
@@ -18,7 +16,6 @@ workflow GenerateReadyBam {
         File refFa
         File refFai
         File refDict
-        Int bwaThreads
         String libraryKit
         String sampleName
     }
@@ -34,7 +31,6 @@ workflow GenerateReadyBam {
             refSa = refSa,
             refFa = refFa,
             refFai = refFai,
-            threads = bwaThreads,
             libraryKit = libraryKit,
             sampleName = sampleName
     }
@@ -81,7 +77,8 @@ workflow GenerateReadyBam {
     output {
         File outFileBam = ApplyBqsr.outFileBam
         File outFileBamIndex = ApplyBqsr.outFileBamIndex
-        File outFileStats = BamStats.outFileBamStats
+        File outFileRawBam = Sort.outFileBam
+        File outFileBamStats = BamStats.outFileBamStats
     }
 }
 
@@ -100,7 +97,6 @@ task BwaMem {
         File refSa
         File refFa
         File refFai
-        Int threads = 2
         String libraryKit
         String sampleName
     }
@@ -108,7 +104,7 @@ task BwaMem {
     command <<<
         set -e -o pipefail
         bwa mem \
-        -t ~{threads} \
+        -t 4
         -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{libraryKit}" \
         ~{refFa} \
         ~{inFileFastqR1} \
