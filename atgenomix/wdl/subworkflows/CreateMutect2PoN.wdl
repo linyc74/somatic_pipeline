@@ -1,7 +1,6 @@
 version 1.0
 
 import "Mutect2CallingProcess.wdl" as mutect2Process
-import "GeneralTask.wdl" as general
 
 # WORKFLOW DEFINITION
 
@@ -16,36 +15,34 @@ workflow CreateMutect2PoN {
         File refFa
         File refFai
         File refDict
-        String normalSampleName
+        Array[String] normalSampleName
         String extraArgs = "--max-mnp-distance 0"
         String ponName
     }
 
-    scatter (normalBam in zip(inFileNormalBams, inFileNormalBamIndexs)) {
+    scatter (i in range(length(normalSampleName))) {
+        File iFNB = inFileNormalBams[i]
+        File iFNBI = inFileNormalBamIndexs[i]
+        String nSN = normalSampleName[i]
+
         call mutect2Process.Mutect2CallingProcess as M2ForPoN {
             input:
-                inFileTumorBam = normalBam.left,
-                inFileTumorBamIndex = normalBam.right,
+                inFileTumorBam = iFNB,
+                inFileTumorBamIndex = iFNBI,
                 inFileIntervalBed = inFileIntervalBed,
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                tumorSampleName = normalSampleName,
-                sampleName = normalSampleName,
+                tumorSampleName = nSN,
+                sampleName = nSN,
                 extraArgs = extraArgs
-        }
-
-        call general.BgzipTabix {
-            input:
-                inFileVcf = M2ForPoN.outFileM2filterVcf,
-                sampleName = normalSampleName
         }
     }
 
     call GenomicDBimport {
         input:
-            inFileVcfs = BgzipTabix.outFileVcfGz,
-            inFileVcfIndexs = BgzipTabix.outFileVcfIndex,
+            inFileVcfs = M2ForPoN.outFileVcfGz,
+            inFileVcfIndexs = M2ForPoN.outFileVcfIndex,
             inFileIntervalBed = inFileIntervalBed,
             refFa = refFa,
             refFai = refFai,
@@ -65,6 +62,7 @@ workflow CreateMutect2PoN {
  
     output {
         File outFilePoNvcf = CreateSomaticPanelOfNormals.outFilePoNvcf
+        File outFilePoNvcfIndex = CreateSomaticPanelOfNormals.outFilePoNvcfIndex
     }
 }
 
@@ -123,6 +121,7 @@ task CreateSomaticPanelOfNormals {
  
     output {
         File outFilePoNvcf = "~{ponName}.vcf"
+        File outFilePoNvcfIndex = "~{ponName}.vcf.idx"
     }
  
     runtime {
