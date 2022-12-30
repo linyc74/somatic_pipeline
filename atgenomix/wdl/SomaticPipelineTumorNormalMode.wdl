@@ -87,12 +87,20 @@ workflow SomaticPipelineTumorNormalMode {
     }
     
     output {
+        Array[File] outFileTumorFastqs = generateBam.outFileTumorFastqs
+        Array[File] outFileNormalFastqs = generateBam.outFileNormalFastqs
+        Array[File] outFileTumorFastqcHtmls = generateBam.outFileTumorFastqcHtmls
+        Array[File] outFileNormalFastqcHtmls = generateBam.outFileNormalFastqcHtmls
+        Array[File] outFileTumorFastqcZips = generateBam.outFileTumorFastqcZips
+        Array[File] outFileNormalFastqcZips = generateBam.outFileNormalFastqcZips
         File outFileTumorBam = generateBam.outFileTumorBam
         File outFileNormalBam = generateBam.outFileNormalBam
         File outFileTumorBamIndex = generateBam.outFileTumorBamIndex
         File outFileNormalBamIndex = generateBam.outFileNormalBamIndex
         File outFileTumorRawBam = generateBam.outFileTumorRawBam
         File outFileNormalRawBam = generateBam.outFileNormalRawBam
+        File outFileStatsTumorBam = generateBam.outFileStatsTumorBam
+        File outFileStatsNormalBam = generateBam.outFileStatsNormalBam
         File outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
         File outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
         File outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz
@@ -124,4 +132,3 @@ workflow SomaticPipelineTumorNormalMode {
         File outFilePCGRhtml = vcfAnnotate.outFileHtml
     }
 }
-
