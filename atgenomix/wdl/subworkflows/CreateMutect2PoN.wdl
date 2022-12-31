@@ -85,6 +85,7 @@ task GenomicDBimport {
         -R ~{refFa} \
         -L ~{inFileIntervalBed} \
         --genomicsdb-workspace-path pon_db \
+        --merge-input-intervals true \
         -V ~{sep=' -V ' inFileVcfs} \
         --read-index ~{sep=' --read-index ' inFileVcfIndexs}
     >>>
