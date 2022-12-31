@@ -1,0 +1,46 @@
+{
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00002-0103-E-X01-02_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00002-0103-E-X01-02_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00003-0103-E-X01-02_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00003-0103-E-X01-02_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00004-0103-E-X01-02_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00004-0103-E-X01-02_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00005-0103-E-X01-02_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00005-0103-E-X01-02_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00006-0103-E-X01-02_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00006-0103-E-X01-02_R2.fastq.gz"]
+  ],
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00002-0101-E-X01-01_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00002-0101-E-X01-01_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00003-0101-E-X01-01_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00003-0101-E-X01-01_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00004-0101-E-X01-01_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00004-0101-E-X01-01_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00005-0101-E-X01-01_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00005-0101-E-X01-01_R2.fastq.gz"],
+    ["/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00006-0101-E-X01-01_R1.fastq.gz",
+    "/mnt/nycuwork/fastq/22_1205_WES_fastq/002-00006-0101-E-X01-01_R2.fastq.gz"]
+  ],
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.tumorSampleName": ["002-00002-0103-E-X01-02","002-00003-0103-E-X01-02","002-00004-0103-E-X01-02","002-00005-0103-E-X01-02","002-00006-0103-E-X01-02"],
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.normalSampleName": ["002-00002-0101-E-X01-01","002-00003-0101-E-X01-01","002-00004-0101-E-X01-01","002-00005-0101-E-X01-01","002-00006-0101-E-X01-01"],
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.finalOutputName": ["002-00002-0103-E-X01-02","002-00003-0103-E-X01-02","002-00004-0103-E-X01-02","002-00005-0103-E-X01-02","002-00006-0103-E-X01-02"],
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileIntervalBed": "/mnt/nycuwork/resource/addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.libraryKit": "SureSelectHumanAllExonV5+UTRs_75Mbp",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcf": "/mnt/nycuwork/resource/22_0408_dbsnp.vcf.gz",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcfIndex": "/mnt/nycuwork/resource/22_0408_dbsnp.vcf.gz.tbi",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFa": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFai": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.fai",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refDict": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.dict",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAmb": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.amb",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAnn": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.ann",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refBwt": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.bwt",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refSa": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.sa",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refPac": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.pac",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "/mnt/nycuwork/resource/22_0922_1000g_gnomad_twb_pon.vcf.gz",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "/mnt/nycuwork/resource/22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponName": "String",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "/mnt/nycuwork/resource/pcgr_data"
+}
+
