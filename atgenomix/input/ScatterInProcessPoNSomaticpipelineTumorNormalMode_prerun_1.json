@@ -40,7 +40,7 @@
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refPac": "/mnt/nycuwork/resource/no_compress_ref/GRCh38.primary_assembly.genome.fa.pac",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "/mnt/nycuwork/resource/22_0922_1000g_gnomad_twb_pon.vcf.gz",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "/mnt/nycuwork/resource/22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
-  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponName": "String",
+  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponName": "202212_5Normal_PoN",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "/mnt/nycuwork/resource/pcgr_data"
 }
 
