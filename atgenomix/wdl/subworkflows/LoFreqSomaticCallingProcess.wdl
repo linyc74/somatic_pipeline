@@ -82,8 +82,8 @@ task LoFreqSomatic {
     command <<<
         set -e -o pipefail
         lofreq somatic \
-        --normal ~{inFileTumorBam} \
-        --tumor ~{inFileNormalBam} \
+        --normal ~{inFileNormalBam} \
+        --tumor ~{inFileTumorBam} \
         --ref ~{refFa} \
         --threads 1 \
         --call-indels \
