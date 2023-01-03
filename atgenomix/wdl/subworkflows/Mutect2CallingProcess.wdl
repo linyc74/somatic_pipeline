@@ -32,6 +32,7 @@ workflow Mutect2CallingProcess {
             inFileNormalBam = inFileNormalBam,
             inFileNormalBamIndex = inFileNormalBamIndex,
             inFileGermlineResource = inFileGermlineResource,
+            inFileGermlineResourceIndex = inFileGermlineResourceIndex,
             inFilePON = inFilePON,
             inFilePONindex = inFilePONindex,
             inFileIntervalBed = inFileIntervalBed,
