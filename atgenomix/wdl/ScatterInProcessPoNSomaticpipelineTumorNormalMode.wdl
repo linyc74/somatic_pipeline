@@ -39,32 +39,6 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[String] finalOutputName
     }
  
-    scatter (i in range(length(finalOutputName))) {
-        Array[File] iFTFs = inFileTumorFastqs[i]
-        Array[File] iFNFs = inFileNormalFastqs[i]
-        String tSN = tumorSampleName[i]
-        String nSN = normalSampleName[i]
-
-        call mapper.TNpairedMapping as TNmapping {
-            input:
-                inFileTumorFastqs = iFTFs,
-                inFileNormalFastqs = iFNFs,
-                inFileDbsnpVcf = inFileDbsnpVcf,
-                inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
-                refAmb = refAmb,
-                refAnn = refAnn,
-                refBwt = refBwt,
-                refPac = refPac,
-                refSa = refSa,
-                refFa = refFa,
-                refFai = refFai,
-                refDict = refDict,
-                libraryKit = libraryKit,
-                tumorSampleName = tSN,
-                normalSampleName = nSN
-        }
-    }
-
     scatter (i in range(length(ponSampleName))) {
         Array[File] iFPFs = inFilePoNfastqs[i]
         String pSN = ponSampleName[i]
@@ -110,20 +84,37 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     }
 
     scatter (i in range(length(finalOutputName))) {
-        File iFTB = TNmapping.outFileTumorBam[i]
-        File iFTBI = TNmapping.outFileTumorBamIndex[i]
-        File iFNB = TNmapping.outFileNormalBam[i]
-        File iFNBI = TNmapping.outFileNormalBamIndex[i]
-        String tSN2 = tumorSampleName[i]
-        String nSN2 = normalSampleName[i]
+        Array[File] iFTFs = inFileTumorFastqs[i]
+        Array[File] iFNFs = inFileNormalFastqs[i]
+        String tSN = tumorSampleName[i]
+        String nSN = normalSampleName[i]
         String fON = finalOutputName[i]
+
+        call mapper.TNpairedMapping as TNmapping {
+            input:
+                inFileTumorFastqs = iFTFs,
+                inFileNormalFastqs = iFNFs,
+                inFileDbsnpVcf = inFileDbsnpVcf,
+                inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+                refAmb = refAmb,
+                refAnn = refAnn,
+                refBwt = refBwt,
+                refPac = refPac,
+                refSa = refSa,
+                refFa = refFa,
+                refFai = refFai,
+                refDict = refDict,
+                libraryKit = libraryKit,
+                tumorSampleName = tSN,
+                normalSampleName = nSN
+        }
 
         call caller.TNpairedVariantsCalling as variantCalling {
             input:
-                inFileTumorBam = iFTB,
-                inFileTumorBamIndex = iFTBI,
-                inFileNormalBam = iFNB,
-                inFileNormalBamIndex = iFNBI,
+                inFileTumorBam = TNmapping.outFileTumorBam,
+                inFileTumorBamIndex = TNmapping.outFileTumorBamIndex,
+                inFileNormalBam = TNmapping.outFileNormalBam,
+                inFileNormalBamIndex = TNmapping.outFileNormalBamIndex,
                 inFileIntervalBed = inFileIntervalBed,
                 inFileGermlineResource = inFileGermlineResource,
                 inFileGermlineResourceIndex = inFileGermlineResourceIndex,
@@ -132,8 +123,8 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                tumorSampleName = tSN2,
-                normalSampleName = nSN2,
+                tumorSampleName = tSN,
+                normalSampleName = nSN,
                 sampleName = fON,
                 vardictMinimumAF = vardictMinimumAF
         }
