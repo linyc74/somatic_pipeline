@@ -1,5 +1,7 @@
 version 1.0
 
+import "GeneralTask.wdl" as general
+import "GenerateReadyBam.wdl" as generateBam
 import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
@@ -12,6 +14,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     input {
         Array[Array[File]] inFileTumorFastqs
         Array[Array[File]] inFileNormalFastqs
+        Array[Array[File]] inFilePoNfastqs
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
         File inFileIntervalBed
@@ -30,6 +33,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         String libraryKit
         String ponName
         String extraArgs = "--max-mnp-distance 0"
+        Array[String] ponSampleName
         Array[String] tumorSampleName
         Array[String] normalSampleName
         Array[String] finalOutputName
@@ -41,7 +45,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         String tSN = tumorSampleName[i]
         String nSN = normalSampleName[i]
 
-        call mapper.TNpairedMapping as generateBam {
+        call mapper.TNpairedMapping as TNmapping {
             input:
                 inFileTumorFastqs = iFTFs,
                 inFileNormalFastqs = iFNFs,
@@ -61,10 +65,39 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         }
     }
 
+    scatter (i in range(length(ponSampleName))) {
+        Array[File] iFPFs = inFilePoNfastqs[i]
+        String pSN = ponSampleName[i]
+
+        call general.TrimGalore as trimPoNfastq {
+            input:
+                sampleName = pSN,
+                inFileFastqR1 = iFPFs[0],
+                inFileFastqR2 = iFPFs[1]
+        }
+
+        call generateBam.GenerateReadyBam as ponBam {
+            input:
+                inFileFastqs = trimPoNfastq.outFileFastqs,
+                inFileDbsnpVcf = inFileDbsnpVcf,
+                inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+                refAmb = refAmb,
+                refAnn = refAnn,
+                refBwt = refBwt,
+                refPac = refPac,
+                refSa = refSa,
+                refFa = refFa,
+                refFai = refFai,
+                refDict = refDict,
+                libraryKit = libraryKit,
+                sampleName = pSN   
+        }
+    }
+
     call createPoN.CreateMutect2PoN {
         input:
-            inFileNormalBams = generateBam.outFileNormalBam,
-            inFileNormalBamIndexs = generateBam.outFileNormalBamIndex,
+            inFileNormalBams = ponBam.outFileBam,
+            inFileNormalBamIndexs = ponBam.outFileBamIndex,
             inFileGermlineResource = inFileGermlineResource,
             inFileGermlineResourceIndex = inFileGermlineResourceIndex,
             inFileIntervalBed = inFileIntervalBed,
@@ -77,10 +110,10 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     }
 
     scatter (i in range(length(finalOutputName))) {
-        File iFTB = generateBam.outFileTumorBam[i]
-        File iFTBI = generateBam.outFileTumorBamIndex[i]
-        File iFNB = generateBam.outFileNormalBam[i]
-        File iFNBI = generateBam.outFileNormalBamIndex[i]
+        File iFTB = TNmapping.outFileTumorBam[i]
+        File iFTBI = TNmapping.outFileTumorBamIndex[i]
+        File iFNB = TNmapping.outFileNormalBam[i]
+        File iFNBI = TNmapping.outFileNormalBamIndex[i]
         String tSN2 = tumorSampleName[i]
         String nSN2 = normalSampleName[i]
         String fON = finalOutputName[i]
@@ -120,20 +153,20 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     }
 
     output {
-        Array[Array[File]] outFileTumorFastqs = generateBam.outFileTumorFastqs
-        Array[Array[File]] outFileNormalFastqs = generateBam.outFileNormalFastqs
-        Array[Array[File]] outFileTumorFastqcHtmls = generateBam.outFileTumorFastqcHtmls
-        Array[Array[File]] outFileNormalFastqcHtmls = generateBam.outFileNormalFastqcHtmls
-        Array[Array[File]] outFileTumorFastqcZips = generateBam.outFileTumorFastqcZips
-        Array[Array[File]] outFileNormalFastqcZips = generateBam.outFileNormalFastqcZips
-        Array[File] outFileTumorBam = generateBam.outFileTumorBam
-        Array[File] outFileNormalBam = generateBam.outFileNormalBam
-        Array[File] outFileTumorBamIndex = generateBam.outFileTumorBamIndex
-        Array[File] outFileNormalBamIndex = generateBam.outFileNormalBamIndex
-        Array[File] outFileTumorRawBam = generateBam.outFileTumorRawBam
-        Array[File] outFileNormalRawBam = generateBam.outFileNormalRawBam
-        Array[File] outFileStatsTumorBam = generateBam.outFileStatsTumorBam
-        Array[File] outFileStatsNormalBam = generateBam.outFileStatsNormalBam
+        Array[Array[File]] outFileTumorFastqs = TNmapping.outFileTumorFastqs
+        Array[Array[File]] outFileNormalFastqs = TNmapping.outFileNormalFastqs
+        Array[Array[File]] outFileTumorFastqcHtmls = TNmapping.outFileTumorFastqcHtmls
+        Array[Array[File]] outFileNormalFastqcHtmls = TNmapping.outFileNormalFastqcHtmls
+        Array[Array[File]] outFileTumorFastqcZips = TNmapping.outFileTumorFastqcZips
+        Array[Array[File]] outFileNormalFastqcZips = TNmapping.outFileNormalFastqcZips
+        Array[File] outFileTumorBam = TNmapping.outFileTumorBam
+        Array[File] outFileNormalBam = TNmapping.outFileNormalBam
+        Array[File] outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
+        Array[File] outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
+        Array[File] outFileTumorRawBam = TNmapping.outFileTumorRawBam
+        Array[File] outFileNormalRawBam = TNmapping.outFileNormalRawBam
+        Array[File] outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
+        Array[File] outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
         Array[File] outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
         Array[File] outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
         Array[File] outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz
@@ -162,5 +195,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[File] outFileMaf = vcfAnnotate.outFileMaf
         Array[File] outFilePCGRflexdbHtml = vcfAnnotate.outFilePCGRflexdbHtml
         Array[File] outFilePCGRhtml = vcfAnnotate.outFilePCGRhtml
+        File outFilePON = CreateMutect2PoN.outFilePoNvcf
+        File outFilePONindex = CreateMutect2PoN.outFilePoNvcfIndex
     }
 }

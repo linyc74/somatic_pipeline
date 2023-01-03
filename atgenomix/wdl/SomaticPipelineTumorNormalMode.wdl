@@ -34,7 +34,7 @@ workflow SomaticPipelineTumorNormalMode {
         String finalOutputName
     }
 
-    call mapper.TNpairedMapping as generateBam {
+    call mapper.TNpairedMapping as TNmapping {
         input:
             inFileTumorFastqs = inFileTumorFastqs,
             inFileNormalFastqs = inFileNormalFastqs,
@@ -55,10 +55,10 @@ workflow SomaticPipelineTumorNormalMode {
 
     call caller.TNpairedVariantsCalling as variantCalling {
         input:
-            inFileTumorBam = generateBam.outFileTumorBam,
-            inFileTumorBamIndex = generateBam.outFileTumorBamIndex,
-            inFileNormalBam = generateBam.outFileNormalBam,
-            inFileNormalBamIndex = generateBam.outFileNormalBamIndex,
+            inFileTumorBam = TNmapping.outFileTumorBam,
+            inFileTumorBamIndex = TNmapping.outFileTumorBamIndex,
+            inFileNormalBam = TNmapping.outFileNormalBam,
+            inFileNormalBamIndex = TNmapping.outFileNormalBamIndex,
             inFileIntervalBed = inFileIntervalBed,
             inFileGermlineResource = inFileGermlineResource,
             inFileGermlineResourceIndex = inFileGermlineResourceIndex,
@@ -87,20 +87,20 @@ workflow SomaticPipelineTumorNormalMode {
     }
     
     output {
-        Array[File] outFileTumorFastqs = generateBam.outFileTumorFastqs
-        Array[File] outFileNormalFastqs = generateBam.outFileNormalFastqs
-        Array[File] outFileTumorFastqcHtmls = generateBam.outFileTumorFastqcHtmls
-        Array[File] outFileNormalFastqcHtmls = generateBam.outFileNormalFastqcHtmls
-        Array[File] outFileTumorFastqcZips = generateBam.outFileTumorFastqcZips
-        Array[File] outFileNormalFastqcZips = generateBam.outFileNormalFastqcZips
-        File outFileTumorBam = generateBam.outFileTumorBam
-        File outFileNormalBam = generateBam.outFileNormalBam
-        File outFileTumorBamIndex = generateBam.outFileTumorBamIndex
-        File outFileNormalBamIndex = generateBam.outFileNormalBamIndex
-        File outFileTumorRawBam = generateBam.outFileTumorRawBam
-        File outFileNormalRawBam = generateBam.outFileNormalRawBam
-        File outFileStatsTumorBam = generateBam.outFileStatsTumorBam
-        File outFileStatsNormalBam = generateBam.outFileStatsNormalBam
+        Array[File] outFileTumorFastqs = TNmapping.outFileTumorFastqs
+        Array[File] outFileNormalFastqs = TNmapping.outFileNormalFastqs
+        Array[File] outFileTumorFastqcHtmls = TNmapping.outFileTumorFastqcHtmls
+        Array[File] outFileNormalFastqcHtmls = TNmapping.outFileNormalFastqcHtmls
+        Array[File] outFileTumorFastqcZips = TNmapping.outFileTumorFastqcZips
+        Array[File] outFileNormalFastqcZips = TNmapping.outFileNormalFastqcZips
+        File outFileTumorBam = TNmapping.outFileTumorBam
+        File outFileNormalBam = TNmapping.outFileNormalBam
+        File outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
+        File outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
+        File outFileTumorRawBam = TNmapping.outFileTumorRawBam
+        File outFileNormalRawBam = TNmapping.outFileNormalRawBam
+        File outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
+        File outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
         File outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
         File outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
         File outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz
