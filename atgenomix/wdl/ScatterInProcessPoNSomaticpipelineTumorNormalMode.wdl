@@ -1,7 +1,7 @@
 version 1.0
 
-import "GeneralTask.wdl" as general
-import "GenerateReadyBam.wdl" as generateBam
+import "subworkflows/GeneralTask.wdl" as general
+import "subworkflows/GenerateReadyBam.wdl" as generateBam
 import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
