@@ -29,10 +29,8 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        Float vardictMinimumAF = 0.01
         String libraryKit
         String ponName
-        String extraArgs = "--max-mnp-distance 0"
         Array[String] ponSampleName
         Array[String] tumorSampleName
         Array[String] normalSampleName
@@ -79,7 +77,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
             refFai = refFai,
             refDict = refDict,
             normalSampleName = normalSampleName,
-            extraArgs = extraArgs,
+            extraArgs = "--max-mnp-distance 0",
             ponName = ponName
     }
 
@@ -126,7 +124,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 tumorSampleName = tSN,
                 normalSampleName = nSN,
                 sampleName = fON,
-                vardictMinimumAF = vardictMinimumAF
+                vardictMinimumAF = 0.01
         }
         
         call annotate.PickAndAnnotate as vcfAnnotate {
