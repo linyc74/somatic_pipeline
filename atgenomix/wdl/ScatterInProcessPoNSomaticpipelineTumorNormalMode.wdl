@@ -76,7 +76,7 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            normalSampleName = normalSampleName,
+            normalSampleName = ponSampleName,
             extraArgs = "--max-mnp-distance 0",
             ponName = ponName
     }
