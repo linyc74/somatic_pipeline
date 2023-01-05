@@ -122,7 +122,8 @@ RUN cd /usr/local/seqslab \
     && ln -sr ./bin/* /usr/local/bin
 
 # Install VarScan v2.3.7
-COPY pkg/VarScan.v2.3.7.jar /usr/local/seqslab
+RUN cd /usr/local/seqslab \
+    && wget https://sourceforge.net/projects/varscan/files/VarScan.v2.3.7.jar
 
 # Install NYCU python CLI tool
 RUN cd /usr/local/seqslab \
