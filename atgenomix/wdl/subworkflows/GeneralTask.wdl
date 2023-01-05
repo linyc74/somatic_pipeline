@@ -144,8 +144,6 @@ task TrimGalore {
     input {
         File inFileFastqR1
         File inFileFastqR2
-        Int cores = 2
-        String fastqcArg = "\"--threads 16\""
         String sampleName
     }
  
@@ -155,8 +153,6 @@ task TrimGalore {
         --paired \
         --quality 20 \
         --phred33 \
-        --cores ~{cores} \
-        --fastqc_args ~{fastqcArg} \
         --illumina \
         --length 20 \
         --max_n 0 \
