@@ -58,7 +58,6 @@ workflow ScatterSomaticpipelineTumorNormalMode {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                vardictMinimumAF = 0.01,
                 libraryKit = libraryKit,
                 tumorSampleName = tSN,
                 normalSampleName = nSN,

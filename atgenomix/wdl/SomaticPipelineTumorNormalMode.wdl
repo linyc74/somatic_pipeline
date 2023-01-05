@@ -27,7 +27,6 @@ workflow SomaticPipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        Float vardictMinimumAF = 0.01
         String libraryKit
         String tumorSampleName
         String normalSampleName
@@ -70,7 +69,7 @@ workflow SomaticPipelineTumorNormalMode {
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName,
             sampleName = finalOutputName,
-            vardictMinimumAF = vardictMinimumAF
+            vardictMinimumAF = 0.01
     }
 
     call annotate.PickAndAnnotate as vcfAnnotate {
