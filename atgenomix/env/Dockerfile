@@ -1,4 +1,4 @@
-FROM atgenomix.azurecr.io/0_runtime/seqslab_runtime-1.5_ubuntu-22.04_java11
+FROM atgenomix.azurecr.io/0_runtime/seqslab_runtime-1.5_ubuntu-22.04_java11:latest
 
 #### Basic image utilities
 RUN apt-get update && \
@@ -84,19 +84,6 @@ RUN cd /usr/local/seqslab \
     && make \
     && ln -s `pwd`/MuSE /usr/local/bin/muse
 
-# Install VarDict v1.6
-#RUN cd /usr/local/seqslab \
-#    && wget https://github.com/AstraZeneca-NGS/VarDict/archive/refs/tags/v1.6.tar.gz \
-#    && tar zxvf v1.6.tar.gz \
-#    && rm v1.6.tar.gz \
-#    && cd VarDict-1.6 \
-#    && ln -s `pwd`/vardict /usr/local/bin \
-#    && ln -s `pwd`/vardict.pl /usr/local/bin \
-#    && ln -s `pwd`/testsomatic.R /usr/local/bin \
-#    && ln -s `pwd`/teststrandbias.R /usr/local/bin \
-#    && ln -s `pwd`/var2vcf_paired.pl /usr/local/bin \
-#    && ln -s `pwd`/var2vcf_valid.pl /usr/local/bin
-
 # Install VarDictJava v1.8.3 
 RUN cd /usr/local/seqslab \
     && wget https://github.com/AstraZeneca-NGS/VarDictJava/releases/download/v1.8.3/VarDict-1.8.3.tar \
@@ -163,23 +150,3 @@ ARG PCGR_ENV_NAME="pcgr"
 # pcgr env is activated by default
 ENV PATH="/opt/mambaforge/envs/${PCGR_ENV_NAME}/bin:${PATH}"
 ENV CONDA_PREFIX="/opt/mambaforge/envs/${PCGR_ENV_NAME}"
-
-# Install vcf2maf v1.6.21
-#RUN cd /usr/local/seqslab \
-#    && wget https://github.com/mskcc/vcf2maf/archive/refs/tags/v1.6.21.tar.gz \
-#    && tar -zxvf v1.6.21.tar.gz \
-#    && rm v1.6.21.tar.gz
-
-# Install SnpEff
-#RUN cd ~ \
-#    && wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
-#    && unzip snpEff_latest_core.zip \
-#    && rm snpEff_latest_core.zip \
-#ENV PATH=$PATH:/snpEff/exec
-
-# Install VEP
-#RUN cd /usr/local/seqslab \
-#    && wget https://github.com/Ensembl/ensembl-vep/archive/refs/tags/release/106.0.tar.gz \
-#    && tar -zxvf 106.0.tar.gz \
-#    && rm 106.0.tar.gz \
-#    && cd ensembl-vep-release-106.0 \
