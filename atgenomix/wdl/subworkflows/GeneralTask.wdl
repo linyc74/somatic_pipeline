@@ -84,6 +84,28 @@ task Concat {
     }
 }
 
+# Generate FastQC report for both fastq_R1 and fastq_R2
+task FastQC {
+    input {
+        File inFileFastqR1
+        File inFileFastqR2
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        fastqc ~{inFileFastqR1} ~{inFileFastqR2}
+    >>>
+ 
+    output {
+        Array[File] outFileHtmls = glob("*.fastqc.html")
+        Array[File] outFileZips = glob("*.fastqc.zip")
+    }
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+}
+
 # Generate text pileup output for a bam file using samtools
 task Mpileup {
     input {
@@ -170,8 +192,6 @@ task TrimGalore {
  
     output {
         Array[File] outFileFastqs = glob("out/*.fq.gz")
-        Array[File] outFileHtmls = glob("out/*.fastqc.html")
-        Array[File] outFileZips = glob("out/*.fastqc.zip")
         # File outFileHtmlR1 = "out/~{sampleName}_val_1_fastqc.html"
         # File outFileHtmlR2 = "out/~{sampleName}_val_2_fastqc.html"
         # File outFileZipR1 = "out/~{sampleName}_val_1_fastqc.zip"
