@@ -16,7 +16,6 @@ workflow GenerateReadyBam {
         File refFa
         File refFai
         File refDict
-        String libraryKit
         String sampleName
     }
     
@@ -31,7 +30,6 @@ workflow GenerateReadyBam {
             refSa = refSa,
             refFa = refFa,
             refFai = refFai,
-            libraryKit = libraryKit,
             sampleName = sampleName
     }
 
@@ -97,7 +95,6 @@ task BwaMem {
         File refSa
         File refFa
         File refFai
-        String libraryKit
         String sampleName
     }
  
@@ -105,7 +102,7 @@ task BwaMem {
         set -e -o pipefail
         bwa mem \
         -t 4 \
-        -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{libraryKit}" \
+        -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{sampleName}" \
         ~{refFa} \
         ~{inFileFastqR1} \
         ~{inFileFastqR2} \

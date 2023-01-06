@@ -20,6 +20,5 @@
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "File",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "File",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "File",
-  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.libraryKit": "String",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileIntervalBed": "File"
 }

@@ -20,7 +20,6 @@ workflow TNpairedMapping {
         File refFa
         File refFai
         File refDict
-        String libraryKit
         String tumorSampleName
         String normalSampleName
     }
@@ -52,7 +51,6 @@ workflow TNpairedMapping {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            libraryKit = libraryKit,
             sampleName = tumorSampleName
     }
 
@@ -69,7 +67,6 @@ workflow TNpairedMapping {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            libraryKit = libraryKit,
             sampleName = normalSampleName   
     }
  

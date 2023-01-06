@@ -56,6 +56,5 @@
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "22_0922_1000g_gnomad_twb_pon.vcf.gz",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
-  "ScatterInProcessPoNSomaticpipelineTumorNormalMode.libraryKit": "SureSelectHumanAllExonV5+UTRs_75Mbp",
   "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
 }

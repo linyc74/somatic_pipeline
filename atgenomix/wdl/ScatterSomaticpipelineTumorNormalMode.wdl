@@ -25,7 +25,6 @@ workflow ScatterSomaticpipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        String libraryKit
         Array[String] tumorSampleName
         Array[String] normalSampleName
         Array[String] finalOutputName
@@ -58,7 +57,6 @@ workflow ScatterSomaticpipelineTumorNormalMode {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                libraryKit = libraryKit,
                 tumorSampleName = tSN,
                 normalSampleName = nSN,
                 finalOutputName = fON

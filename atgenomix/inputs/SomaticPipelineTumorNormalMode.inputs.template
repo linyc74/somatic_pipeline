@@ -19,7 +19,6 @@
   "SomaticPipelineTumorNormalMode.inFilePON": "File",
   "SomaticPipelineTumorNormalMode.inFilePONindex": "File",
   "SomaticPipelineTumorNormalMode.inDirPCGRref": "File",
-  "SomaticPipelineTumorNormalMode.libraryKit": "String",
   "SomaticPipelineTumorNormalMode.inFileIntervalBed": "File"
 }
 

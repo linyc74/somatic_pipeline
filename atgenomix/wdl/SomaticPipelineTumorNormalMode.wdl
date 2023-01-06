@@ -27,7 +27,6 @@ workflow SomaticPipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        String libraryKit
         String tumorSampleName
         String normalSampleName
         String finalOutputName
@@ -47,7 +46,6 @@ workflow SomaticPipelineTumorNormalMode {
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
-            libraryKit = libraryKit,
             tumorSampleName = tumorSampleName,
             normalSampleName = normalSampleName
     }

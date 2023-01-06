@@ -29,7 +29,6 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         File refFa
         File refFai
         File refDict
-        String libraryKit
         String ponName
         Array[String] ponSampleName
         Array[String] tumorSampleName
@@ -61,7 +60,6 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                libraryKit = libraryKit,
                 sampleName = pSN   
         }
     }
@@ -102,7 +100,6 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refFa = refFa,
                 refFai = refFai,
                 refDict = refDict,
-                libraryKit = libraryKit,
                 tumorSampleName = tSN,
                 normalSampleName = nSN
         }

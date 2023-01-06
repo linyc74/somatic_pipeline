@@ -25,7 +25,6 @@
   "SomaticPipelineTumorNormalMode.inFilePON": "File",
   "SomaticPipelineTumorNormalMode.inFilePONindex": "File",
   "SomaticPipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
-  "SomaticPipelineTumorNormalMode.libraryKit": "SureSelectHumanAllExonV5+UTRs_75Mbp",
   "SomaticPipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
 }
 
