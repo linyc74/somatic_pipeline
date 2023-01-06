@@ -40,6 +40,12 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[File] iFPFs = inFilePoNfastqs[i]
         String pSN = ponSampleName[i]
 
+        call general.FastQC as fastqcPoNfastq {
+            input:
+                inFileFastqR1 = iFPFs[0],
+                inFileFastqR2 = iFPFs[1]
+    }
+
         call general.TrimGalore as trimPoNfastq {
             input:
                 sampleName = pSN,
@@ -143,8 +149,10 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[Array[File]] outFileNormalFastqs = TNmapping.outFileNormalFastqs
         Array[Array[File]] outFileTumorFastqcHtmls = TNmapping.outFileTumorFastqcHtmls
         Array[Array[File]] outFileNormalFastqcHtmls = TNmapping.outFileNormalFastqcHtmls
+        Array[Array[File]] outFilePoNfastqcHtmls = fastqcPoNfastq.outFileHtmls
         Array[Array[File]] outFileTumorFastqcZips = TNmapping.outFileTumorFastqcZips
         Array[Array[File]] outFileNormalFastqcZips = TNmapping.outFileNormalFastqcZips
+        Array[Array[File]] outFilePoNfastqcZips = fastqcPoNfastq.outFileZips
         Array[File] outFileTumorBam = TNmapping.outFileTumorBam
         Array[File] outFileNormalBam = TNmapping.outFileNormalBam
         Array[File] outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
