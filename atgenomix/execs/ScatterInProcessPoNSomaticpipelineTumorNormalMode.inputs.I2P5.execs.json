@@ -4,14 +4,14 @@
             "",
             ""
         ],
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileTumorFastqs":  [
             [
-                "",
-                ""
+                "1_tumorFastqR1",
+                "1_tumorFastqR2"
             ],
             [
-                "",
-                ""
+                "2_tumorFastqR1",
+                "2_tumorFastqR2"
             ]
         ],
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.normalSampleName": [
@@ -20,12 +20,12 @@
         ],
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
             [
-                "",
-                ""
+                "1_normalFastqR1",
+                "1_normalFastqR2"
             ],
             [
-                "",
-                ""
+                "2_normalFastqR1",
+                "2_normalFastqR2"
             ]
         ],
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.finalOutputName": [
@@ -42,24 +42,24 @@
         ],
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFilePoNfastqs": [
             [
-                "",
-                ""
+                "1_ponFastqR1",
+                "1_ponFastqR2"
             ],
             [
-                "",
-                ""
+                "2_ponFastqR1",
+                "2_ponFastqR2"
             ],
             [
-                "",
-                ""
+                "3_ponFastqR1",
+                "3_ponFastqR2"
             ],
             [
-                "",
-                ""
+                "4_ponFastqR1",
+                "4_ponFastqR2"
             ],
             [
-                "",
-                ""
+                "5_ponFastqR1",
+                "5_ponFastqR2"
             ]
         ],
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
@@ -123,20 +123,20 @@
                 ""
             ]
         ],
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAmb": "GRCh38.primary_assembly.genome.fa.amb",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAnn": "GRCh38.primary_assembly.genome.fa.ann",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refBwt": "GRCh38.primary_assembly.genome.fa.bwt",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refPac": "GRCh38.primary_assembly.genome.fa.pac",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.sa",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "22_0922_1000g_gnomad_twb_pon.vcf.gz",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refDict": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-dict",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAmb": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-amb",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refAnn": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-ann",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refBwt": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-bwt",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refPac": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-pac",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refSa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-sa",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcf": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileDbsnpVcfIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz-tbi",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResource": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0922_1000g_gnomad_twb_pon-vcf-gz",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0922_1000g_gnomad_twb_pon-vcf-gz-tbi",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inDirPCGRref": "drs://dev-run-test-api.seqslab.net/GRCh38_pcgr_data_20220203",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileIntervalBed": "drs://dev-run-test-api.seqslab.net/GRCh38_addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38-bed"
     },
     "workflows": [
         {
@@ -144,98 +144,98 @@
             "path": "wdl/subworkflows/TNpairedMapping.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "TNpairedMapping",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "GenerateReadyBam.wdl",
             "path": "wdl/subworkflows/GenerateReadyBam.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "GenerateReadyBam",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "PickAndAnnotate.wdl",
             "path": "wdl/subworkflows/PickAndAnnotate.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "PickAndAnnotate",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "VarscanSomaticCallingProcess.wdl",
             "path": "wdl/subworkflows/VarscanSomaticCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "VarscanSomaticCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "TNpairedVariantsCalling.wdl",
             "path": "wdl/subworkflows/TNpairedVariantsCalling.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "TNpairedVariantsCalling",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "BamSomaticsniperCallingProcess.wdl",
             "path": "wdl/subworkflows/BamSomaticsniperCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "BamSomaticsniperCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "ScatterInProcessPoNSomaticpipelineTumorNormalMode.wdl",
             "path": "wdl/ScatterInProcessPoNSomaticpipelineTumorNormalMode.wdl",
             "file_type": "PRIMARY_DESCRIPTOR",
             "workflow_name": "ScatterInProcessPoNSomaticpipelineTumorNormalMode",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "LoFreqSomaticCallingProcess.wdl",
             "path": "wdl/subworkflows/LoFreqSomaticCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "LoFreqSomaticCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "VardictPairedCallingProcess.wdl",
             "path": "wdl/subworkflows/VardictPairedCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "VardictPairedCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "GeneralTask.wdl",
             "path": "wdl/subworkflows/GeneralTask.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "CreateMutect2PoN.wdl",
             "path": "wdl/subworkflows/CreateMutect2PoN.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "CreateMutect2PoN",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "Mutect2CallingProcess.wdl",
             "path": "wdl/subworkflows/Mutect2CallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "Mutect2CallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "MuseCallingProcess.wdl",
             "path": "wdl/subworkflows/MuseCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "MuseCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
-            "path": "inputs.json",
+            "path": "inputs/ScatterInProcessPoNSomaticpipelineTumorNormalMode.inputs.I2P5.json",
             "file_type": "TEST_FILE"
         },
         {
-            "path": "execs.json",
+            "path": "execs/ScatterInProcessPoNSomaticpipelineTumorNormalMode.inputs.I2P5.execs.json",
             "file_type": "EXECUTION_FILE"
         }
     ],
