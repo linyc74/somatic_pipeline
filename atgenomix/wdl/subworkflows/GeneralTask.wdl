@@ -93,12 +93,13 @@ task FastQC {
  
     command <<<
         set -e -o pipefail
-        fastqc ~{inFileFastqR1} ~{inFileFastqR2}
+        mkdir out
+        fastqc ~{inFileFastqR1} ~{inFileFastqR2} -o out
     >>>
  
     output {
-        Array[File] outFileHtmls = glob("*.fastqc.html")
-        Array[File] outFileZips = glob("*.fastqc.zip")
+        Array[File] outFileHtmls = glob("out/*.fastqc.html")
+        Array[File] outFileZips = glob("out/*.fastqc.zip")
     }
  
     runtime {
