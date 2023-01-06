@@ -98,8 +98,8 @@ task FastQC {
     >>>
  
     output {
-        Array[File] outFileHtmls = glob("out/*.fastqc.html")
-        Array[File] outFileZips = glob("out/*.fastqc.zip")
+        Array[File] outFileHtmls = glob("out/*fastqc.html")
+        Array[File] outFileZips = glob("out/*fastqc.zip")
     }
  
     runtime {
