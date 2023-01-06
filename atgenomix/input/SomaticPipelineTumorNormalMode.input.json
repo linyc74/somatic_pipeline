@@ -1,0 +1,31 @@
+{
+  "SomaticPipelineTumorNormalMode.tumorSampleName": "",
+  "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
+    "",
+    ""
+  ],
+  "SomaticPipelineTumorNormalMode.normalSampleName": "",
+  "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
+    "",
+    ""
+  ],
+  "SomaticPipelineTumorNormalMode.finalOutputName": "",
+  "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
+  "SomaticPipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
+  "SomaticPipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
+  "SomaticPipelineTumorNormalMode.refAmb": "GRCh38.primary_assembly.genome.fa.amb",
+  "SomaticPipelineTumorNormalMode.refAnn": "GRCh38.primary_assembly.genome.fa.ann",
+  "SomaticPipelineTumorNormalMode.refBwt": "GRCh38.primary_assembly.genome.fa.bwt",
+  "SomaticPipelineTumorNormalMode.refPac": "GRCh38.primary_assembly.genome.fa.pac",
+  "SomaticPipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.sa",
+  "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
+  "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResource": "22_0922_1000g_gnomad_twb_pon.vcf.gz",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
+  "SomaticPipelineTumorNormalMode.inFilePON": "File",
+  "SomaticPipelineTumorNormalMode.inFilePONindex": "File",
+  "SomaticPipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
+  "SomaticPipelineTumorNormalMode.libraryKit": "SureSelectHumanAllExonV5+UTRs_75Mbp",
+  "SomaticPipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
+}
+

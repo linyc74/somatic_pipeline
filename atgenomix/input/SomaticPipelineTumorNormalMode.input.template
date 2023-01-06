@@ -1,0 +1,25 @@
+{
+  "SomaticPipelineTumorNormalMode.tumorSampleName": "String",
+  "SomaticPipelineTumorNormalMode.inFileTumorFastqs": "Array[File]",
+  "SomaticPipelineTumorNormalMode.normalSampleName": "String",
+  "SomaticPipelineTumorNormalMode.inFileNormalFastqs": "Array[File]",
+  "SomaticPipelineTumorNormalMode.finalOutputName": "String",
+  "SomaticPipelineTumorNormalMode.refFa": "File",
+  "SomaticPipelineTumorNormalMode.refFai": "File",
+  "SomaticPipelineTumorNormalMode.refDict": "File",
+  "SomaticPipelineTumorNormalMode.refAmb": "File",
+  "SomaticPipelineTumorNormalMode.refAnn": "File",
+  "SomaticPipelineTumorNormalMode.refBwt": "File",
+  "SomaticPipelineTumorNormalMode.refPac": "File",
+  "SomaticPipelineTumorNormalMode.refSa": "File",
+  "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "File",
+  "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "File",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResource": "File",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "File",
+  "SomaticPipelineTumorNormalMode.inFilePON": "File",
+  "SomaticPipelineTumorNormalMode.inFilePONindex": "File",
+  "SomaticPipelineTumorNormalMode.inDirPCGRref": "File",
+  "SomaticPipelineTumorNormalMode.libraryKit": "String",
+  "SomaticPipelineTumorNormalMode.inFileIntervalBed": "File"
+}
+
