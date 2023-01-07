@@ -93,7 +93,7 @@ task FastQC {
  
     command <<<
         set -e -o pipefail
-        mkdir out
+        mkdir fastqc_report
         fastqc ~{inFileFastqR1} ~{inFileFastqR2} -o fastqc_report
         tar cvf fastqc_report.tar fastqc_report
     >>>
