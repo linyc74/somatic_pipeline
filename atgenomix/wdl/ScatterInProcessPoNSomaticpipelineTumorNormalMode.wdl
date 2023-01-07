@@ -92,6 +92,18 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         String nSN = normalSampleName[i]
         String fON = finalOutputName[i]
 
+        call general.FastQC as fastqcTumorFastq {
+            input:
+                inFileFastqR1 = iFTFs[0],
+                inFileFastqR2 = iFTFs[1]
+        }
+
+        call general.FastQC as fastqcNormalFastq {
+            input:
+                inFileFastqR1 = iFNFs[0],
+                inFileFastqR2 = iFNFs[1]
+        }
+
         call mapper.TNpairedMapping as TNmapping {
             input:
                 inFileTumorFastqs = iFTFs,
@@ -147,11 +159,11 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     output {
         Array[Array[File]] outFileTumorFastqs = TNmapping.outFileTumorFastqs
         Array[Array[File]] outFileNormalFastqs = TNmapping.outFileNormalFastqs
-        Array[Array[File]] outFileTumorFastqcHtmls = TNmapping.outFileTumorFastqcHtmls
-        Array[Array[File]] outFileNormalFastqcHtmls = TNmapping.outFileNormalFastqcHtmls
+        Array[Array[File]] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
+        Array[Array[File]] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
         Array[Array[File]] outFilePoNfastqcHtmls = fastqcPoNfastq.outFileHtmls
-        Array[Array[File]] outFileTumorFastqcZips = TNmapping.outFileTumorFastqcZips
-        Array[Array[File]] outFileNormalFastqcZips = TNmapping.outFileNormalFastqcZips
+        Array[Array[File]] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
+        Array[Array[File]] outFileNormalFastqcZips = fastqcNormalFastq.outFileZips
         Array[Array[File]] outFilePoNfastqcZips = fastqcPoNfastq.outFileZips
         Array[File] outFileTumorBam = TNmapping.outFileTumorBam
         Array[File] outFileNormalBam = TNmapping.outFileNormalBam

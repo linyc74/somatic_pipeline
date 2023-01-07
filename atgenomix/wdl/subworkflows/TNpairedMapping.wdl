@@ -31,21 +31,9 @@ workflow TNpairedMapping {
             inFileFastqR2 = inFileTumorFastqs[1]
     }
 
-    call general.FastQC as fastqcTumorFastq {
-        input:
-            inFileFastqR1 = inFileTumorFastqs[0],
-            inFileFastqR2 = inFileTumorFastqs[1]
-    }
-
     call general.TrimGalore as trimNormalFastq {
         input:
             sampleName = normalSampleName,
-            inFileFastqR1 = inFileNormalFastqs[0],
-            inFileFastqR2 = inFileNormalFastqs[1]
-    }
-
-    call general.FastQC as fastqcNormalFastq {
-        input:
             inFileFastqR1 = inFileNormalFastqs[0],
             inFileFastqR2 = inFileNormalFastqs[1]
     }
@@ -85,10 +73,6 @@ workflow TNpairedMapping {
     output {
         Array[File] outFileTumorFastqs = trimTumorFastq.outFileFastqs
         Array[File] outFileNormalFastqs = trimNormalFastq.outFileFastqs
-        Array[File] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
-        Array[File] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
-        Array[File] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
-        Array[File] outFileNormalFastqcZips = fastqcNormalFastq.outFileZips
         File outFileTumorBam = tumorBam.outFileBam
         File outFileNormalBam = normalBam.outFileBam
         File outFileTumorBamIndex = tumorBam.outFileBamIndex

@@ -1,5 +1,6 @@
 version 1.0
 
+import "subworkflows/GeneralTask.wdl" as general
 import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
@@ -30,6 +31,18 @@ workflow SomaticPipelineTumorNormalMode {
         String tumorSampleName
         String normalSampleName
         String finalOutputName
+    }
+
+    call general.FastQC as fastqcTumorFastq {
+        input:
+            inFileFastqR1 = inFileTumorFastqs[0],
+            inFileFastqR2 = inFileTumorFastqs[1]
+    }
+
+    call general.FastQC as fastqcNormalFastq {
+        input:
+            inFileFastqR1 = inFileNormalFastqs[0],
+            inFileFastqR2 = inFileNormalFastqs[1]
     }
 
     call mapper.TNpairedMapping as TNmapping {
@@ -86,10 +99,10 @@ workflow SomaticPipelineTumorNormalMode {
     output {
         Array[File] outFileTumorFastqs = TNmapping.outFileTumorFastqs
         Array[File] outFileNormalFastqs = TNmapping.outFileNormalFastqs
-        Array[File] outFileTumorFastqcHtmls = TNmapping.outFileTumorFastqcHtmls
-        Array[File] outFileNormalFastqcHtmls = TNmapping.outFileNormalFastqcHtmls
-        Array[File] outFileTumorFastqcZips = TNmapping.outFileTumorFastqcZips
-        Array[File] outFileNormalFastqcZips = TNmapping.outFileNormalFastqcZips
+        Array[File] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
+        Array[File] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
+        Array[File] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
+        Array[File] outFileNormalFastqcZips = fastqcNormalFastq.outFileZips
         File outFileTumorBam = TNmapping.outFileTumorBam
         File outFileNormalBam = TNmapping.outFileNormalBam
         File outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
