@@ -99,10 +99,8 @@ workflow SomaticPipelineTumorNormalMode {
     output {
         Array[File] outFileTumorTrimmedFastqs = TNmapping.outFileTumorTrimmedFastqs
         Array[File] outFileNormalTrimmedFastqs = TNmapping.outFileNormalTrimmedFastqs
-        Array[File] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
-        Array[File] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
-        Array[File] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
-        Array[File] outFileNormalFastqcZips = fastqcNormalFastq.outFileZips
+        File outFileTumorFastqcReportTar = fastqcTumorFastq.outFileFastqcReportTar
+        File outFileNormalFastqcReportTar = fastqcNormalFastq.outFileFastqcReportTar
         File outFileTumorBam = TNmapping.outFileTumorBam
         File outFileNormalBam = TNmapping.outFileNormalBam
         File outFileTumorBamIndex = TNmapping.outFileTumorBamIndex

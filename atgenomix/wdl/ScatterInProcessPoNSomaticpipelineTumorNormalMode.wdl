@@ -161,12 +161,9 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     output {
         Array[Array[File]] outFileTrimmedTumorFastqs = TNmapping.outFileTumorTrimmedFastqs
         Array[Array[File]] outFileTrimmedNormalFastqs = TNmapping.outFileNormalTrimmedFastqs
-        Array[Array[File]] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
-        Array[Array[File]] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
-        Array[Array[File]] outFilePoNfastqcHtmls = fastqcPoNfastq.outFileHtmls
-        Array[Array[File]] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
-        Array[Array[File]] outFileNormalFastqcZips = fastqcNormalFastq.outFileZips
-        Array[Array[File]] outFilePoNfastqcZips = fastqcPoNfastq.outFileZips
+        Array[File] outFileTumorFastqcReportTar = fastqcTumorFastq.outFileFastqcReportTar
+        Array[File] outFileNormalFastqcReportTar = fastqcNormalFastq.outFileFastqcReportTar
+        Array[File] outFilePoNfastqcReportTar = fastqcPoNfastq.outFileFastqcReportTar
         Array[File] outFileTumorBam = TNmapping.outFileTumorBam
         Array[File] outFileNormalBam = TNmapping.outFileNormalBam
         Array[File] outFileTumorBamIndex = TNmapping.outFileTumorBamIndex

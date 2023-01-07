@@ -94,12 +94,12 @@ task FastQC {
     command <<<
         set -e -o pipefail
         mkdir out
-        fastqc ~{inFileFastqR1} ~{inFileFastqR2} -o out
+        fastqc ~{inFileFastqR1} ~{inFileFastqR2} -o fastqc_report
+        tar cvf fastqc_report.tar fastqc_report
     >>>
  
     output {
-        Array[File] outFileHtmls = glob("out/*fastqc.html")
-        Array[File] outFileZips = glob("out/*fastqc.zip")
+        File outFileFastqcReportTar = "fastqc_report.tar"
     }
  
     runtime {
