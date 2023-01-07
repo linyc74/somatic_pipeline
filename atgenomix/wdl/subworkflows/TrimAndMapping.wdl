@@ -111,7 +111,7 @@ task TrimGalore {
     }
  
     output {
-        Array[File] outFileTrimmedFastqs = glob("out/*.fq.gz")
+        Array[File] outFileTrimmedFastqs = ["out/~{sampleName}_val_1_fq.gz","out/~{sampleName}_val_2_fq.gz"]
         # File outFileHtmlR1 = "out/~{sampleName}_val_1_fastqc.html"
         # File outFileHtmlR2 = "out/~{sampleName}_val_2_fastqc.html"
         # File outFileZipR1 = "out/~{sampleName}_val_1_fastqc.zip"
