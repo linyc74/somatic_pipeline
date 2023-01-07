@@ -1,11 +1,11 @@
 version 1.0
 
-import "GeneralTask.wdl" as general
-import "GenerateReadyBam.wdl" as generateBam
+import "TrimAndMapping.wdl" as mapping
+import "PostMappingProcess.wdl" as postMapping
 
 # WORKFLOW DEFINITION
 
-# Take both tumor and normal paired-end fastq files, using TrimGalore trim and get fastqc report then using bwa-mem align to reference genome
+# Take both tumor and normal paired-end fastq files, using TrimGalore trim then using bwa-mem align to reference genome
 workflow TNpairedMapping {
     input {
         Array[File] inFileTumorFastqs
@@ -23,26 +23,9 @@ workflow TNpairedMapping {
         String tumorSampleName
         String normalSampleName
     }
- 
-    call general.TrimGalore as trimTumorFastq {
-        input:
-            sampleName = tumorSampleName,
-            inFileFastqR1 = inFileTumorFastqs[0],
-            inFileFastqR2 = inFileTumorFastqs[1]
-    }
 
-    call general.TrimGalore as trimNormalFastq {
+    call mapping.TrimAndMapping as trimAndMapTumorFastq {
         input:
-            sampleName = normalSampleName,
-            inFileFastqR1 = inFileNormalFastqs[0],
-            inFileFastqR2 = inFileNormalFastqs[1]
-    }
-
-    call generateBam.GenerateReadyBam as tumorBam {
-        input:
-            inFileFastqs = trimTumorFastq.outFileFastqs,
-            inFileDbsnpVcf = inFileDbsnpVcf,
-            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
             refAnn = refAnn,
             refBwt = refBwt,
@@ -50,20 +33,39 @@ workflow TNpairedMapping {
             refSa = refSa,
             refFa = refFa,
             refFai = refFai,
-            refDict = refDict,
-            sampleName = tumorSampleName
+            sampleName = tumorSampleName,
+            inFileFastqs = inFileTumorFastqs
     }
 
-    call generateBam.GenerateReadyBam as normalBam {
+    call mapping.TrimAndMapping as trimAndMapNormalFastq {
         input:
-            inFileFastqs = trimNormalFastq.outFileFastqs,
-            inFileDbsnpVcf = inFileDbsnpVcf,
-            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refAmb = refAmb,
             refAnn = refAnn,
             refBwt = refBwt,
             refPac = refPac,
             refSa = refSa,
+            refFa = refFa,
+            refFai = refFai,
+            sampleName = normalSampleName,
+            inFileFastqs = inFileNormalFastqs
+    }
+
+    call postMapping.PostMappingProcess as postMappingTumorBam {
+        input:
+            inFileUnSortRawBam = trimAndMapTumorFastq.outFileUnSortRawBam,
+            inFileDbsnpVcf = inFileDbsnpVcf,
+            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+            refFa = refFa,
+            refFai = refFai,
+            refDict = refDict,
+            sampleName = tumorSampleName
+    }
+
+    call postMapping.PostMappingProcess as postMappingNormalBam {
+        input:
+            inFileUnSortRawBam = trimAndMapNormalFastq.outFileUnSortRawBam,
+            inFileDbsnpVcf = inFileDbsnpVcf,
+            inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
             refFa = refFa,
             refFai = refFai,
             refDict = refDict,
@@ -71,15 +73,15 @@ workflow TNpairedMapping {
     }
  
     output {
-        Array[File] outFileTumorFastqs = trimTumorFastq.outFileFastqs
-        Array[File] outFileNormalFastqs = trimNormalFastq.outFileFastqs
-        File outFileTumorBam = tumorBam.outFileBam
-        File outFileNormalBam = normalBam.outFileBam
-        File outFileTumorBamIndex = tumorBam.outFileBamIndex
-        File outFileNormalBamIndex = normalBam.outFileBamIndex
-        File outFileTumorRawBam = tumorBam.outFileBam
-        File outFileNormalRawBam = normalBam.outFileBam
-        File outFileStatsTumorBam = tumorBam.outFileBamStats
-        File outFileStatsNormalBam = normalBam.outFileBamStats
+        Array[File] outFileTumorTrimmedFastqs = trimAndMapTumorFastq.outFileTrimmedFastq
+        Array[File] outFileNormalTrimmedFastqs = trimAndMapNormalFastq.outFileTrimmedFastq
+        File outFileTumorBam = postMappingTumorBam.outFileBam
+        File outFileNormalBam = postMappingNormalBam.outFileBam
+        File outFileTumorBamIndex = postMappingTumorBam.outFileBamIndex
+        File outFileNormalBamIndex = postMappingNormalBam.outFileBamIndex
+        File outFileTumorSortedRawBam = postMappingTumorBam.outFileSortedRawBam
+        File outFileNormalSortedRawBam = postMappingNormalBam.outFileSortedRawBam
+        File outFileStatsTumorBam = postMappingTumorBam.outFileBamStats
+        File outFileStatsNormalBam = postMappingNormalBam.outFileBamStats
     }
 }

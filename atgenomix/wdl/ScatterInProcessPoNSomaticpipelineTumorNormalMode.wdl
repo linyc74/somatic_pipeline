@@ -1,7 +1,8 @@
 version 1.0
 
 import "subworkflows/GeneralTask.wdl" as general
-import "subworkflows/GenerateReadyBam.wdl" as generateBam
+import "subworkflows/TrimAndMapping.wdl" as ponMapping
+import "subworkflows/PostMappingProcess.wdl" as ponPostMapping
 import "subworkflows/TNpairedMapping.wdl" as mapper
 import "subworkflows/TNpairedVariantsCalling.wdl" as caller
 import "subworkflows/PickAndAnnotate.wdl" as annotate
@@ -46,18 +47,8 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 inFileFastqR2 = iFPFs[1]
     }
 
-        call general.TrimGalore as trimPoNfastq {
+        call ponMapping.TrimAndMapping {
             input:
-                sampleName = pSN,
-                inFileFastqR1 = iFPFs[0],
-                inFileFastqR2 = iFPFs[1]
-        }
-
-        call generateBam.GenerateReadyBam as ponBam {
-            input:
-                inFileFastqs = trimPoNfastq.outFileFastqs,
-                inFileDbsnpVcf = inFileDbsnpVcf,
-                inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
                 refAmb = refAmb,
                 refAnn = refAnn,
                 refBwt = refBwt,
@@ -65,15 +56,26 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refSa = refSa,
                 refFa = refFa,
                 refFai = refFai,
+                sampleName = pSN,
+                inFileFastqs = iFPFs
+        }
+
+        call ponPostMapping.PostMappingProcess {
+            input:
+                inFileUnSortRawBam = TrimAndMapping.outFileUnSortRawBam,
+                inFileDbsnpVcf = inFileDbsnpVcf,
+                inFileDbsnpVcfIndex = inFileDbsnpVcfIndex,
+                refFa = refFa,
+                refFai = refFai,
                 refDict = refDict,
-                sampleName = pSN   
+                sampleName = pSN
         }
     }
 
     call createPoN.CreateMutect2PoN {
         input:
-            inFileNormalBams = ponBam.outFileBam,
-            inFileNormalBamIndexs = ponBam.outFileBamIndex,
+            inFileNormalBams = PostMappingProcess.outFileBam,
+            inFileNormalBamIndexs = PostMappingProcess.outFileBamIndex,
             inFileGermlineResource = inFileGermlineResource,
             inFileGermlineResourceIndex = inFileGermlineResourceIndex,
             inFileIntervalBed = inFileIntervalBed,
@@ -157,8 +159,8 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
     }
 
     output {
-        Array[Array[File]] outFileTumorFastqs = TNmapping.outFileTumorFastqs
-        Array[Array[File]] outFileNormalFastqs = TNmapping.outFileNormalFastqs
+        Array[Array[File]] outFileTrimmedTumorFastqs = TNmapping.outFileTumorTrimmedFastqs
+        Array[Array[File]] outFileTrimmedNormalFastqs = TNmapping.outFileNormalTrimmedFastqs
         Array[Array[File]] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
         Array[Array[File]] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
         Array[Array[File]] outFilePoNfastqcHtmls = fastqcPoNfastq.outFileHtmls
@@ -169,8 +171,8 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[File] outFileNormalBam = TNmapping.outFileNormalBam
         Array[File] outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
         Array[File] outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
-        Array[File] outFileTumorRawBam = TNmapping.outFileTumorRawBam
-        Array[File] outFileNormalRawBam = TNmapping.outFileNormalRawBam
+        Array[File] outFileTumorSortedRawBam = TNmapping.outFileTumorSortedRawBam
+        Array[File] outFileNormalSortedRawBam = TNmapping.outFileNormalSortedRawBam
         Array[File] outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
         Array[File] outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
         Array[File] outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz

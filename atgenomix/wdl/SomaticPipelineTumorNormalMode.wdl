@@ -97,8 +97,8 @@ workflow SomaticPipelineTumorNormalMode {
     }
     
     output {
-        Array[File] outFileTumorFastqs = TNmapping.outFileTumorFastqs
-        Array[File] outFileNormalFastqs = TNmapping.outFileNormalFastqs
+        Array[File] outFileTumorTrimmedFastqs = TNmapping.outFileTumorTrimmedFastqs
+        Array[File] outFileNormalTrimmedFastqs = TNmapping.outFileNormalTrimmedFastqs
         Array[File] outFileTumorFastqcHtmls = fastqcTumorFastq.outFileHtmls
         Array[File] outFileNormalFastqcHtmls = fastqcNormalFastq.outFileHtmls
         Array[File] outFileTumorFastqcZips = fastqcTumorFastq.outFileZips
@@ -107,8 +107,8 @@ workflow SomaticPipelineTumorNormalMode {
         File outFileNormalBam = TNmapping.outFileNormalBam
         File outFileTumorBamIndex = TNmapping.outFileTumorBamIndex
         File outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
-        File outFileTumorRawBam = TNmapping.outFileTumorRawBam
-        File outFileNormalRawBam = TNmapping.outFileNormalRawBam
+        File outFileTumorSortedRawBam = TNmapping.outFileTumorSortedRawBam
+        File outFileNormalSortedRawBam = TNmapping.outFileNormalSortedRawBam
         File outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
         File outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
         File outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz

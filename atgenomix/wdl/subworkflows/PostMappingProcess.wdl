@@ -2,40 +2,21 @@ version 1.0
 
 # WORKFLOW DEFINITION
 
-# Generate a analysis-ready bam file and a comprehensive statistics report
-workflow GenerateReadyBam {
+# Take in a raw bam and generate a analysis-ready bam file and a comprehensive statistics report
+workflow PostMappingProcess {
     input {
-        Array[File] inFileFastqs
+        File inFileUnSortRawBam
         File inFileDbsnpVcf
         File inFileDbsnpVcfIndex
-        File refAmb
-        File refAnn
-        File refBwt
-        File refPac
-        File refSa
         File refFa
         File refFai
         File refDict
         String sampleName
     }
     
-    call BwaMem {
-        input:
-            inFileFastqR1 = inFileFastqs[0],
-            inFileFastqR2 = inFileFastqs[1],
-            refAmb = refAmb,
-            refAnn = refAnn,
-            refBwt = refBwt,
-            refPac = refPac,
-            refSa = refSa,
-            refFa = refFa,
-            refFai = refFai,
-            sampleName = sampleName
-    }
-
     call Sort { 
         input:
-            inFileBam = BwaMem.outFileBam,
+            inFileBam = inFileUnSortRawBam,
             sampleName = sampleName
     }
 
@@ -75,49 +56,13 @@ workflow GenerateReadyBam {
     output {
         File outFileBam = ApplyBqsr.outFileBam
         File outFileBamIndex = ApplyBqsr.outFileBamIndex
-        File outFileRawBam = Sort.outFileBam
+        File outFileSortedRawBam = Sort.outFileBam
         File outFileBamStats = BamStats.outFileBamStats
     }
 }
 
 
 # TASK DEFINITIONS
-
-# Align reads using bwa mem and output a bam file
-task BwaMem {
-    input {
-        File inFileFastqR1
-        File inFileFastqR2
-        File refAmb
-        File refAnn
-        File refBwt
-        File refPac
-        File refSa
-        File refFa
-        File refFai
-        String sampleName
-    }
- 
-    command <<<
-        set -e -o pipefail
-        bwa mem \
-        -t 4 \
-        -R "@RG\tID:~{sampleName}\tSM:~{sampleName}\tPL:ILLUMINA\tLB:~{sampleName}" \
-        ~{refFa} \
-        ~{inFileFastqR1} \
-        ~{inFileFastqR2} \
-        | \
-        samtools view -b - > ~{sampleName}.bam  
-    >>>
- 
-    runtime {
-        docker: 'nycu:latest'
-    }
- 
-    output {
-        File outFileBam = "~{sampleName}.bam"
-    }
-}
 
 # Sort reads within bam using samtools
 task Sort {

@@ -64,8 +64,8 @@ workflow ScatterSomaticpipelineTumorNormalMode {
     }
  
     output {
-        Array[Array[File]] outFileTumorFastqs = SomaticPipelineTumorNormalMode.outFileTumorFastqs
-        Array[Array[File]] outFileNormalFastqs = SomaticPipelineTumorNormalMode.outFileNormalFastqs
+        Array[Array[File]] outFileTumorTrimmedFastqs = SomaticPipelineTumorNormalMode.outFileTumorTrimmedFastqs
+        Array[Array[File]] outFileNormalTrimmedFastqs = SomaticPipelineTumorNormalMode.outFileNormalTrimmedFastqs
         Array[Array[File]] outFileTumorFastqcHtmls = SomaticPipelineTumorNormalMode.outFileTumorFastqcHtmls
         Array[Array[File]] outFileNormalFastqcHtmls = SomaticPipelineTumorNormalMode.outFileNormalFastqcHtmls
         Array[Array[File]] outFileTumorFastqcZips = SomaticPipelineTumorNormalMode.outFileTumorFastqcZips
@@ -74,8 +74,8 @@ workflow ScatterSomaticpipelineTumorNormalMode {
         Array[File] outFileNormalBam = SomaticPipelineTumorNormalMode.outFileNormalBam
         Array[File] outFileTumorBamIndex = SomaticPipelineTumorNormalMode.outFileTumorBamIndex
         Array[File] outFileNormalBamIndex = SomaticPipelineTumorNormalMode.outFileNormalBamIndex
-        Array[File] outFileTumorRawBam = SomaticPipelineTumorNormalMode.outFileTumorRawBam
-        Array[File] outFileNormalRawBam = SomaticPipelineTumorNormalMode.outFileNormalRawBam
+        Array[File] outFileTumorSortedRawBam = SomaticPipelineTumorNormalMode.outFileTumorSortedRawBam
+        Array[File] outFileNormalSortedRawBam = SomaticPipelineTumorNormalMode.outFileNormalSortedRawBam
         Array[File] outFileStatsTumorBam = SomaticPipelineTumorNormalMode.outFileStatsTumorBam
         Array[File] outFileStatsNormalBam = SomaticPipelineTumorNormalMode.outFileStatsNormalBam
         Array[File] outFileBamsomaticsniperPyVcfGz = SomaticPipelineTumorNormalMode.outFileBamsomaticsniperPyVcfGz
