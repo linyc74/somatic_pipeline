@@ -3,8 +3,8 @@
     "workflow_params": {
         "inputs": {
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.tumorSampleName": [
-                "",
-                ""
+                "tumor1",
+                "tumor2"
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
                 [
@@ -17,8 +17,8 @@
                 ]
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.normalSampleName": [
-                "",
-                ""
+                "normal1",
+                "normal2"
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
                 [
@@ -31,16 +31,16 @@
                 ]
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.finalOutputName": [
-                "",
-                ""
+                "final1",
+                "final2"
             ],
-            "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponName": "",
+            "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponName": "5sample_PoN",
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.ponSampleName": [
-                "",
-                "",
-                "",
-                "",
-                ""
+                "pon1",
+                "pon2",
+                "pon3",
+                "pon4",
+                "pon5"
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFilePoNfastqs": [
                 [
@@ -82,44 +82,44 @@
         "datasets": {
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0102-E-X01-02-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0102-E-X01-02-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0102-E-X01-02-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0102-E-X01-02-s3M_R2-fastq-gz"
                 ]
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ]
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.inFilePoNfastqs": [
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/test_3M_001-00001-0101-E-X01-01-s3M_R2-fastq-gz"
                 ]
             ],
             "ScatterInProcessPoNSomaticpipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
@@ -1813,8 +1813,8 @@
                     "vm_size": "Standard_D14_v2",
                     "wm_size": "Standard_D1_v2",
                     "workers": {
-                        "spot": 0,
-                        "dedicated": 1
+                        "spot": 6,
+                        "dedicated": 3
                     },
                     "auto_scale": false,
                     "worker_on_master": true
