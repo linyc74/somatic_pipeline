@@ -2,17 +2,17 @@
     "name": "weichi_SomaticPipeline_TN_mode_20230109_test3",
     "workflow_params": {
         "inputs": {
-            "SomaticPipelineTumorNormalMode.tumorSampleName": "",
+            "SomaticPipelineTumorNormalMode.tumorSampleName": "002-00003-0103-E-X01-02",
             "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-                "tumorFastqR1.gz",
-                "tumorFastqR2.gz"
+                "002-00003-0103-E-X01-02_R1.fastq.gz",
+                "002-00003-0103-E-X01-02_R2.fastq.gz"
             ],
-            "SomaticPipelineTumorNormalMode.normalSampleName": "",
+            "SomaticPipelineTumorNormalMode.normalSampleName": "002-00003-0101-E-X01-01",
             "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-                "normalFastqR1.gz",
-                "normalFastqR2.gz"
+                "002-00003-0101-E-X01-01_R1.fastq.gz",
+                "002-00003-0101-E-X01-01_R2.fastq.gz"
             ],
-            "SomaticPipelineTumorNormalMode.finalOutputName": "",
+            "SomaticPipelineTumorNormalMode.finalOutputName": "002-00003-0103-E-X01-02",
             "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
             "SomaticPipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
             "SomaticPipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
@@ -32,12 +32,12 @@
         },
         "datasets": {
             "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-                "",
-                ""
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0103-E-X01-02_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0103-E-X01-02_R2-fastq-gz"
             ],
             "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-                "",
-                ""
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R2-fastq-gz"
             ],
             "SomaticPipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
             "SomaticPipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
@@ -1220,6 +1220,66 @@
                     "vm_size": "Standard_D14_v2",
                     "wm_size": "Standard_D1_v2",
                     "workers": {
+                        "spot": 3,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "SomaticPipelineTumorNormalMode"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D14_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 5,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "TNmapping"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D12_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
                         "spot": 0,
                         "dedicated": 1
                     },
@@ -1236,9 +1296,40 @@
                     "spark.dynamicAllocation.minExecutors 1",
                     "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
                     "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
-                    "spark.local.dir /mnt"
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
                 ],
-                "call": "SomaticPipelineTumorNormalMode"
+                "call": "fastqcTumorFastq"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D12_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 0,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "fastqcNormalFastq"
             }
         ],
         "workspace": "sponsorwus2",
