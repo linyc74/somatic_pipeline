@@ -1,13 +1,13 @@
 {
   "SomaticPipelineTumorNormalMode.tumorSampleName": "",
   "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-    "",
-    ""
+    "tumorFastqR1.gz",
+    "tumorFastqR2.gz"
   ],
   "SomaticPipelineTumorNormalMode.normalSampleName": "",
   "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-    "",
-    ""
+    "normalFastqR1.gz",
+    "normalFastqR2.gz"
   ],
   "SomaticPipelineTumorNormalMode.finalOutputName": "",
   "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
@@ -20,10 +20,10 @@
   "SomaticPipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.sa",
   "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
   "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
-  "SomaticPipelineTumorNormalMode.inFileGermlineResource": "22_0922_1000g_gnomad_twb_pon.vcf.gz",
-  "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "22_0922_1000g_gnomad_twb_pon.vcf.gz.tbi",
-  "SomaticPipelineTumorNormalMode.inFilePON": "File",
-  "SomaticPipelineTumorNormalMode.inFilePONindex": "File",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResource": "af-only-gnomad.hg38.vcf.gz",
+  "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "af-only-gnomad.hg38.vcf.gz.tbi",
+  "SomaticPipelineTumorNormalMode.inFilePON": "5pon_20230109.vcf",
+  "SomaticPipelineTumorNormalMode.inFilePONindex": "5pon_20230109.vcf.idx",
   "SomaticPipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
   "SomaticPipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
 }
