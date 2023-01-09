@@ -32,12 +32,12 @@
     "subgraphs": [],
     "connections": {
         "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-            "tumorFastqR1.gz",
-            "tumorFastqR2.gz"
+            "",
+            ""
         ],
         "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-            "normalFastqR1.gz",
-            "normalFastqR2.gz"
+            "",
+            ""
         ],
         "SomaticPipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
         "SomaticPipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
