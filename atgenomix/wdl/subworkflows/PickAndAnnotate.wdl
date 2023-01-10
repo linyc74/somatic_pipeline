@@ -30,16 +30,10 @@ workflow PickAndAnnotate {
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as vcfCompressIndex {
-        input:
-            inFileVcf = PythonVariantPicking.outFileVcf,
-            sampleName = sampleName
-    }
-
     call PCGR {
         input:
-            inFileVcfGz = vcfCompressIndex.outFileVcfGz,
-            inFileVcfIndex = vcfCompressIndex.outFileVcfIndex,
+            inFileVcfGz = PythonVariantPicking.outFileVcfGz,
+            inFileVcfIndex = PythonVariantPicking.outFileVcfIndex,
             inDirPCGRref = inDirPCGRref,
             sampleName = sampleName
     }
@@ -81,10 +75,16 @@ task PythonVariantPicking {
         --output-vcf ~{sampleName}_picked.vcf \
         --min-snv-caller 2 \
         --min-indel-callers 1
+        bgzip \
+        --stdout ~{sampleName}_picked.vcf > ~{sampleName}_picked.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}_picked.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}_picked.vcf"
+        File outFileVcfGz = "~{sampleName}_picked.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_picked.vcf.gz.tbi"
     }
  
     runtime {

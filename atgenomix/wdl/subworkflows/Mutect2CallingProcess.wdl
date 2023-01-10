@@ -53,7 +53,7 @@ workflow Mutect2CallingProcess {
     call FilterMutectCalls {
         input:
             inFileArtifactPriors = LearnReadOrientationModel.outFileArtifactPriors,
-            inFileVcf = Mutect2.outFileVcf,
+            inFileVcfGz = Mutect2.outFileVcfGz,
             inFileVcfStats = Mutect2.outFileVcfStats,
             refFa = refFa,
             refFai = refFai,
@@ -61,29 +61,17 @@ workflow Mutect2CallingProcess {
             sampleName = sampleName     
     }
 
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = FilterMutectCalls.outFileVcf,
-            sampleName = sampleName
-    }
-
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = FilterMutectCalls.outFileVcf,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
+            inFileVcfGz = FilterMutectCalls.outFileVcfGz,
             sampleName = sampleName
     }
 
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = FilterMutectCalls.outFileVcfGz
+        File outFileVcfIndex = FilterMutectCalls.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 
@@ -119,7 +107,7 @@ task Mutect2 {
         ~{"--input " + inFileNormalBam} \
         --tumor-sample ~{tumorSampleName} \
         ~{"--normal-sample " + normalSampleName} \
-        --output ~{sampleName}.vcf \
+        --output ~{sampleName}.vcf.gz \
         --f1r2-tar-gz ~{sampleName}_f1r2.tar.gz \
         --max-reads-per-alignment-start 0 \
         ~{"--germline-resource " + inFileGermlineResource} \
@@ -132,9 +120,9 @@ task Mutect2 {
     }
  
     output {
-        File outFileVcf = "~{sampleName}.vcf"
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
         File outFileF1R2 = "~{sampleName}_f1r2.tar.gz"
-        File outFileVcfStats =  "~{sampleName}.vcf.stats"
+        File outFileVcfStats =  "~{sampleName}.vcf.gz.stats"
     }
 }
 
@@ -164,7 +152,7 @@ task LearnReadOrientationModel {
 task FilterMutectCalls {
     input {
         File inFileArtifactPriors
-        File inFileVcf
+        File inFileVcfGz
         File inFileVcfStats
         File refFa
         File refFai
@@ -175,12 +163,11 @@ task FilterMutectCalls {
     command <<<
         set -e -o pipefail
         gatk FilterMutectCalls \
-        --variant ~{inFileVcf} \
+        --variant ~{inFileVcfGz} \
         --reference ~{refFa} \
-        --output ~{sampleName}_filtered.vcf \
+        --output ~{sampleName}_filtered.vcf.gz \
         --filtering-stats ~{inFileVcfStats} \
-        --orientation-bias-artifact-priors ~{inFileArtifactPriors} \
-        --create-output-variant-index false
+        --orientation-bias-artifact-priors ~{inFileArtifactPriors}
     >>>
  
     runtime {
@@ -188,6 +175,7 @@ task FilterMutectCalls {
     }
  
     output {
-        File outFileVcf = "~{sampleName}_filtered.vcf"
+        File outFileVcfGz = "~{sampleName}_filtered.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_filtered.vcf.gz.tbi"
     }
 }

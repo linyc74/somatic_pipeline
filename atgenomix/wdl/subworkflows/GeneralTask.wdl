@@ -23,59 +23,6 @@ task BamStats {
     }
 }
 
-# Compress vcf file using bgzip and index using tabix 
-task BgzipTabix {
-    input {
-        File inFileVcf
-        String sampleName
-    }
- 
-    command <<<
-        set -e -o pipefail
-        bgzip \
-        --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
-        tabix \
-        --preset vcf \
-        ~{sampleName}.vcf.gz
-    >>>
- 
-    output {
-        File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
-    }
- 
-    runtime {
-        docker: 'nycu:latest'
-    }
-}
-
-# Compress vcf file using bgzip and index using bcftools 
-task BgzipBcftoolsIndex {
-    input {
-        File inFileVcf
-        String sampleName
-    }
- 
-    command <<<
-        set -e -o pipefail
-        bgzip \
-        --force \
-        --stdout ~{inFileVcf} > ~{sampleName}.vcf.gz
-        bcftools index \
-        --force \
-        ~{sampleName}.vcf.gz
-    >>>
- 
-    output {
-        File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.gz.csi"
-    }
- 
-    runtime {
-        docker: 'nycu:latest'
-    }
-}
-
 # Concatenate SNV.vcf and INDEL.vcf using bcftools
 task Concat {
     input {
@@ -94,10 +41,16 @@ task Concat {
         --output ~{sampleName}.vcf \
         ~{inFileSnvVcf} \
         ~{inFileIndelVcf}
+        bgzip \
+        --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}.vcf"
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
     }
  
     runtime {
@@ -159,7 +112,7 @@ task Mpileup {
 # Generate a filtered vcf using the self maintained python code
 task PythonVariantFilter {
     input {
-        File inFileVcf
+        File inFileVcfGz
         String flaggingCriteria = "\"LOW_DP: DP<20, HIGH_MQ: MQ>=30\""
         String removalFlags = "panel_of_normal,LOW_DP"
         String sampleName
@@ -167,15 +120,22 @@ task PythonVariantFilter {
  
     command <<<
         set -e -o pipefail
+        zcat ~{inFileVcfGz} > in.vcf
         python /usr/local/seqslab/variant filtering \
-        --input-vcf ~{inFileVcf} \
+        --input-vcf in.vcf \
         --output-vcf ~{sampleName}_Pyfiltered.vcf \
         --variant-flagging-criteria ~{flaggingCriteria}  \
         --variant-removal-flags ~{removalFlags}
+        bgzip \
+        --stdout ~{sampleName}_Pyfiltered.vcf > ~{sampleName}_Pyfiltered.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}_Pyfiltered.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}_Pyfiltered.vcf"
+        File outFileVcfGz = "~{sampleName}_Pyfiltered.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_Pyfiltered.vcf.gz.tbi"
     }
  
     runtime {

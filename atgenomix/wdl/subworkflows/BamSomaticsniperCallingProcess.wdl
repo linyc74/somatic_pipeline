@@ -27,29 +27,17 @@ workflow BamSomaticsniperCallingProcess {
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = BamSomaticsniper.outFileVcf,
-            sampleName = sampleName
-    }
- 
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = BamSomaticsniper.outFileVcf,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
+            inFileVcfGz = BamSomaticsniper.outFileVcfGz,
             sampleName = sampleName
     }
 
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = BamSomaticsniper.outFileVcfGz
+        File outFileVcfIndex = BamSomaticsniper.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 
@@ -77,10 +65,16 @@ task BamSomaticsniper {
         ~{inFileTumorBam} \
         ~{inFileNormalBam} \
         ~{sampleName}_somatic-sniper.vcf
+        bgzip \
+        --stdout ~{sampleName}_somatic-sniper.vcf > ~{sampleName}_somatic-sniper.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}_somatic-sniper.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}_somatic-sniper.vcf"
+        File outFileVcfGz = "~{sampleName}_somatic-sniper.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_somatic-sniper.vcf.gz.tbi"
     }
  
     runtime {

@@ -47,29 +47,17 @@ workflow VardictPairedCallingProcess {
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = Var2Vcf.outFileVcf,
-            sampleName = sampleName
-    }
-
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = Var2Vcf.outFileVcf,
+            inFileVcfGz = Var2Vcf.outFileVcfGz,
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
-            sampleName = sampleName
-    }    
- 
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = Var2Vcf.outFileVcfGz
+        File outFileVcfIndex = Var2Vcf.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 
@@ -156,10 +144,16 @@ task Var2Vcf {
         -N "~{tumorSampleName} | ~{normalSampleName}" \
         -f ~{minimumAF} \
         1> ~{sampleName}.vcf
+        bgzip \
+        --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}.vcf"
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
     }
  
     runtime {

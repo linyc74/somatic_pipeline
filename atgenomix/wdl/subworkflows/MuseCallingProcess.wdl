@@ -33,29 +33,17 @@ workflow MuseCallingProcess {
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = MuseSump.outFileVcf,
-            sampleName = sampleName
-    }
-
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = MuseSump.outFileVcf,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
+            inFileVcfGz = MuseSump.outFileVcfGz,
             sampleName = sampleName
     }
  
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = MuseSump.outFileVcfGz
+        File outFileVcfIndex = MuseSump.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 
@@ -104,10 +92,16 @@ task MuseSump {
         -I ~{inFileMuseResult} \
         -E \
         -O ~{sampleName}.vcf
+        bgzip \
+        --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}.vcf.gz
     >>>
  
     output {
-        File outFileVcf = "~{sampleName}.vcf"
+        File outFileVcfGz = "~{sampleName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
     }
  
     runtime {

@@ -38,29 +38,17 @@ workflow LoFreqSomaticCallingProcess {
             sampleName = sampleName
     }
 
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = concat.outFileVcf,
-            sampleName = sampleName
-    }
-
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = concat.outFileVcf,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
+            inFileVcfGz = concat.outFileVcfGz,
             sampleName = sampleName
     }
    
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = concat.outFileVcfGz
+        File outFileVcfIndex = concat.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 

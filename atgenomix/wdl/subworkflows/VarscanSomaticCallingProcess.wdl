@@ -42,50 +42,26 @@ workflow VarscanSomaticCallingProcess {
             sampleName = sampleName
     }
 
-    call general.BgzipBcftoolsIndex as snpCompressIndex {
-        input:
-            inFileVcf = VarscanSomatic.outFileSnpVcf,
-            sampleName = sampleName  
-    }
-
-    call general.BgzipBcftoolsIndex as indelCompressIndex {
-        input:
-            inFileVcf = VarscanSomatic.outFileIndelVcf,
-            sampleName = sampleName  
-    }
-
     call general.Concat as concat {
         input:
-            inFileSnvVcf = snpCompressIndex.outFileVcfGz,
-            inFileSnvVcfIndex = snpCompressIndex.outFileVcfIndex,
-            inFileIndelVcf = indelCompressIndex.outFileVcfGz,
-            infileIndelVcfIndex = indelCompressIndex.outFileVcfIndex,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressVcf {
-        input:
-            inFileVcf = concat.outFileVcf,
+            inFileSnvVcf = VarscanSomatic.outFileSnpVcfGz,
+            inFileSnvVcfIndex = VarscanSomatic.outFileSnpVcfIndex,
+            inFileIndelVcf = VarscanSomatic.outFileIndelVcfGz,
+            infileIndelVcfIndex = VarscanSomatic.outFileIndelVcfIndex,
             sampleName = sampleName
     }
 
     call general.PythonVariantFilter as filter {
         input:
-            inFileVcf = concat.outFileVcf,
-            sampleName = sampleName
-    }
-
-    call general.BgzipTabix as compressPyVcf {
-        input:
-            inFileVcf = filter.outFileVcf,
+            inFileVcfGz = concat.outFileVcfGz,
             sampleName = sampleName
     }
 
     output {
-        File outFileVcfGz = compressVcf.outFileVcfGz
-        File outFileVcfIndex = compressVcf.outFileVcfIndex
-        File outFilePythonFilterVcfGz = compressPyVcf.outFileVcfGz
-        File outFilePythonFilterVcfIndex = compressPyVcf.outFileVcfIndex
+        File outFileVcfGz = concat.outFileVcfGz
+        File outFileVcfIndex = concat.outFileVcfIndex
+        File outFilePythonFilterVcfGz = filter.outFileVcfGz
+        File outFilePythonFilterVcfIndex = filter.outFileVcfIndex
     }
 }
 
@@ -109,11 +85,23 @@ task VarscanSomatic {
         --output-indel ~{sampleName}_indel.vcf \
         --strand-filter 1 \
         --output-vcf 1
+        bgzip \
+        --stdout~{sampleName}_snp.vcf > ~{sampleName}_snp.vcf.gz
+        bgzip \
+        --stdout~{sampleName}_indel.vcf > ~{sampleName}_indel.vcf.gz        
+        tabix \
+        --preset vcf \
+        ~{sampleName}_snp.vcf.gz
+        tabix \
+        --preset vcf \
+        ~{sampleName}_indel.vcf.gz
     >>>
  
     output {
-        File outFileSnpVcf = "~{sampleName}_snp.vcf"
-        File outFileIndelVcf = "~{sampleName}_indel.vcf"
+        File outFileSnpVcfGz = "~{sampleName}_snp.vcf.gz"
+        File outFileIndelVcfGz = "~{sampleName}_indel.vcf.gz"
+        File outFileSnpVcfIndex = "~{sampleName}_snp.vcf.gz.tbi"
+        File outFileIndelVcfIndex = "~{sampleName}_indel.vcf.gz.tbi"
     }
  
     runtime {
