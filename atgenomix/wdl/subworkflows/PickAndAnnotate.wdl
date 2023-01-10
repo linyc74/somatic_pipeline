@@ -1,6 +1,4 @@
 version 1.0
- 
-import "GeneralTask.wdl" as general
 
 # WORKFLOW DEFINITION
 
