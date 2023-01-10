@@ -131,78 +131,78 @@
         "datasets": {
             "ScatterSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0103-E-X01-02_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0103-E-X01-02_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0103-E-X01-02_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0103-E-X01-02_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0102-E-X01-03_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0102-E-X01-03_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0103-E-X01-02_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0103-E-X01-02_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0102-E-X01-03_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0102-E-X01-03_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0103-E-X01-02_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0103-E-X01-02_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0102-E-X01-03_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0102-E-X01-03_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0103-E-X01-02_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0103-E-X01-02_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0103-E-X01-03_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0103-E-X01-03_R2-fastq-gz"
                 ]
             ],
             "ScatterSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00003-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00004-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00005-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0101-E-X01-01_R2-fastq-gz"
                 ],
                 [
-                    "",
-                    ""
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0101-E-X01-01_R1-fastq-gz",
+                    "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00006-0101-E-X01-01_R2-fastq-gz"
                 ]
             ],
             "ScatterSomaticpipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
@@ -1306,7 +1306,8 @@
                     "spark.dynamicAllocation.minExecutors 1",
                     "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
                     "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
-                    "spark.local.dir /mnt"
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
                 ],
                 "call": "ScatterSomaticpipelineTumorNormalMode"
             }
