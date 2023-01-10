@@ -2,7 +2,7 @@ version 1.0
 
 # WORKFLOW DEFINITION
 
-# Take in a raw bam and generate a analysis-ready bam file and a comprehensive statistics report
+# Take in a raw bam and generate a analysis-ready bam file
 workflow PostMappingProcess {
     input {
         File inFileUnSortRawBam
@@ -47,17 +47,10 @@ workflow PostMappingProcess {
             refDict = refDict
     }
 
-    call BamStats {
-        input:
-            inFileBam = ApplyBqsr.outFileBam,
-            sampleName = sampleName
-    }
-
     output {
         File outFileBam = ApplyBqsr.outFileBam
         File outFileBamIndex = ApplyBqsr.outFileBamIndex
         File outFileSortedRawBam = Sort.outFileBam
-        File outFileBamStats = BamStats.outFileBamStats
     }
 }
 
@@ -169,26 +162,5 @@ task ApplyBqsr {
     output {
         File outFileBam = "~{sampleName}.bam"
         File outFileBamIndex = "~{sampleName}.bai"
-    }
-}
-
-# Generate a comprehensive statistics report from bam file using samtools
-task BamStats {
-    input {
-        File inFileBam
-        String sampleName
-    }
- 
-    command <<<
-        set -e -o pipefail
-        samtools stats ~{inFileBam} > ~{sampleName}_stats.txt
-    >>>
- 
-    runtime {
-        docker: 'nycu:latest'
-    }
- 
-    output {
-        File outFileBamStats = "~{sampleName}_stats.txt"
     }
 }

@@ -81,7 +81,5 @@ workflow TNpairedMapping {
         File outFileNormalBamIndex = postMappingNormalBam.outFileBamIndex
         File outFileTumorSortedRawBam = postMappingTumorBam.outFileSortedRawBam
         File outFileNormalSortedRawBam = postMappingNormalBam.outFileSortedRawBam
-        File outFileStatsTumorBam = postMappingTumorBam.outFileBamStats
-        File outFileStatsNormalBam = postMappingNormalBam.outFileBamStats
     }
 }

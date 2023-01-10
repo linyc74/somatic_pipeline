@@ -70,6 +70,12 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 refDict = refDict,
                 sampleName = pSN
         }
+
+        call general.BamStats as ponBamStats {
+            input:
+                inFileBam = PostMappingProcess.outFileBam,
+                sampleName = pSN
+        }
     }
 
     call createPoN.CreateMutect2PoN {
@@ -124,6 +130,18 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
                 normalSampleName = nSN
         }
 
+        call general.BamStats as tumorBamStats {
+            input:
+                inFileBam = TNmapping.outFileTumorBam,
+                sampleName = tSN
+        }
+
+        call general.BamStats as normalBamStats {
+            input:
+                inFileBam = TNmapping.outFileNormalBam,
+                sampleName = nSN
+        }
+
         call caller.TNpairedVariantsCalling as variantCalling {
             input:
                 inFileTumorBam = TNmapping.outFileTumorBam,
@@ -170,8 +188,9 @@ workflow ScatterInProcessPoNSomaticpipelineTumorNormalMode {
         Array[File] outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
         Array[File] outFileTumorSortedRawBam = TNmapping.outFileTumorSortedRawBam
         Array[File] outFileNormalSortedRawBam = TNmapping.outFileNormalSortedRawBam
-        Array[File] outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
-        Array[File] outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
+        Array[File] outFileStatsTumorBam = tumorBamStats.outFileBamStats
+        Array[File] outFileStatsNormalBam = normalBamStats.outFileBamStats
+        Array[File] outFileStatsPoNbam = ponBamStats.outFileBamStats        
         Array[File] outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
         Array[File] outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
         Array[File] outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz

@@ -63,6 +63,18 @@ workflow SomaticPipelineTumorNormalMode {
             normalSampleName = normalSampleName
     }
 
+    call general.BamStats as tumorBamStats {
+        input:
+            inFileBam = TNmapping.outFileTumorBam,
+            sampleName = tumorSampleName
+    }
+
+    call general.BamStats as normalBamStats {
+        input:
+            inFileBam = TNmapping.outFileNormalBam,
+            sampleName = normalSampleName
+    }
+
     call caller.TNpairedVariantsCalling as variantCalling {
         input:
             inFileTumorBam = TNmapping.outFileTumorBam,
@@ -107,8 +119,8 @@ workflow SomaticPipelineTumorNormalMode {
         File outFileNormalBamIndex = TNmapping.outFileNormalBamIndex
         File outFileTumorSortedRawBam = TNmapping.outFileTumorSortedRawBam
         File outFileNormalSortedRawBam = TNmapping.outFileNormalSortedRawBam
-        File outFileStatsTumorBam = TNmapping.outFileStatsTumorBam
-        File outFileStatsNormalBam = TNmapping.outFileStatsNormalBam
+        File outFileStatsTumorBam = tumorBamStats.outFileBamStats
+        File outFileStatsNormalBam = normalBamStats.outFileBamStats
         File outFileBamsomaticsniperPyVcfGz = variantCalling.outFileBamsomaticsniperPyVcfGz
         File outFileBamsomaticsniperPyVcfIndex = variantCalling.outFileBamsomaticsniperPyVcfIndex
         File outFileLofreqPyVcfGz = variantCalling.outFileLofreqPyVcfGz
