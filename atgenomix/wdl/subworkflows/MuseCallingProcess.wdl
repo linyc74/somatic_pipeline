@@ -92,11 +92,8 @@ task MuseSump {
         -I ~{inFileMuseResult} \
         -E \
         -O ~{sampleName}.vcf
-        bgzip \
-        --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
-        tabix \
-        --preset vcf \
-        ~{sampleName}.vcf.gz
+        bgzip --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
+        tabix --preset vcf ~{sampleName}.vcf.gz
     >>>
  
     output {

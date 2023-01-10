@@ -162,6 +162,7 @@ task FilterMutectCalls {
  
     command <<<
         set -e -o pipefail
+        tabix -p vcf ~{inFileVcfGz}
         gatk FilterMutectCalls \
         --variant ~{inFileVcfGz} \
         --reference ~{refFa} \

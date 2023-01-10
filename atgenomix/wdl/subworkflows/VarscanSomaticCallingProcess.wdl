@@ -85,16 +85,10 @@ task VarscanSomatic {
         --output-indel ~{sampleName}_indel.vcf \
         --strand-filter 1 \
         --output-vcf 1
-        bgzip \
-        --stdout~{sampleName}_snp.vcf > ~{sampleName}_snp.vcf.gz
-        bgzip \
-        --stdout~{sampleName}_indel.vcf > ~{sampleName}_indel.vcf.gz        
-        tabix \
-        --preset vcf \
-        ~{sampleName}_snp.vcf.gz
-        tabix \
-        --preset vcf \
-        ~{sampleName}_indel.vcf.gz
+        bgzip --stdout ~{sampleName}_snp.vcf > ~{sampleName}_snp.vcf.gz
+        bgzip --stdout ~{sampleName}_indel.vcf > ~{sampleName}_indel.vcf.gz        
+        tabix --preset vcf ~{sampleName}_snp.vcf.gz
+        tabix --preset vcf ~{sampleName}_indel.vcf.gz
     >>>
  
     output {

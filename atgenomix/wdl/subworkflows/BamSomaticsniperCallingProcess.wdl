@@ -65,11 +65,8 @@ task BamSomaticsniper {
         ~{inFileTumorBam} \
         ~{inFileNormalBam} \
         ~{sampleName}_somatic-sniper.vcf
-        bgzip \
-        --stdout ~{sampleName}_somatic-sniper.vcf > ~{sampleName}_somatic-sniper.vcf.gz
-        tabix \
-        --preset vcf \
-        ~{sampleName}_somatic-sniper.vcf.gz
+        bgzip --stdout ~{sampleName}_somatic-sniper.vcf > ~{sampleName}_somatic-sniper.vcf.gz
+        tabix --preset vcf ~{sampleName}_somatic-sniper.vcf.gz
     >>>
  
     output {
