@@ -2,6 +2,27 @@ version 1.0
 
 # TASK DEFINITIONS
 
+# Generate a comprehensive statistics report from bam file using samtools
+task BamStats {
+    input {
+        File inFileBam
+        String sampleName
+    }
+ 
+    command <<<
+        set -e -o pipefail
+        samtools stats ~{inFileBam} > ~{sampleName}_stats.txt
+    >>>
+ 
+    runtime {
+        docker: 'nycu:latest'
+    }
+ 
+    output {
+        File outFileBamStats = "~{sampleName}_stats.txt"
+    }
+}
+
 # Compress vcf file using bgzip and index using tabix 
 task BgzipTabix {
     input {
