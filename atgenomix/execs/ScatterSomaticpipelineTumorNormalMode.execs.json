@@ -1,113 +1,113 @@
 {
     "inputs": {
         "ScatterSomaticpipelineTumorNormalMode.tumorSampleName": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
+            "002-00002-0103-E-X01-02",
+            "002-00003-0103-E-X01-02",
+            "002-00003-0102-E-X01-03",
+            "002-00004-0103-E-X01-02",
+            "002-00004-0102-E-X01-03",
+            "002-00005-0103-E-X01-02",
+            "002-00005-0102-E-X01-03",
+            "002-00006-0103-E-X01-02",
+            "002-00006-0103-E-X01-03"
         ],
         "ScatterSomaticpipelineTumorNormalMode.inFileTumorFastqs": [
             [
-                "",
-                ""
+                "002-00002-0103-E-X01-02_R1.fastq.gz",
+                "002-00002-0103-E-X01-02_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00003-0103-E-X01-02_R1.fastq.gz",
+                "002-00003-0103-E-X01-02_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00003-0102-E-X01-03_R1.fastq.gz",
+                "002-00003-0102-E-X01-03_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00004-0103-E-X01-02_R1.fastq.gz",
+                "002-00004-0103-E-X01-02_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00004-0102-E-X01-03_R1.fastq.gz",
+                "002-00004-0102-E-X01-03_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00005-0103-E-X01-02_R1.fastq.gz",
+                "002-00005-0103-E-X01-02_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00005-0102-E-X01-03_R1.fastq.gz",
+                "002-00005-0102-E-X01-03_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00006-0103-E-X01-02_R1.fastq.gz",
+                "002-00006-0103-E-X01-02_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00006-0103-E-X01-03_R1.fastq.gz",
+                "002-00006-0103-E-X01-03_R2.fastq.gz"
             ]
         ],
         "ScatterSomaticpipelineTumorNormalMode.normalSampleName": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
+            "002-00002-0101-E-X01-01",
+            "002-00003-0101-E-X01-01",
+            "002-00003-0101-E-X01-01",
+            "002-00004-0101-E-X01-01",
+            "002-00004-0101-E-X01-01",
+            "002-00005-0101-E-X01-01",
+            "002-00005-0101-E-X01-01",
+            "002-00006-0101-E-X01-01",
+            "002-00006-0101-E-X01-01"
         ],
         "ScatterSomaticpipelineTumorNormalMode.inFileNormalFastqs": [
             [
-                "",
-                ""
+                "002-00002-0101-E-X01-01_R1.fastq.gz",
+                "002-00002-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00003-0101-E-X01-01_R1.fastq.gz",
+                "002-00003-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00003-0101-E-X01-01_R1.fastq.gz",
+                "002-00003-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00004-0101-E-X01-01_R1.fastq.gz",
+                "002-00004-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00004-0101-E-X01-01_R1.fastq.gz",
+                "002-00004-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00005-0101-E-X01-01_R1.fastq.gz",
+                "002-00005-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00005-0101-E-X01-01_R1.fastq.gz",
+                "002-00005-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00006-0101-E-X01-01_R1.fastq.gz",
+                "002-00006-0101-E-X01-01_R2.fastq.gz"
             ],
             [
-                "",
-                ""
+                "002-00006-0101-E-X01-01_R1.fastq.gz",
+                "002-00006-0101-E-X01-01_R2.fastq.gz"
             ]
         ],
         "ScatterSomaticpipelineTumorNormalMode.finalOutputName": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
+            "002-00002-0103-E-X01-02",
+            "002-00003-0103-E-X01-02",
+            "002-00003-0102-E-X01-03",
+            "002-00004-0103-E-X01-02",
+            "002-00004-0102-E-X01-03",
+            "002-00005-0103-E-X01-02",
+            "002-00005-0102-E-X01-03",
+            "002-00006-0103-E-X01-02",
+            "002-00006-0103-E-X01-03"
         ],
         "ScatterSomaticpipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
         "ScatterSomaticpipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
@@ -205,22 +205,22 @@
                 ""
             ]
         ],
-        "ScatterSomaticpipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
-        "ScatterSomaticpipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
-        "ScatterSomaticpipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
-        "ScatterSomaticpipelineTumorNormalMode.refAmb": "GRCh38.primary_assembly.genome.fa.amb",
-        "ScatterSomaticpipelineTumorNormalMode.refAnn": "GRCh38.primary_assembly.genome.fa.ann",
-        "ScatterSomaticpipelineTumorNormalMode.refBwt": "GRCh38.primary_assembly.genome.fa.bwt",
-        "ScatterSomaticpipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.pac",
-        "ScatterSomaticpipelineTumorNormalMode.refPac": "GRCh38.primary_assembly.genome.fa.sa",
-        "ScatterSomaticpipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
-        "ScatterSomaticpipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
-        "ScatterSomaticpipelineTumorNormalMode.inFileGermlineResource": "af-only-gnomad.hg38.vcf.gz",
-        "ScatterSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "af-only-gnomad.hg38.vcf.gz.tbi",
-        "ScatterSomaticpipelineTumorNormalMode.inFilePON": "5pon_20230109.vcf",
-        "ScatterSomaticpipelineTumorNormalMode.inFilePONindex": "5pon_20230109.vcf.idx",
-        "ScatterSomaticpipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
-        "ScatterSomaticpipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
+        "ScatterSomaticpipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
+        "ScatterSomaticpipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
+        "ScatterSomaticpipelineTumorNormalMode.refDict": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-dict",
+        "ScatterSomaticpipelineTumorNormalMode.refAmb": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-amb",
+        "ScatterSomaticpipelineTumorNormalMode.refAnn": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-ann",
+        "ScatterSomaticpipelineTumorNormalMode.refBwt": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-bwt",
+        "ScatterSomaticpipelineTumorNormalMode.refSa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-pac",
+        "ScatterSomaticpipelineTumorNormalMode.refPac": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-sa",
+        "ScatterSomaticpipelineTumorNormalMode.inFileDbsnpVcf": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz",
+        "ScatterSomaticpipelineTumorNormalMode.inFileDbsnpVcfIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz-tbi",
+        "ScatterSomaticpipelineTumorNormalMode.inFileGermlineResource": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz",
+        "ScatterSomaticpipelineTumorNormalMode.inFileGermlineResourceIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz-tbi",
+        "ScatterSomaticpipelineTumorNormalMode.inFilePON": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf",
+        "ScatterSomaticpipelineTumorNormalMode.inFilePONindex": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf-idx",
+        "ScatterSomaticpipelineTumorNormalMode.inDirPCGRref": "drs://dev-run-test-api.seqslab.net/GRCh38_pcgr_data_20220203",
+        "ScatterSomaticpipelineTumorNormalMode.inFileIntervalBed": "drs://dev-run-test-api.seqslab.net/GRCh38_addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38-bed"
     },
     "workflows": [
         {
@@ -228,105 +228,105 @@
             "path": "wdl/subworkflows/PickAndAnnotate.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "PickAndAnnotate",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "VarscanSomaticCallingProcess.wdl",
             "path": "wdl/subworkflows/VarscanSomaticCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "VarscanSomaticCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "TNpairedMapping.wdl",
             "path": "wdl/subworkflows/TNpairedMapping.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "TNpairedMapping",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "TNpairedVariantsCalling.wdl",
             "path": "wdl/subworkflows/TNpairedVariantsCalling.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "TNpairedVariantsCalling",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "PostMappingProcess.wdl",
             "path": "wdl/subworkflows/PostMappingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "PostMappingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "MuseCallingProcess.wdl",
             "path": "wdl/subworkflows/MuseCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "MuseCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "VardictPairedCallingProcess.wdl",
             "path": "wdl/subworkflows/VardictPairedCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "VardictPairedCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "Mutect2CallingProcess.wdl",
             "path": "wdl/subworkflows/Mutect2CallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "Mutect2CallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "GeneralTask.wdl",
             "path": "wdl/subworkflows/GeneralTask.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "TrimAndMapping.wdl",
             "path": "wdl/subworkflows/TrimAndMapping.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "TrimAndMapping",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "LoFreqSomaticCallingProcess.wdl",
             "path": "wdl/subworkflows/LoFreqSomaticCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "LoFreqSomaticCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "ScatterSomaticpipelineTumorNormalMode.wdl",
             "path": "wdl/ScatterSomaticpipelineTumorNormalMode.wdl",
             "file_type": "PRIMARY_DESCRIPTOR",
             "workflow_name": "ScatterSomaticpipelineTumorNormalMode",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "BamSomaticsniperCallingProcess.wdl",
             "path": "wdl/subworkflows/BamSomaticsniperCallingProcess.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "BamSomaticsniperCallingProcess",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
             "name": "SomaticPipelineTumorNormalMode.wdl",
             "path": "wdl/SomaticPipelineTumorNormalMode.wdl",
             "file_type": "SECONDARY_DESCRIPTOR",
             "workflow_name": "SomaticPipelineTumorNormalMode",
-            "image_name": ""
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
         },
         {
-            "path": "inputs.json",
+            "path": "inputs/ScatterSomaticpipelineTumorNormalMode.inputs.json",
             "file_type": "TEST_FILE"
         },
         {
-            "path": "execs.json",
+            "path": "execs/ScatterSomaticpipelineTumorNormalMode.execs.json",
             "file_type": "EXECUTION_FILE"
         }
     ],
@@ -691,140 +691,140 @@
         }
     ],
     "i_configs": {
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileRecalibrationTable": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.Sort.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileRecalibrationTable": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.Sort.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAmb": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAnn": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refBwt": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refPac": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refSa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAmb": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAnn": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refBwt": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refPac": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refSa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.normalBamStats.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.tumorBamStats.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileNormalBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileTumorBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileIntervalBed": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileIndelVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.infileIndelVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.inFileMuseResult": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileArtifactPriors": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfStats": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.LearnReadOrientationModel.inFileF1R2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResource": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResourceIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileIntervalBed": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePON": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePONindex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refDict": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.TestsomaticR.inFileVardictStep1": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.inFileVardictStep2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileIntervalBed": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBamIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileNormalPileup": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileTumorPileup": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileIndelVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcf": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.infileIndelVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileIntervalBed": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileBam": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileIntervalBed": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFa": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFai": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inDirPCGRref": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfGz": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfIndex": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfLF": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfM2": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfMU": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfSS": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfVD": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.infileVcfVS": "opp_generic-singular_auto",
-        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.refFa": "opp_generic-singular_auto"
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileRecalibrationTable": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcf": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.Sort.inFileBam": "opp_input_bam_partition_grch38-part50",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileRecalibrationTable": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcf": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.Sort.inFileBam": "opp_input_bam_partition_grch38-part50",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR1": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAmb": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAnn": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refBwt": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refPac": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refSa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR1": "opp_input_fastq_partition_per-1M-reads",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR2": "opp_input_fastq_partition_per-1M-reads",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR1": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAmb": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAnn": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refBwt": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refPac": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refSa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR1": "opp_input_fastq_partition_per-1M-reads",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR2": "opp_input_fastq_partition_per-1M-reads",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR1": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR1": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.normalBamStats.inFileBam": "opp_input_bam_partition_1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.tumorBamStats.inFileBam": "opp_input_bam_partition_1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileNormalBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileTumorBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileIndelVcf": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcf": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcfIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.infileIndelVcfIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.inFileMuseResult": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.muse.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileArtifactPriors": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfStats": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.LearnReadOrientationModel.inFileF1R2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResource": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResourceIndex": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePON": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePONindex": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refDict": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.TestsomaticR.inFileVardictStep1": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.inFileVardictStep2": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileNormalPileup": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileTumorPileup": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileIndelVcf": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcf": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcfIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.infileIndelVcfIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileBam": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFa": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFai": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inDirPCGRref": "opp_input_reference_shared_cluster",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfGz": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfIndex": "opp_input_copy_to_local",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfLF": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfM2": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfMU": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfSS": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfVD": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.infileVcfVS": "opp_input_vcf_partition_grch38-part1",
+        "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.refFa": "opp_input_reference_shared_cluster"
     },
     "o_configs": {
         "ScatterSomaticpipelineTumorNormalMode.SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.outFileBam": "opp_output_generic",
