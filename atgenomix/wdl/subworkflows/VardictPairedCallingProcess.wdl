@@ -50,7 +50,8 @@ workflow VardictPairedCallingProcess {
     call general.PythonVariantFilter as filter {
         input:
             inFileVcfGz = Var2Vcf.outFileVcfGz,
-            sampleName = sampleName
+            sampleName = sampleName,
+            callerName = "vardict"
     }
 
     output {
@@ -149,8 +150,8 @@ task Var2Vcf {
     >>>
  
     output {
-        File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
+        File outFileVcfGz = "~{sampleName}_vardict.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_vardict.vcf.gz.tbi"
     }
  
     runtime {

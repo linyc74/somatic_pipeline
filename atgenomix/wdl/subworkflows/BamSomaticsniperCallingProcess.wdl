@@ -30,7 +30,8 @@ workflow BamSomaticsniperCallingProcess {
     call general.PythonVariantFilter as filter {
         input:
             inFileVcfGz = BamSomaticsniper.outFileVcfGz,
-            sampleName = sampleName
+            sampleName = sampleName,
+            callerName = "somatic-sniper"
     }
 
     output {

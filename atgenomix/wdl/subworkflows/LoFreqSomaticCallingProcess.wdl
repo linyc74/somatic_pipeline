@@ -35,13 +35,15 @@ workflow LoFreqSomaticCallingProcess {
             inFileSnvVcfIndex = LoFreqSomatic.outFileSnvVcfIndex,
             inFileIndelVcf = LoFreqSomatic.outFileIndelVcf,
             infileIndelVcfIndex = LoFreqSomatic.outFileIndelVcfIndex,
-            sampleName = sampleName
+            sampleName = sampleName,
+            callerName = "lofreq"
     }
 
     call general.PythonVariantFilter as filter {
         input:
             inFileVcfGz = concat.outFileVcfGz,
-            sampleName = sampleName
+            sampleName = sampleName,
+            callerName = "lofreq"
     }
    
     output {

@@ -36,7 +36,8 @@ workflow MuseCallingProcess {
     call general.PythonVariantFilter as filter {
         input:
             inFileVcfGz = MuseSump.outFileVcfGz,
-            sampleName = sampleName
+            sampleName = sampleName,
+            callerName = "muse"
     }
  
     output {
@@ -97,8 +98,8 @@ task MuseSump {
     >>>
  
     output {
-        File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
+        File outFileVcfGz = "~{sampleName}_muse.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_muse.vcf.gz.tbi"
     }
  
     runtime {

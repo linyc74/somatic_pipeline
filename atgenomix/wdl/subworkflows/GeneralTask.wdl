@@ -31,6 +31,7 @@ task Concat {
         File inFileIndelVcf
         File infileIndelVcfIndex
         String sampleName
+        String callerName
     }
  
     command <<<
@@ -46,8 +47,8 @@ task Concat {
     >>>
  
     output {
-        File outFileVcfGz = "~{sampleName}.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}.vcf.gz.tbi"
+        File outFileVcfGz = "~{sampleName}_~{callerName}.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_~{callerName}.vcf.gz.tbi"
     }
  
     runtime {
@@ -113,6 +114,7 @@ task PythonVariantFilter {
         String flaggingCriteria = "\"LOW_DP: DP<20, HIGH_MQ: MQ>=30\""
         String removalFlags = "panel_of_normal,LOW_DP"
         String sampleName
+        String callerName
     }
  
     command <<<
@@ -128,8 +130,8 @@ task PythonVariantFilter {
     >>>
  
     output {
-        File outFileVcfGz = "~{sampleName}_Pyfiltered.vcf.gz"
-        File outFileVcfIndex = "~{sampleName}_Pyfiltered.vcf.gz.tbi"
+        File outFileVcfGz = "~{sampleName}_~{callerName}_Pyfiltered.vcf.gz"
+        File outFileVcfIndex = "~{sampleName}_~{callerName}_Pyfiltered.vcf.gz.tbi"
     }
  
     runtime {
