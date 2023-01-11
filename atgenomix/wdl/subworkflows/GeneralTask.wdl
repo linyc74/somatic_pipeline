@@ -125,8 +125,8 @@ task PythonVariantFilter {
         --output-vcf ~{sampleName}_Pyfiltered.vcf \
         --variant-flagging-criteria ~{flaggingCriteria}  \
         --variant-removal-flags ~{removalFlags}
-        bgzip --stdout ~{sampleName}_Pyfiltered.vcf > ~{sampleName}_Pyfiltered.vcf.gz
-        tabix --preset vcf ~{sampleName}_Pyfiltered.vcf.gz
+        bgzip --stdout ~{sampleName}_Pyfiltered.vcf > ~{sampleName}_~{callerName}_Pyfiltered.vcf.gz
+        tabix --preset vcf ~{sampleName}_~{callerName}_Pyfiltered.vcf.gz
     >>>
  
     output {
