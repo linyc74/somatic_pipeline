@@ -167,7 +167,7 @@ task FilterMutectCalls {
         gatk FilterMutectCalls \
         --variant ~{inFileVcfGz} \
         --reference ~{refFa} \
-        --output ~{sampleName}_filtered.vcf.gz \
+        --output ~{sampleName}_filterMutectCalls.vcf.gz \
         --filtering-stats ~{inFileVcfStats} \
         --orientation-bias-artifact-priors ~{inFileArtifactPriors}
     >>>

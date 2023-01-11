@@ -42,8 +42,8 @@ task Concat {
         --output ~{sampleName}.vcf \
         ~{inFileSnvVcf} \
         ~{inFileIndelVcf}
-        bgzip --stdout ~{sampleName}.vcf > ~{sampleName}.vcf.gz
-        tabix --preset vcf ~{sampleName}.vcf.gz
+        bgzip --stdout ~{sampleName}.vcf > ~{sampleName}_~{callerName}.vcf.gz
+        tabix --preset vcf ~{sampleName}_~{callerName}.vcf.gz
     >>>
  
     output {
