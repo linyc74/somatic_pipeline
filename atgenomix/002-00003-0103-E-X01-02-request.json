@@ -2,17 +2,17 @@
     "name": "002-00003-0103-E-X01-02",
     "workflow_params": {
         "inputs": {
-            "SomaticPipelineTumorNormalMode.tumorSampleName": "",
+            "SomaticPipelineTumorNormalMode.tumorSampleName": "002-00003-0103-E-X01-02",
             "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-                "tumorFastqR1.gz",
-                "tumorFastqR2.gz"
+                "002-00003-0103-E-X01-02_R1.fastq.gz",
+                "002-00003-0103-E-X01-02_R2.fastq.gz"
             ],
-            "SomaticPipelineTumorNormalMode.normalSampleName": "",
+            "SomaticPipelineTumorNormalMode.normalSampleName": "002-00003-0101-E-X01-01",
             "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-                "normalFastqR1.gz",
-                "normalFastqR2.gz"
+                "002-00003-0101-E-X01-01_R1.fastq.gz",
+                "002-00003-0101-E-X01-01_R2.fastq.gz"
             ],
-            "SomaticPipelineTumorNormalMode.finalOutputName": "",
+            "SomaticPipelineTumorNormalMode.finalOutputName": "002-00003-0103-E-X01-02",
             "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
             "SomaticPipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
             "SomaticPipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
@@ -32,12 +32,12 @@
         },
         "datasets": {
             "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
-                "",
-                ""
+                "drs://dev-run-test-api.seqslab.net/ymdent_fastq_in_bgzip_002-00003-0103-E-X01-02_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/ymdent_fastq_in_bgzip_002-00003-0103-E-X01-02_R2-fastq-gz"
             ],
             "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
-                "",
-                ""
+                "drs://dev-run-test-api.seqslab.net/ymdent_fastq_in_bgzip_002-00003-0101-E-X01-01_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/ymdent_fastq_in_bgzip_002-00003-0101-E-X01-01_R2-fastq-gz"
             ],
             "SomaticPipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
             "SomaticPipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
@@ -1124,8 +1124,8 @@
                     "vm_size": "Standard_D14_v2",
                     "wm_size": "Standard_D1_v2",
                     "workers": {
-                        "spot": 0,
-                        "dedicated": 1
+                        "spot": 6,
+                        "dedicated": 3
                     },
                     "auto_scale": false,
                     "worker_on_master": true
@@ -1140,7 +1140,8 @@
                     "spark.dynamicAllocation.minExecutors 1",
                     "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
                     "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
-                    "spark.local.dir /mnt"
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
                 ],
                 "call": "SomaticPipelineTumorNormalMode"
             }
