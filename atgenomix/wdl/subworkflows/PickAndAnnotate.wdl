@@ -106,14 +106,23 @@ task PCGR {
         --pcgr_dir ~{inDirPCGRref} \
         --output_dir pcgr_output \
         --genome_assembly grch38 \
-        --sample_id ~{sampleName} \
-        --vcf2maf
+        --sample_id ~{sampleName}
+        # --vcf2maf
+
+        zcat pcgr_output/~{sampleName}.pcgr_acmg.grch38.vcf.gz > file_for_vcf2maf.vcf
+        vcf2maf.pl \
+        --input-vcf file_for_vcf2maf.vcf \
+        --output-maf ~{sampleName}.maf \
+        --tumor-id ~{sampleName} \
+        --inhibit-vep \
+        --ncbi-build GRCh38 \
+        --ref-fasta ~{inDirPCGRref}/data/grch38/.vep/homo_sapiens/105_GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
     >>>
  
     output {
         File outFileVcf = "pcgr_output/~{sampleName}.pcgr_acmg.grch38.vcf.gz"
         File outFileVcfIndex = "pcgr_output/~{sampleName}.pcgr_acmg.grch38.vcf.gz.tbi"
-        File outFileMaf = "pcgr_output/~{sampleName}.pcgr_acmg.grch38.maf"
+        File outFileMaf = "~{sampleName}.maf"
         File outFileFlexdbHtml = "pcgr_output/~{sampleName}.pcgr_acmg.grch38.flexdb.html"
         File outFileHtml = "pcgr_output/~{sampleName}.pcgr_acmg.grch38.html"
     }
