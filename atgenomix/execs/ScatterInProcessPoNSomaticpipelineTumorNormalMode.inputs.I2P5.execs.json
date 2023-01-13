@@ -241,7 +241,7 @@
             "file_type": "TEST_FILE"
         },
         {
-            "path": "execs/ScatterInProcessPoNSomaticpipelineTumorNormalMode.inputs.I2P5s.execs.json",
+            "path": "execs/ScatterInProcessPoNSomaticpipelineTumorNormalMode.inputs.I2P5.execs.json",
             "file_type": "EXECUTION_FILE"
         }
     ],
