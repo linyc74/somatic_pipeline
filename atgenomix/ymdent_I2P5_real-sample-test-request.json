@@ -1705,6 +1705,36 @@
                     "vm_size": "Standard_D14_v2",
                     "wm_size": "Standard_D1_v2",
                     "workers": {
+                        "spot": 0,
+                        "dedicated": 2
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "vcfAnnotate"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D14_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
                         "spot": 6,
                         "dedicated": 3
                     },
