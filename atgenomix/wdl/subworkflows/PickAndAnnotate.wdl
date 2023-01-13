@@ -106,6 +106,7 @@ task PCGR {
         --pcgr_dir ~{inDirPCGRref} \
         --output_dir pcgr_output \
         --genome_assembly grch38 \
+        --vep_buffer_size 30000 \
         --sample_id ~{sampleName}
         # --vcf2maf
 
