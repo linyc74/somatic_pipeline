@@ -613,7 +613,7 @@
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.CreateSomaticPanelOfNormals.refFa": "opp_input_reference_shared_cluster",
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.CreateSomaticPanelOfNormals.refFai": "opp_input_reference_shared_cluster",
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.inFileIntervalBed": "opp_input_reference_shared_cluster",
-        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.inFileVcfIndexs": "opp_input_vcf_partition_grch38-part1",
+        "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.inFileVcfIndexs": "opp_input_copy_to_local",
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.inFileVcfs": "opp_input_vcf_partition_grch38-part1",
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.refDict": "opp_input_reference_shared_cluster",
         "ScatterInProcessPoNSomaticpipelineTumorNormalMode.CreateMutect2PoN.GenomicDBimport.refFa": "opp_input_reference_shared_cluster",
