@@ -71,8 +71,8 @@ task PythonVariantPicking {
         --vardict ~{inFileVcfVD} \
         --varscan ~{infileVcfVS} \
         --output-vcf ~{sampleName}_picked.vcf \
-        --min-snv-caller 2 \
-        --min-indel-callers 1
+        --min-snv-caller 4 \
+        --min-indel-callers 2
         bgzip \
         --stdout ~{sampleName}_picked.vcf > ~{sampleName}_picked.vcf.gz
         tabix \
