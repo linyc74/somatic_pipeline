@@ -116,13 +116,13 @@ task CreateSomaticPanelOfNormals {
         gatk CreateSomaticPanelOfNormals \
         -R ~{refFa} \
         -V gendb://~{inDirPoNdb} \
-        -O ~{ponName}.vcf \
+        -O ~{ponName}.vcf.gz \
         --germline-resource ~{inFileGermlineResource}
     >>>
  
     output {
-        File outFilePoNvcf = "~{ponName}.vcf"
-        File outFilePoNvcfIndex = "~{ponName}.vcf.idx"
+        File outFilePoNvcf = "~{ponName}.vcf.gz"
+        File outFilePoNvcfIndex = "~{ponName}.vcf.gz.tbi"
     }
  
     runtime {
