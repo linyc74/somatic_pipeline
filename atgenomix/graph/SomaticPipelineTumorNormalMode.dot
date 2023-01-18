@@ -1,0 +1,19 @@
+digraph SomaticPipelineTumorNormalMode {
+  #rankdir=LR;
+  compound=true;
+
+  # Links
+  CALL_TNmapping -> CALL_normalBamStats
+  CALL_variantCalling -> CALL_vcfAnnotate
+  CALL_TNmapping -> CALL_variantCalling
+  CALL_TNmapping -> CALL_tumorBamStats
+
+  # Nodes
+  CALL_vcfAnnotate [label="call vcfAnnotate";shape="oval";peripheries=2]
+  CALL_variantCalling [label="call variantCalling";shape="oval";peripheries=2]
+  CALL_fastqcTumorFastq [label="call fastqcTumorFastq"]
+  CALL_normalBamStats [label="call normalBamStats"]
+  CALL_TNmapping [label="call TNmapping";shape="oval";peripheries=2]
+  CALL_tumorBamStats [label="call tumorBamStats"]
+  CALL_fastqcNormalFastq [label="call fastqcNormalFastq"]
+}

@@ -1,0 +1,775 @@
+{
+    "inputs": {
+        "SomaticPipelineTumorNormalMode.tumorSampleName": "",
+        "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
+            "tumorFastqR1.gz",
+            "tumorFastqR2.gz"
+        ],
+        "SomaticPipelineTumorNormalMode.normalSampleName": "",
+        "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
+            "normalFastqR1.gz",
+            "normalFastqR2.gz"
+        ],
+        "SomaticPipelineTumorNormalMode.finalOutputName": "",
+        "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
+        "SomaticPipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
+        "SomaticPipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
+        "SomaticPipelineTumorNormalMode.refAmb": "GRCh38.primary_assembly.genome.fa.amb",
+        "SomaticPipelineTumorNormalMode.refAnn": "GRCh38.primary_assembly.genome.fa.ann",
+        "SomaticPipelineTumorNormalMode.refBwt": "GRCh38.primary_assembly.genome.fa.bwt",
+        "SomaticPipelineTumorNormalMode.refPac": "GRCh38.primary_assembly.genome.fa.pac",
+        "SomaticPipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.sa",
+        "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
+        "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
+        "SomaticPipelineTumorNormalMode.inFileGermlineResource": "af-only-gnomad.hg38.vcf.gz",
+        "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "af-only-gnomad.hg38.vcf.gz.tbi",
+        "SomaticPipelineTumorNormalMode.inFilePON": "5pon_20230109.vcf",
+        "SomaticPipelineTumorNormalMode.inFilePONindex": "5pon_20230109.vcf.idx",
+        "SomaticPipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
+        "SomaticPipelineTumorNormalMode.inFileIntervalBed": "addchr_23_0106_SureSelectClinicalResearchExomeV2_67.29Mbp_GRCh38.bed"
+    },
+    "graph": "digraph SomaticPipelineTumorNormalMode {\n  #rankdir=LR;\n  compound=true;\n\n  # Links\n  CALL_TNmapping -> CALL_tumorBamStats\n  CALL_variantCalling -> CALL_vcfAnnotate\n  CALL_TNmapping -> CALL_variantCalling\n  CALL_TNmapping -> CALL_normalBamStats\n\n  # Nodes\n  CALL_vcfAnnotate [label=\"call vcfAnnotate\";shape=\"oval\";peripheries=2]\n  CALL_variantCalling [label=\"call variantCalling\";shape=\"oval\";peripheries=2]\n  CALL_fastqcTumorFastq [label=\"call fastqcTumorFastq\"]\n  CALL_normalBamStats [label=\"call normalBamStats\"]\n  CALL_TNmapping [label=\"call TNmapping\";shape=\"oval\";peripheries=2]\n  CALL_tumorBamStats [label=\"call tumorBamStats\"]\n  CALL_fastqcNormalFastq [label=\"call fastqcNormalFastq\"]\n}\n",
+    "subgraphs": [],
+    "connections": {
+        "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
+            "",
+            ""
+        ],
+        "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
+            "",
+            ""
+        ],
+        "SomaticPipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
+        "SomaticPipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
+        "SomaticPipelineTumorNormalMode.refDict": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-dict",
+        "SomaticPipelineTumorNormalMode.refAmb": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-amb",
+        "SomaticPipelineTumorNormalMode.refAnn": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-ann",
+        "SomaticPipelineTumorNormalMode.refBwt": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-bwt",
+        "SomaticPipelineTumorNormalMode.refPac": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-pac",
+        "SomaticPipelineTumorNormalMode.refSa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-sa",
+        "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz",
+        "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz-tbi",
+        "SomaticPipelineTumorNormalMode.inFileGermlineResource": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz",
+        "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz-tbi",
+        "SomaticPipelineTumorNormalMode.inFilePON": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf",
+        "SomaticPipelineTumorNormalMode.inFilePONindex": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf-idx",
+        "SomaticPipelineTumorNormalMode.inDirPCGRref": "drs://dev-run-test-api.seqslab.net/GRCh38_pcgr_data_20220203",
+        "SomaticPipelineTumorNormalMode.inFileIntervalBed": "drs://dev-run-test-api.seqslab.net/GRCh38_addchr_23_0106_SureSelectClinicalResearchExomeV2_67-29Mbp_GRCh38-bed"
+    },
+    "workflows": [
+        {
+            "name": "TNpairedMapping.wdl",
+            "path": "wdl/subworkflows/TNpairedMapping.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "TNpairedMapping",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "PickAndAnnotate.wdl",
+            "path": "wdl/subworkflows/PickAndAnnotate.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "PickAndAnnotate",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "SomaticPipelineTumorNormalMode.wdl",
+            "path": "wdl/SomaticPipelineTumorNormalMode.wdl",
+            "file_type": "PRIMARY_DESCRIPTOR",
+            "workflow_name": "SomaticPipelineTumorNormalMode",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "VarscanSomaticCallingProcess.wdl",
+            "path": "wdl/subworkflows/VarscanSomaticCallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "VarscanSomaticCallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "TNpairedVariantsCalling.wdl",
+            "path": "wdl/subworkflows/TNpairedVariantsCalling.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "TNpairedVariantsCalling",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "BamSomaticsniperCallingProcess.wdl",
+            "path": "wdl/subworkflows/BamSomaticsniperCallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "BamSomaticsniperCallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "PostMappingProcess.wdl",
+            "path": "wdl/subworkflows/PostMappingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "PostMappingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "LoFreqSomaticCallingProcess.wdl",
+            "path": "wdl/subworkflows/LoFreqSomaticCallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "LoFreqSomaticCallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "VardictPairedCallingProcess.wdl",
+            "path": "wdl/subworkflows/VardictPairedCallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "VardictPairedCallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "GeneralTask.wdl",
+            "path": "wdl/subworkflows/GeneralTask.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "Mutect2CallingProcess.wdl",
+            "path": "wdl/subworkflows/Mutect2CallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "Mutect2CallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "TrimAndMapping.wdl",
+            "path": "wdl/subworkflows/TrimAndMapping.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "TrimAndMapping",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "name": "MuseCallingProcess.wdl",
+            "path": "wdl/subworkflows/MuseCallingProcess.wdl",
+            "file_type": "SECONDARY_DESCRIPTOR",
+            "workflow_name": "MuseCallingProcess",
+            "image_name": "atgenomix/seqslab_runtime-1.5_ubuntu-22.04_java11_ymdent_somatic_pipeline:latest"
+        },
+        {
+            "path": "inputs/SomaticPipelineTumorNormalMode.inputs.json",
+            "file_type": "TEST_FILE"
+        },
+        {
+            "path": "execs/SomaticPipelineTumorNormalMode.execs.json",
+            "file_type": "EXECUTION_FILE"
+        }
+    ],
+    "operator_pipelines": [
+        {
+            "id": "opp_input_copy_to_local",
+            "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster",
+            "file_type": "*",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "CopyToLocalLoader"
+            ],
+            "version": "2022-12-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_reference_shared_cluster",
+            "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster",
+            "file_type": "*",
+            "workload_type": "SHARED",
+            "input": true,
+            "operators": [
+                {
+                    "name": "RefLoader",
+                    "scope": "cluster",
+                    "arguments": {}
+                }
+            ],
+            "version": "2022-12-29",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_reference_shared_task",
+            "description": "Automatic workload pipeline for localizing either a file or directory shared within task in a single node cluster",
+            "file_type": "*",
+            "workload_type": "SHARED",
+            "input": true,
+            "operators": [
+                "RefLoader"
+            ],
+            "version": "2022-12-29",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_1",
+            "description": "File-based BAM workload pipeline with all BAM records in a single partition",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerPart1",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_grch38-part23",
+            "description": "File-based BAM workload pipeline with reads on GRCH38 primary chromosome parallelized into 23 partitions (one autosome per partition, and chrX, chrY, and chrM merged into a single partition)",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerGRCh38Part23",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_grch38-part3101",
+            "description": "File-based BAM workload pipeline with reads on GRCH38 reference genome parallelized into 3,101 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerGRCh38Part3101",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_grch38-part50",
+            "description": "File-based BAM workload pipeline with reads on GRCH38 reference genome parallelized into 50 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerGRCh38Part50",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_grch38-part50-paired",
+            "description": "File-based BAM workload pipeline with reads on GRCH38 reference genome parallelized into 50 contiguous unmasked regions, where both reads in a read pair are presented in each partition for analyses (e.g., read consensus)",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerGRCh38Part50Consensus",
+                "BamExecutor"
+            ],
+            "version": "2022-03-07",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-part23",
+            "description": "File-based BAM workload pipeline with reads on HG19 primary chromosome parallelized into 23 partitions (one autosome per partition, and chrX, chrY, and chrM merged into a single partition)",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Part23",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-chr20-part45",
+            "description": "File-based BAM workload pipeline with reads on HG19 reference genome chr20 parallelized into 45 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Chr20Part45",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-part155",
+            "description": "File-based BAM workload pipeline with reads on HG19 reference genome parallelized into 155 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Part155",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-part155-paired",
+            "description": "File-based BAM workload pipeline with reads on HG19 reference genome parallelized into 155 contiguous unmasked regions, where both reads in a read pair are presented in each partition for analyses (e.g., read consensus)",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Part155Consensus",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-part3109",
+            "description": "File-based BAM workload pipeline with reads on HG19 reference genome parallelized into 3,109 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Part3109",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_bam_partition_hg19-part77",
+            "description": "File-based BAM workload pipeline with reads on HG19 reference genome parallelized into 77 contiguous unmasked regions",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerHg19Part77",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_ubam_partition_1",
+            "description": "File-based BAM workload pipeline with unmapped BAM records in a single partition",
+            "file_type": "bam",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "BamPartitionerPart1Unmap",
+                "BamExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_delta_sql",
+            "description": "File-based Delta Lake workload pipeline",
+            "file_type": "delta",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "TableLocalizationExecutor"
+            ],
+            "version": "2022-12-01",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_fastq_partition_per-1M-reads",
+            "description": "File-based FASTQ workload parallelization pipeline with 1,048,576 read records for each partition",
+            "file_type": "fastq,fastq.gz,fq.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "FastqPartitioner",
+                "FastqExecutor"
+            ],
+            "version": "2022-11-14",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_sql-glow",
+            "description": "File-based VCF workload pipeline using Glow and Delta Lake",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfGlowTransformer",
+                "TableLocalizationExecutor"
+            ],
+            "version": "2022-11-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_grch38-part23",
+            "description": "File-based VCF workload pipeline with GRCH38 primary chromosome parallelized into 23 partitions (one autosome per partition, and chrX, chrY, and chrM merged into a single partition)\",\n",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerGRCh38Part23",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-12-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_grch38-part155",
+            "description": "File-based VCF workload pipeline with GRCh38 reference genome parallelized into 155 contiguous unmasked regions",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerGRCh38Part155",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-12-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_grch38-part3101",
+            "description": "File-based VCF workload pipeline with GRCh38 reference genome parallelized into 3,101 contiguous unmasked regions",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerGRCh38Part3101",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-11-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_grch38-part1",
+            "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerGRCh38Part1",
+                "VcfExecutor"
+            ],
+            "version": "2023-01-03",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_hg19-part23",
+            "description": "File-based VCF workload pipeline with HG19 primary chromosome parallelized into 23 partitions (one autosome per partition, and chrX, chrY, and chrM merged into a single partition)",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerHg19Part23",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-12-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_hg19-part155",
+            "description": "File-based VCF workload pipeline with HG19 reference genome parallelized into 155 contiguous unmasked regions",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerHg19Part155",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-12-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_hg19-part3109-unpadded",
+            "description": "File-based VCF workload pipeline with HG19 reference genome parallelized into 3,109 contiguous unmasked and unpadded regions",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerHg19Part3109Unpadded",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-12-01",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_hg19-part3109",
+            "description": "File-based VCF workload pipeline with HG19 reference genome parallelized into 3,109 contiguous unmasked regions",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerHg19Part3109",
+                "VcfDataFrameTransformer",
+                "VcfExecutor"
+            ],
+            "version": "2022-11-22",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        },
+        {
+            "id": "opp_input_vcf_partition_hg19-part1",
+            "description": "File-based VCF workload pipeline with HG19 reference genome with all VCF records in a single partition",
+            "file_type": "vcf,gvcf,vcf.gz,gvcf.gz",
+            "workload_type": "FILE",
+            "input": true,
+            "operators": [
+                "VcfPartitionerHg19Part1",
+                "VcfExecutor"
+            ],
+            "version": "2023-01-03",
+            "cus_id": "cus_P7VOS8Hn6l4X1m2"
+        }
+    ],
+    "i_configs": {
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileRecalibrationTable": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcf": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.Sort.inFileBam": "opp_input_bam_partition_grch38-part50",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileRecalibrationTable": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcf": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcfIndex": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.Sort.inFileBam": "opp_input_bam_partition_grch38-part50",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR1": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAmb": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAnn": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refBwt": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refPac": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refSa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR1": "opp_input_fastq_partition_per-1M-reads",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR2": "opp_input_fastq_partition_per-1M-reads",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR1": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAmb": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAnn": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refBwt": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refPac": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refSa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR1": "opp_input_fastq_partition_per-1M-reads",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR2": "opp_input_fastq_partition_per-1M-reads",
+        "SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR1": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR1": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.normalBamStats.inFileBam": "opp_input_bam_partition_1",
+        "SomaticPipelineTumorNormalMode.tumorBamStats.inFileBam": "opp_input_bam_partition_1",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileNormalBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileTumorBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileIndelVcf": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcf": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcfIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.infileIndelVcfIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.inFileMuseResult": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileArtifactPriors": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfStats": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.LearnReadOrientationModel.inFileF1R2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResource": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResourceIndex": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePON": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePONindex": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refDict": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.TestsomaticR.inFileVardictStep1": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.inFileVardictStep2": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBamIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileNormalPileup": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileTumorPileup": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileIndelVcf": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcf": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcfIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.infileIndelVcfIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileBam": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileIntervalBed": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFa": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFai": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inDirPCGRref": "opp_input_reference_shared_cluster",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfGz": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfIndex": "opp_input_copy_to_local",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfLF": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfM2": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfMU": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfSS": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfVD": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.infileVcfVS": "opp_input_vcf_partition_grch38-part1",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.refFa": "opp_input_reference_shared_cluster"
+    },
+    "o_configs": {
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.outFileBamIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.outFileRecalibrationTable": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.outFileMetrics": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.Sort.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.outFileBamIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.outFileRecalibrationTable": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.outFileMetrics": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.Sort.outFileBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.outFileUnSortRawBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.outFileTrimmedFastqs": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.outFileUnSortRawBam": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.outFileTrimmedFastqs": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.fastqcNormalFastq.outFileFastqcReportTar": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.fastqcTumorFastq.outFileFastqcReportTar": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.normalBamStats.outFileBamStats": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.tumorBamStats.outFileBamStats": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.outFileIndelVcf": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.outFileIndelVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.outFileSnvVcf": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.outFileSnvVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.outFileMuseResult": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.muse.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.LearnReadOrientationModel.outFileArtifactPriors": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.outFileF1R2": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.outFileVcfStats": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.TestsomaticR.outFileResult": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.outFileResult": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.outFileIndelVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.outFileIndelVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.outFileSnpVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.outFileSnpVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.outFilePileup": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.outFilePileup": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.outFileFlexdbHtml": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.outFileHtml": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.outFileMaf": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.outFileVcf": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.outFileVcfIndex": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.outFileVcfGz": "opp_output_generic",
+        "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.outFileVcfIndex": "opp_output_generic"
+    },
+    "calls": [
+        "SomaticPipelineTumorNormalMode",
+        "fastqcTumorFastq",
+        "fastqcNormalFastq",
+        "TNmapping",
+        "tumorBamStats",
+        "normalBamStats",
+        "variantCalling",
+        "vcfAnnotate",
+        "PythonVariantPicking",
+        "PCGR",
+        "trimAndMapTumorFastq",
+        "trimAndMapNormalFastq",
+        "postMappingTumorBam",
+        "postMappingNormalBam",
+        "bamsomaticsniper",
+        "lofreq",
+        "muse",
+        "mutect2",
+        "vardict",
+        "varscan",
+        "tumorMpileup",
+        "normalMpileup",
+        "VarscanSomatic",
+        "concat",
+        "filter",
+        "BamSomaticsniper",
+        "filter",
+        "Sort",
+        "MarkDuplicates",
+        "BaseRecalibrator",
+        "ApplyBqsr",
+        "LoFreqSomatic",
+        "concat",
+        "filter",
+        "VardictPaired",
+        "TestsomaticR",
+        "Var2Vcf",
+        "filter",
+        "Mutect2",
+        "LearnReadOrientationModel",
+        "FilterMutectCalls",
+        "filter",
+        "TrimGalore",
+        "BwaMem",
+        "MuseCall",
+        "MuseSump",
+        "filter"
+    ]
+}
