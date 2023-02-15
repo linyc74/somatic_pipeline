@@ -1,0 +1,1343 @@
+{
+    "name": "weichi_SomaticPipeline_TN_mode_20230109_test2",
+    "workflow_params": {
+        "inputs": {
+            "SomaticPipelineTumorNormalMode.tumorSampleName": "002-00002-0102-E-X01-03",
+            "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
+                "002-00002-0102-E-X01-03_R1.fastq.gz",
+                "002-00002-0102-E-X01-03_R2.fastq.gz"
+            ],
+            "SomaticPipelineTumorNormalMode.normalSampleName": "002-00002-0101-E-X01-01",
+            "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
+                "002-00002-0101-E-X01-01_R1.fastq.gz",
+                "002-00002-0101-E-X01-01_R2.fastq.gz"
+            ],
+            "SomaticPipelineTumorNormalMode.finalOutputName": "002-00002-0102-E-X01-03",
+            "SomaticPipelineTumorNormalMode.refFa": "GRCh38.primary_assembly.genome.fa",
+            "SomaticPipelineTumorNormalMode.refFai": "GRCh38.primary_assembly.genome.fa.fai",
+            "SomaticPipelineTumorNormalMode.refDict": "GRCh38.primary_assembly.genome.dict",
+            "SomaticPipelineTumorNormalMode.refAmb": "GRCh38.primary_assembly.genome.fa.amb",
+            "SomaticPipelineTumorNormalMode.refAnn": "GRCh38.primary_assembly.genome.fa.ann",
+            "SomaticPipelineTumorNormalMode.refBwt": "GRCh38.primary_assembly.genome.fa.bwt",
+            "SomaticPipelineTumorNormalMode.refPac": "GRCh38.primary_assembly.genome.fa.pac",
+            "SomaticPipelineTumorNormalMode.refSa": "GRCh38.primary_assembly.genome.fa.sa",
+            "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "22_0408_dbsnp.vcf.gz",
+            "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "22_0408_dbsnp.vcf.gz.tbi",
+            "SomaticPipelineTumorNormalMode.inFileGermlineResource": "af-only-gnomad.hg38.vcf.gz",
+            "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "af-only-gnomad.hg38.vcf.gz.tbi",
+            "SomaticPipelineTumorNormalMode.inFilePON": "5pon_20230109.vcf",
+            "SomaticPipelineTumorNormalMode.inFilePONindex": "5pon_20230109.vcf.idx",
+            "SomaticPipelineTumorNormalMode.inDirPCGRref": "pcgr_data",
+            "SomaticPipelineTumorNormalMode.inFileIntervalBed": "addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38.bed"
+        },
+        "datasets": {
+            "SomaticPipelineTumorNormalMode.inFileTumorFastqs": [
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0102-E-X01-03_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0102-E-X01-03_R2-fastq-gz"
+            ],
+            "SomaticPipelineTumorNormalMode.inFileNormalFastqs": [
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0101-E-X01-01_R1-fastq-gz",
+                "drs://dev-run-test-api.seqslab.net/22_1205_WES_fastq_002-00002-0101-E-X01-01_R2-fastq-gz"
+            ],
+            "SomaticPipelineTumorNormalMode.refFa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa",
+            "SomaticPipelineTumorNormalMode.refFai": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-fai",
+            "SomaticPipelineTumorNormalMode.refDict": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-dict",
+            "SomaticPipelineTumorNormalMode.refAmb": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-amb",
+            "SomaticPipelineTumorNormalMode.refAnn": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-ann",
+            "SomaticPipelineTumorNormalMode.refBwt": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-bwt",
+            "SomaticPipelineTumorNormalMode.refPac": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-pac",
+            "SomaticPipelineTumorNormalMode.refSa": "drs://dev-run-test-api.seqslab.net/GRCh38_no_compress_ref_GRCh38-primary_assembly-genome-fa-sa",
+            "SomaticPipelineTumorNormalMode.inFileDbsnpVcf": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz",
+            "SomaticPipelineTumorNormalMode.inFileDbsnpVcfIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_22_0408_dbsnp-vcf-gz-tbi",
+            "SomaticPipelineTumorNormalMode.inFileGermlineResource": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz",
+            "SomaticPipelineTumorNormalMode.inFileGermlineResourceIndex": "drs://dev-run-test-api.seqslab.net/GRCh38_af-only-gnomad-hg38-vcf-gz-tbi",
+            "SomaticPipelineTumorNormalMode.inFilePON": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf",
+            "SomaticPipelineTumorNormalMode.inFilePONindex": "drs://dev-run-test-api.seqslab.net/GRCh38_5pon_20230109-vcf-idx",
+            "SomaticPipelineTumorNormalMode.inDirPCGRref": "drs://dev-run-test-api.seqslab.net/GRCh38_pcgr_data_20220203",
+            "SomaticPipelineTumorNormalMode.inFileIntervalBed": "drs://dev-run-test-api.seqslab.net/GRCh38_addchrSureSelectHumanAllExonV5+UTRs_75Mbp_GRCh38-bed"
+        },
+        "tasks": {
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.inFileRecalibrationTable": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.ApplyBqsr.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BamStats.inFileBam": {
+                "operators": [
+                    "BamPartitionerPart1",
+                    "BamExecutor"
+                ],
+                "description": "File-based BAM workload pipeline with all BAM records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcf": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.inFileDbsnpVcfIndex": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.BaseRecalibrator.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.MarkDuplicates.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingNormalBam.Sort.inFileBam": {
+                "operators": [
+                    "BamPartitionerGRCh38Part50",
+                    "BamExecutor"
+                ],
+                "description": "File-based BAM workload pipeline with reads on GRCH38 reference genome parallelized into 50 contiguous unmasked regions"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.inFileRecalibrationTable": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.ApplyBqsr.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BamStats.inFileBam": {
+                "operators": [
+                    "BamPartitionerPart1",
+                    "BamExecutor"
+                ],
+                "description": "File-based BAM workload pipeline with all BAM records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcf": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.inFileDbsnpVcfIndex": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.BaseRecalibrator.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.MarkDuplicates.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.postMappingTumorBam.Sort.inFileBam": {
+                "operators": [
+                    "BamPartitionerGRCh38Part50",
+                    "BamExecutor"
+                ],
+                "description": "File-based BAM workload pipeline with reads on GRCH38 reference genome parallelized into 50 contiguous unmasked regions"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR1": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.inFileFastqR2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAmb": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refAnn": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refBwt": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refPac": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.BwaMem.refSa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR1": {
+                "operators": [
+                    "FastqPartitioner",
+                    "FastqExecutor"
+                ],
+                "description": "File-based FASTQ workload parallelization pipeline with 1,048,576 read records for each partition"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapNormalFastq.TrimGalore.inFileFastqR2": {
+                "operators": [
+                    "FastqPartitioner",
+                    "FastqExecutor"
+                ],
+                "description": "File-based FASTQ workload parallelization pipeline with 1,048,576 read records for each partition"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR1": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.inFileFastqR2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAmb": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refAnn": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refBwt": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refPac": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.BwaMem.refSa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR1": {
+                "operators": [
+                    "FastqPartitioner",
+                    "FastqExecutor"
+                ],
+                "description": "File-based FASTQ workload parallelization pipeline with 1,048,576 read records for each partition"
+            },
+            "SomaticPipelineTumorNormalMode.TNmapping.trimAndMapTumorFastq.TrimGalore.inFileFastqR2": {
+                "operators": [
+                    "FastqPartitioner",
+                    "FastqExecutor"
+                ],
+                "description": "File-based FASTQ workload parallelization pipeline with 1,048,576 read records for each partition"
+            },
+            "SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR1": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.fastqcNormalFastq.inFileFastqR2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR1": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.fastqcTumorFastq.inFileFastqR2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileNormalBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.inFileTumorBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.BamSomaticsniper.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.bamsomaticsniper.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileIntervalBed": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileNormalBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.inFileTumorBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.LoFreqSomatic.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileIndelVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.inFileSnvVcfIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.concat.infileIndelVcfIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.lofreq.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileNormalBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.inFileTumorBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseCall.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.MuseSump.inFileMuseResult": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.muse.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileArtifactPriors": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.inFileVcfStats": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.FilterMutectCalls.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.LearnReadOrientationModel.inFileF1R2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResource": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileGermlineResourceIndex": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileIntervalBed": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileNormalBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePON": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFilePONindex": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.inFileTumorBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refDict": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.Mutect2.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.mutect2.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.TestsomaticR.inFileVardictStep1": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.Var2Vcf.inFileVardictStep2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileIntervalBed": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileNormalBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.inFileTumorBamIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.VardictPaired.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.vardict.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileNormalPileup": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.VarscanSomatic.inFileTumorPileup": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.compressPyVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.compressVcf.inFileVcf": {
+                "operators": [
+                    "VcfPartitionerGRCh38Part1",
+                    "VcfExecutor"
+                ],
+                "description": "File-based VCF workload pipeline with GRCH38 reference genome with all VCF records in a single partition"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileIndelVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.inFileSnvVcfIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.concat.infileIndelVcfIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.filter.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.indelCompressIndex.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.inFileIntervalBed": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.normalMpileup.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.snpCompressIndex.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileBam": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.inFileIntervalBed": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.variantCalling.varscan.tumorMpileup.refFai": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inDirPCGRref": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfGz": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PCGR.inFileVcfIndex": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfLF": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfM2": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfMU": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfSS": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.inFileVcfVD": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.infileVcfVS": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.PythonVariantPicking.refFa": {
+                "operators": [
+                    {
+                        "name": "RefLoader",
+                        "scope": "cluster",
+                        "arguments": {}
+                    }
+                ],
+                "description": "Automatic workload pipeline for localizing either a file or directory shared within cluster in a single node cluster"
+            },
+            "SomaticPipelineTumorNormalMode.vcfAnnotate.vcfCompressIndex.inFileVcf": {
+                "operators": [
+                    "CopyToLocalLoader"
+                ],
+                "description": "Automatic workload pipeline for localizing a file per partition to each executor of cluster"
+            }
+        }
+    },
+    "workflow_backend_params": {
+        "clusters": [
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D14_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 3,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "SomaticPipelineTumorNormalMode"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D14_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 5,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "TNmapping"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D12_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 0,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "fastqcTumorFastq"
+            },
+            {
+                "id": 3,
+                "name": "acu-m16",
+                "description": "Memory optimized 16-core spot cluster compute with maximum 500 concurrent tasks (Runtime 2.0, Spark 3.3, Python 3.8, Java 1.8.0, Cromwell 78)",
+                "settings": {
+                    "type": "batch.core.windows.net",
+                    "vm_size": "Standard_D12_v2",
+                    "wm_size": "Standard_D1_v2",
+                    "workers": {
+                        "spot": 0,
+                        "dedicated": 1
+                    },
+                    "auto_scale": false,
+                    "worker_on_master": true
+                },
+                "options": [
+                    "spark.driver.cores 1",
+                    "spark.driver.memory 2g",
+                    "spark.executor.cores 1",
+                    "spark.executor.memory 7g",
+                    "spark.dynamicAllocation.enabled true",
+                    "spark.shuffle.service.enabled true",
+                    "spark.dynamicAllocation.minExecutors 1",
+                    "spark.kryo.registrator org.bdgenomics.adam.serialization.ADAMKryoRegistrator",
+                    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version 2",
+                    "spark.local.dir /mnt",
+                    "spark.port.maxRetries 256"
+                ],
+                "call": "fastqcNormalFastq"
+            }
+        ],
+        "workspace": "sponsorwus2",
+        "integrity": false,
+        "content_trust": false,
+        "graph": "digraph SomaticPipelineTumorNormalMode {\n  #rankdir=LR;\n  compound=true;\n\n  # Links\n  CALL_variantCalling -> CALL_vcfAnnotate\n  CALL_TNmapping -> CALL_variantCalling\n\n  # Nodes\n  CALL_vcfAnnotate [label=\"call vcfAnnotate\";shape=\"oval\";peripheries=2]\n  CALL_variantCalling [label=\"call variantCalling\";shape=\"oval\";peripheries=2]\n  CALL_fastqcTumorFastq [label=\"call fastqcTumorFastq\"]\n  CALL_TNmapping [label=\"call TNmapping\";shape=\"oval\";peripheries=2]\n  CALL_fastqcNormalFastq [label=\"call fastqcNormalFastq\"]\n}\n"
+    },
+    "workflow_url": "https://dev-run-test-api.seqslab.net/trs/v2/tools/ymdent_SomaticPipeline_TN_mode/versions/1.1/WDL/files/",
+    "workflow_type_version": "1.1",
+    "workflow_type": "WDL"
+}
