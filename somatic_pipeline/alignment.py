@@ -86,14 +86,14 @@ class TemplateAligner(Processor, ABC):
 
     def sam_to_bam(self):
         self.bam = f'{self.workdir}/{self.sample_name}.bam'
-        cmd = f'samtools view -b -h {self.sam} > {self.bam}'
-        self.call(cmd)
+        self.call(f'samtools view -b -h {self.sam} > {self.bam}')
+        self.call(f'rm {self.sam}')  # to save disk space
 
     def sort_bam(self):
         dstdir = self.workdir if self.discard_bam else self.outdir
         self.sorted_bam = f'{dstdir}/{self.sample_name}-sorted.bam'
-        cmd = f'samtools sort {self.bam} > {self.sorted_bam}'
-        self.call(cmd)
+        self.call(f'samtools sort {self.bam} > {self.sorted_bam}')
+        self.call(f'rm {self.bam}')  # to save disk space
 
 
 class BwaAligner(TemplateAligner):
