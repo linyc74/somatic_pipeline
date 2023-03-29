@@ -444,12 +444,11 @@ class VariantCallingWorkflow(Processor):
             )
 
     def vcf_2_maf(self):
-        for vcf in self.vcfs + [self.vcf]:
-            Vcf2Maf(self.settings).main(
-                vcf=vcf,
-                ref_fa=self.ref_fa,
-                dstdir=None  # same dir of input vcf
-            )
+        Vcf2Maf(self.settings).main(
+            vcf=self.vcf,
+            ref_fa=self.ref_fa,
+            dstdir=None  # same dir of input vcf
+        )
 
     def compress_index_vcf(self):
         for vcf in self.vcfs + [self.vcf]:
