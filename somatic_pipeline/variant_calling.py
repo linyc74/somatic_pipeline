@@ -1,11 +1,36 @@
 import os
 from abc import ABC
-from typing import Optional, List, Dict, Callable
+from typing import Optional, List, Dict, Callable, Tuple
 from .tools import edit_fpath
 from .template import Processor
 from .constant import TUMOR, NORMAL
 from .variant_filtering import FlagVariants, RemoveVariants
 from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam
+
+
+class CallerParams:
+
+    def __init__(
+            self,
+            ref_fa: str,
+            tumor_bam: str,
+            normal_bam: str,
+            call_region_bed: Optional[str],
+            panel_of_normal_vcf: Optional[str],
+            germline_resource_vcf: Optional[str],
+            variant_flagging_criteria: Optional[str],
+            variant_removal_flags: List[str],
+            only_pass: bool):
+
+        self.ref_fa = ref_fa
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+        self.call_region_bed = call_region_bed
+        self.panel_of_normal_vcf = panel_of_normal_vcf
+        self.germline_resource_vcf = germline_resource_vcf
+        self.variant_flagging_criteria = variant_flagging_criteria
+        self.variant_removal_flags = variant_removal_flags
+        self.only_pass = only_pass
 
 
 class VariantCalling(Processor):
@@ -15,18 +40,11 @@ class VariantCalling(Processor):
     TUMOR_ONLY_MODE = 'tumor-only'
 
     variant_callers: List[str]
-    ref_fa: str
-    tumor_bam: str
-    normal_bam: Optional[str]
-    call_region_bed: Optional[str]
-    panel_of_normal_vcf: Optional[str]
-    germline_resource_vcf: Optional[str]
-    variant_flagging_criteria: Optional[str]
-    variant_removal_flags: List[str]
+    params: CallerParams
 
     dstdir: str
-    mode_caller_to_method: Dict[str, Dict[str, Callable]]
     mode: str
+    mode_caller_to_method: Dict[str, Dict[str, Callable]]
     vcfs: List[str]
 
     def main(
@@ -39,17 +57,20 @@ class VariantCalling(Processor):
             panel_of_normal_vcf: Optional[str],
             germline_resource_vcf: Optional[str],
             variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> List[str]:
+            variant_removal_flags: List[str],
+            only_pass: bool) -> List[str]:
 
         self.variant_callers = variant_callers
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.panel_of_normal_vcf = panel_of_normal_vcf
-        self.germline_resource_vcf = germline_resource_vcf
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+        self.params = CallerParams(
+            ref_fa=ref_fa,
+            tumor_bam=tumor_bam,
+            normal_bam=normal_bam,
+            call_region_bed=call_region_bed,
+            panel_of_normal_vcf=panel_of_normal_vcf,
+            germline_resource_vcf=germline_resource_vcf,
+            variant_flagging_criteria=variant_flagging_criteria,
+            variant_removal_flags=variant_removal_flags,
+            only_pass=only_pass)
 
         self.index_ref_fa_and_bams()
         self.make_dstdir()
@@ -62,7 +83,7 @@ class VariantCalling(Processor):
             method = self.get_method(caller)
 
             if method is not None:
-                vcf = method()
+                vcf = method(self.params)
                 dst = f'{self.dstdir}/{caller}.vcf'
                 self.call(f'mv {vcf} {dst}')
                 self.vcfs.append(dst)
@@ -73,167 +94,78 @@ class VariantCalling(Processor):
         return self.vcfs
 
     def index_ref_fa_and_bams(self):
-        SamtoolsIndexFa(self.settings).main(fa=self.ref_fa)
-        SamtoolsIndexBam(self.settings).main(bam=self.tumor_bam)
-        if self.normal_bam is not None:
-            SamtoolsIndexBam(self.settings).main(bam=self.normal_bam)
+        SamtoolsIndexFa(self.settings).main(fa=self.params.ref_fa)
+        SamtoolsIndexBam(self.settings).main(bam=self.params.tumor_bam)
+        if self.params.normal_bam is not None:
+            SamtoolsIndexBam(self.settings).main(bam=self.params.normal_bam)
 
     def make_dstdir(self):
         self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
         os.makedirs(self.dstdir, exist_ok=True)
 
     def set_mode(self):
-        self.mode = self.TUMOR_ONLY_MODE if (self.normal_bam is None) else self.TN_PAIRED_MODE
+        self.mode = self.TUMOR_ONLY_MODE if (self.params.normal_bam is None) else self.TN_PAIRED_MODE
 
     def set_mode_caller_to_method(self):
         self.mode_caller_to_method = {
             self.TN_PAIRED_MODE: {
-                'mutect2': self.mutect2_tn_paired,
-                'muse': self.muse,
-                'varscan': self.varscan,
-                'vardict': self.vardict_tn_paired,
-                'lofreq': self.lofreq_tn_paired,
-                'somatic-sniper': self.somatic_sniper,
+                'mutect2': Mutect2TNPaired(self.settings).main,
+                'muse': Muse(self.settings).main,
+                'varscan': Varscan(self.settings).main,
+                'vardict': VarDictTNPaired(self.settings).main,
+                'lofreq': LoFreqTNPaired(self.settings).main,
+                'somatic-sniper': SomaticSniper(self.settings).main,
             },
             self.TUMOR_ONLY_MODE: {
-                'mutect2': self.mutect2_tumor_only,
-                'haplotype-caller': self.haplotype_caller,
-                'vardict': self.vardict_tumor_only,
-                'lofreq': self.lofreq_tumor_only,
+                'mutect2': Mutect2TumorOnly(self.settings).main,
+                'haplotype-caller': HaplotypeCaller(self.settings).main,
+                'vardict': VarDictTumorOnly(self.settings).main,
+                'lofreq': LoFreqTumorOnly(self.settings).main,
             }
         }
 
     def get_method(self, caller: str) -> Optional[Callable]:
         return self.mode_caller_to_method[self.mode].get(caller, None)
 
-    def mutect2_tn_paired(self) -> str:
-        return Mutect2TNPaired(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            call_region_bed=self.call_region_bed,
-            panel_of_normal_vcf=self.panel_of_normal_vcf,
-            germline_resource_vcf=self.germline_resource_vcf,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def mutect2_tumor_only(self) -> str:
-        return Mutect2TumorOnly(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            call_region_bed=self.call_region_bed,
-            panel_of_normal_vcf=self.panel_of_normal_vcf,
-            germline_resource_vcf=self.germline_resource_vcf,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def haplotype_caller(self) -> str:
-        return HaplotypeCaller(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def muse(self) -> str:
-        return Muse(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def varscan(self) -> str:
-        return Varscan(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def vardict_tn_paired(self) -> str:
-        return VarDictTNPaired(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def vardict_tumor_only(self) -> str:
-        return VarDictTumorOnly(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def lofreq_tn_paired(self) -> str:
-        return LoFreqTNPaired(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def lofreq_tumor_only(self) -> str:
-        return LoFreqTumorOnly(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            call_region_bed=self.call_region_bed,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-    def somatic_sniper(self) -> str:
-        return SomaticSniper(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
-
-
 #
 
 
-class Base(Processor, ABC):
+class CallerBase(Processor, ABC):
 
-    ref_fa: str
-    tumor_bam: str
-    normal_bam: Optional[str]
-    call_region_bed: Optional[str]
-    variant_flagging_criteria: Optional[str]
-    variant_removal_flags: List[str]
+    params: CallerParams
 
     vcf: str
 
+    def main(self, params: CallerParams) -> str:
+        self.params = params
+        self.main__()
+        return self.vcf
+
+    def main__(self):
+        pass
+
     def flag_and_remove_variants(self):
-        if self.variant_flagging_criteria is not None:
+        if self.params.variant_flagging_criteria is not None:
             self.vcf = FlagVariants(self.settings).main(
                 vcf=self.vcf,
-                variant_flagging_criteria=self.variant_flagging_criteria)
+                variant_flagging_criteria=self.params.variant_flagging_criteria)
 
-        if len(self.variant_removal_flags) > 0:
+        if len(self.params.variant_removal_flags) > 0:
             self.vcf = RemoveVariants(self.settings).main(
                 vcf=self.vcf,
-                flags=self.variant_removal_flags)
+                flags=self.params.variant_removal_flags)
 
 
 #
 
 
-class GATKBase(Base):
+class GATKBase(CallerBase):
 
     def create_sequence_dictionary(self):
-        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
+        GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.params.ref_fa)
 
 
 class Mutect2Base(GATKBase):
-
-    panel_of_normal_vcf: Optional[str]
-    germline_resource_vcf: Optional[str]
 
     pon_args: List[str]
     germline_resource_args: List[str]
@@ -241,13 +173,13 @@ class Mutect2Base(GATKBase):
 
     def prepare_mutect2_resource_vcfs(self):
         self.pon_args, self.germline_resource_args = PrepareMutect2ResourceVcfs(self.settings).main(
-            panel_of_normal_vcf=self.panel_of_normal_vcf,
-            germline_resource_vcf=self.germline_resource_vcf)
+            panel_of_normal_vcf=self.params.panel_of_normal_vcf,
+            germline_resource_vcf=self.params.germline_resource_vcf)
 
     def filter_mutect_calls(self):
         self.vcf = FilterMutectCalls(self.settings).main(
             vcf=self.vcf,
-            ref_fa=self.ref_fa,
+            ref_fa=self.params.ref_fa,
             f1r2_tar_gz=self.f1r2_tar_gz)
 
 
@@ -262,7 +194,7 @@ class PrepareMutect2ResourceVcfs(Processor):
     def main(
             self,
             panel_of_normal_vcf: Optional[str],
-            germline_resource_vcf: Optional[str]):
+            germline_resource_vcf: Optional[str]) -> Tuple[List[str], List[str]]:
 
         self.panel_of_normal_vcf = panel_of_normal_vcf
         self.germline_resource_vcf = germline_resource_vcf
@@ -351,25 +283,7 @@ class FilterMutectCalls(Processor):
 
 class Mutect2TNPaired(Mutect2Base):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: Optional[str],
-            call_region_bed: Optional[str],
-            panel_of_normal_vcf: Optional[str],
-            germline_resource_vcf: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.call_region_bed = call_region_bed
-        self.panel_of_normal_vcf = panel_of_normal_vcf
-        self.germline_resource_vcf = germline_resource_vcf
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
@@ -381,15 +295,15 @@ class Mutect2TNPaired(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        bed = [] if self.call_region_bed is None else [f'--intervals {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'--intervals {self.params.call_region_bed}']
         self.vcf = f'{self.workdir}/mutect2.vcf'
         self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
 
         args = [
             'gatk Mutect2',
-            f'--reference {self.ref_fa}',
-            f'--input {self.tumor_bam}',
-            f'--input {self.normal_bam}',
+            f'--reference {self.params.ref_fa}',
+            f'--input {self.params.tumor_bam}',
+            f'--input {self.params.normal_bam}',
             f'--tumor-sample {TUMOR}',
             f'--normal-sample {NORMAL}',
             f'--output {self.vcf}',
@@ -405,24 +319,7 @@ class Mutect2TNPaired(Mutect2Base):
 
 class Mutect2TumorOnly(Mutect2Base):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            call_region_bed: Optional[str],
-            panel_of_normal_vcf: Optional[str],
-            germline_resource_vcf: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = None
-        self.call_region_bed = call_region_bed
-        self.panel_of_normal_vcf = panel_of_normal_vcf
-        self.germline_resource_vcf = germline_resource_vcf
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
@@ -434,13 +331,13 @@ class Mutect2TumorOnly(Mutect2Base):
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
-        bed = [] if self.call_region_bed is None else [f'--intervals {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'--intervals {self.params.call_region_bed}']
         self.vcf = f'{self.workdir}/mutect2.vcf'
         self.f1r2_tar_gz = f'{self.workdir}/gatk-mutect2-f1r2.tar.gz'
         cmd = self.CMD_LINEBREAK.join([
             'gatk Mutect2',
-            f'--reference {self.ref_fa}',
-            f'--input {self.tumor_bam}',
+            f'--reference {self.params.ref_fa}',
+            f'--input {self.params.tumor_bam}',
             f'--output {self.vcf}',
             f'--native-pair-hmm-threads {self.threads}',
             f'--f1r2-tar-gz {self.f1r2_tar_gz}',
@@ -453,20 +350,7 @@ class Mutect2TumorOnly(Mutect2Base):
 
 class HaplotypeCaller(GATKBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = None
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.create_sequence_dictionary()
         self.haplotype_caller()
@@ -477,12 +361,12 @@ class HaplotypeCaller(GATKBase):
 
     def haplotype_caller(self):
         log = f'{self.outdir}/gatk-HaplotypeCaller.log'
-        bed = [] if self.call_region_bed is None else [f'--intervals {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'--intervals {self.params.call_region_bed}']
         output = f'{self.workdir}/haplotype-caller.vcf'
         args = [
             'gatk HaplotypeCaller',
-            f'--reference {self.ref_fa}',
-            f'--input {self.tumor_bam}',
+            f'--reference {self.params.ref_fa}',
+            f'--input {self.params.tumor_bam}',
         ] + bed + [
             f'--output {output}',
             f'--native-pair-hmm-threads {self.threads}',
@@ -495,7 +379,7 @@ class HaplotypeCaller(GATKBase):
     def filter_haplotype_variants(self):
         self.vcf = FilterHaplotypeVariants(self.settings).main(
             vcf=self.vcf,
-            ref_fa=self.ref_fa)
+            ref_fa=self.params.ref_fa)
 
 
 class FilterHaplotypeVariants(Processor):
@@ -619,27 +503,13 @@ class FilterHaplotypeVariants(Processor):
 #
 
 
-class Muse(Base):
+class Muse(CallerBase):
 
     WES_OR_WGS = '-E'  # '-E' for WES; '-G' for WGS
 
     call_result_txt: str
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.clean_up_call_region_bed()
         self.muse_call()
@@ -649,21 +519,21 @@ class Muse(Base):
         return self.vcf
 
     def clean_up_call_region_bed(self):
-        if self.call_region_bed is not None:
-            self.call_region_bed = CleanUpCallRegionBed(self.settings).main(
-                bed=self.call_region_bed)
+        if self.params.call_region_bed is not None:
+            self.params.call_region_bed = CleanUpCallRegionBed(self.settings).main(
+                bed=self.params.call_region_bed)
 
     def muse_call(self):
         output = f'{self.workdir}/MuSE-call-result'
-        bed = [] if self.call_region_bed is None else [f'-l {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'-l {self.params.call_region_bed}']
         log = f'{self.outdir}/MuSE-call.log'
         cmd = self.CMD_LINEBREAK.join([
             'MuSE call',
-            f'-f {self.ref_fa}',
+            f'-f {self.params.ref_fa}',
             f'-O {output}',
         ] + bed + [
-            self.tumor_bam,
-            self.normal_bam,
+            self.params.tumor_bam,
+            self.params.normal_bam,
             f'1> {log}',
             f'2> {log}',
         ])
@@ -706,26 +576,14 @@ class CleanUpCallRegionBed(Processor):
         return self.output_bed
 
 
-class Varscan(Base):
+class Varscan(CallerBase):
 
     normal_pileup: str
     tumor_pileup: str
     snp_vcf: str
     indel_vcf: str
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.samtools_mpileup()
         self.varscan_somatic()
@@ -740,8 +598,8 @@ class Varscan(Base):
         self.tumor_pileup = f'{self.workdir}/{TUMOR}-pileup'
         self.normal_pileup = f'{self.workdir}/{NORMAL}-pileup'
         for bam, output, name in [
-            (self.tumor_bam, self.tumor_pileup, TUMOR),
-            (self.normal_bam, self.normal_pileup, NORMAL),
+            (self.params.tumor_bam, self.tumor_pileup, TUMOR),
+            (self.params.normal_bam, self.normal_pileup, NORMAL),
         ]:
             self.__mpileup(bam=bam, output=output, name=name)
 
@@ -749,7 +607,7 @@ class Varscan(Base):
         log = f'{self.outdir}/samtools-mpileup-{name}.log'
         cmd = self.CMD_LINEBREAK.join([
             'samtools mpileup',
-            f'--fasta-ref {self.ref_fa}',
+            f'--fasta-ref {self.params.ref_fa}',
             f'--output {output}',
             bam,
             f'2> {log}',
@@ -803,7 +661,7 @@ class Varscan(Base):
 #
 
 
-class VarDictBase(Base):
+class VarDictBase(CallerBase):
 
     ALLELE_FREQ_THRESHOLD = 0.01
 
@@ -816,7 +674,7 @@ class VarDictBase(Base):
     def __write_genome_file(self):
         chr_to_length = {}
         this_chr = None
-        with open(self.ref_fa) as reader:
+        with open(self.params.ref_fa) as reader:
             for line in reader:
                 if line.startswith('>'):
                     this_chr = line[1:].split(' ')[0]
@@ -830,29 +688,16 @@ class VarDictBase(Base):
                 writer.write(f'{c}\t{l}\n')
 
     def __write_bed(self):
-        self.call_region_bed = f'{self.workdir}/vardict-wgs.bed'
+        self.params.call_region_bed = f'{self.workdir}/vardict-wgs.bed'
         # Create regions with a window size of 50150 bp and overlapping size 150 bp
-        self.call(f'bedtools makewindows -g {self.genome_file} -w 50150 -s 50000 > {self.call_region_bed}')
+        self.call(f'bedtools makewindows -g {self.genome_file} -w 50150 -s 50000 > {self.params.call_region_bed}')
 
 
 class VarDictTumorOnly(VarDictBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
+    def main__(self):
 
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = None
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
-
-        if self.call_region_bed is None:
+        if self.params.call_region_bed is None:
             self.build_call_region_bed_for_wgs_mode()
         self.run_vardict()
         self.flag_and_remove_variants()
@@ -864,16 +709,16 @@ class VarDictTumorOnly(VarDictBase):
         self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
             'VarDict',
-            f'-G {self.ref_fa}',
+            f'-G {self.params.ref_fa}',
             f'-f {self.ALLELE_FREQ_THRESHOLD}',
             f'-N {TUMOR}',
-            f'-b {self.tumor_bam}',
+            f'-b {self.params.tumor_bam}',
             f'-th {self.threads}',
             '-c 1',  # column for chromosome
             '-S 2',  # column for region start
             '-E 3',  # column for region end
             '-g 4',  # column for gene name
-            self.call_region_bed,
+            self.params.call_region_bed,
             f'2> {log}',
             '|',
             'teststrandbias.R',
@@ -891,23 +736,9 @@ class VarDictTumorOnly(VarDictBase):
 
 class VarDictTNPaired(VarDictBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
+    def main__(self):
 
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
-
-        if self.call_region_bed is None:
+        if self.params.call_region_bed is None:
             self.build_call_region_bed_for_wgs_mode()
         self.run_vardict()
         self.flag_and_remove_variants()
@@ -919,16 +750,16 @@ class VarDictTNPaired(VarDictBase):
         self.vcf = f'{self.workdir}/vardict.vcf'
         args = [
             'VarDict',
-            f'-G {self.ref_fa}',
+            f'-G {self.params.ref_fa}',
             f'-f {self.ALLELE_FREQ_THRESHOLD}',
             f'-N {TUMOR}',
-            f'-b "{self.tumor_bam}|{self.normal_bam}"',
+            f'-b "{self.params.tumor_bam}|{self.params.normal_bam}"',
             f'-th {self.threads}',
             '-c 1',  # column for chromosome
             '-S 2',  # column for region start
             '-E 3',  # column for region end
             '-g 4',  # column for gene name
-            self.call_region_bed,
+            self.params.call_region_bed,
             f'2> {log}',
             '|',
             'testsomatic.R',
@@ -946,22 +777,9 @@ class VarDictTNPaired(VarDictBase):
 #
 
 
-class LoFreqTumorOnly(Base):
+class LoFreqTumorOnly(CallerBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = None
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.lofreq_call_parallel()
         self.flag_and_remove_variants()
@@ -971,53 +789,37 @@ class LoFreqTumorOnly(Base):
     def lofreq_call_parallel(self):
         self.vcf = f'{self.workdir}/lofreq.vcf'
         log = f'{self.outdir}/lofreq-call-parallel.log'
-        bed = [] if self.call_region_bed is None else [f'--bed {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'--bed {self.params.call_region_bed}']
         args = [
             'lofreq call-parallel',
-            f'--ref {self.ref_fa}',
+            f'--ref {self.params.ref_fa}',
         ] + bed + [
             f'--pp-threads {self.threads}',
             '--call-indels',  # works only when BAM file contains indel qualities, GATK BQSR does that
             f'--out {self.vcf}',
-            self.tumor_bam,
+            self.params.tumor_bam,
             f'1> {log}',
             f'2> {log}',
         ]
         self.call(self.CMD_LINEBREAK.join(args))
 
 
-class LoFreqTNPaired(Base):
+class LoFreqTNPaired(CallerBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            call_region_bed: Optional[str],
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.call_region_bed = call_region_bed
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.lofreq_somatic()
         self.concat_snp_indel_vcfs()
         self.flag_and_remove_variants()
 
-        return self.vcf
-
     def lofreq_somatic(self):
         log = f'{self.outdir}/lofreq-somatic.log'
-        bed = [] if self.call_region_bed is None else [f'--bed {self.call_region_bed}']
+        bed = [] if self.params.call_region_bed is None else [f'--bed {self.params.call_region_bed}']
         args = [
             'lofreq somatic',
-            f'--normal {self.normal_bam}',
-            f'--tumor {self.tumor_bam}',
-            f'--ref {self.ref_fa}',
+            f'--normal {self.params.normal_bam}',
+            f'--tumor {self.params.tumor_bam}',
+            f'--ref {self.params.ref_fa}',
         ] + bed + [
             f'--threads {self.threads}',
             '--call-indels',  # works only when BAM file contains indel qualities, GATK BQSR does that
@@ -1049,21 +851,9 @@ class LoFreqTNPaired(Base):
 #
 
 
-class SomaticSniper(Base):
+class SomaticSniper(CallerBase):
 
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: str,
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str]) -> str:
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
+    def main__(self):
 
         self.run_somatic_sniper()
         self.flag_and_remove_variants()
@@ -1078,9 +868,9 @@ class SomaticSniper(Base):
             f'-n {NORMAL}',
             f'-t {TUMOR}',
             f'-F vcf',  # output format
-            f'-f {self.ref_fa}',
-            self.tumor_bam,
-            self.normal_bam,
+            f'-f {self.params.ref_fa}',
+            self.params.tumor_bam,
+            self.params.normal_bam,
             self.vcf,
             f'1> {log}',
             f'2> {log}',

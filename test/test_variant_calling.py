@@ -38,6 +38,7 @@ class TestVariantCalling(TestCase):
             call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_flagging_criteria='low_depth:DP<20',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
+            only_pass=True,
         )
         expected = [
             f'{self.outdir}/callers/lofreq.vcf',
@@ -67,6 +68,7 @@ class TestVariantCalling(TestCase):
             call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
+            only_pass=True,
         )
         expected = [
             f'{self.outdir}/callers/lofreq.vcf',
@@ -88,5 +90,6 @@ class TestVariantCalling(TestCase):
                 germline_resource_vcf=None,
                 call_region_bed=None,
                 variant_flagging_criteria=None,
-                variant_removal_flags=[]
+                variant_removal_flags=[],
+                only_pass=True
             )

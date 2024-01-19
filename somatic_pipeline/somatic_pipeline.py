@@ -47,6 +47,7 @@ class SomaticPipeline(Processor):
     # variant filtering
     variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
+    only_pass: bool
 
     # variant picking
     min_snv_callers: int
@@ -93,6 +94,7 @@ class SomaticPipeline(Processor):
 
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
+            only_pass: bool,
 
             min_snv_callers: int,
             min_indel_callers: int,
@@ -134,6 +136,7 @@ class SomaticPipeline(Processor):
 
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
+        self.only_pass = only_pass
 
         self.min_snv_callers = min_snv_callers
         self.min_indel_callers = min_indel_callers
@@ -204,6 +207,7 @@ class SomaticPipeline(Processor):
                 germline_resource_vcf=self.germline_resource_vcf,
                 variant_flagging_criteria=self.variant_flagging_criteria,
                 variant_removal_flags=self.variant_removal_flags,
+                only_pass=self.only_pass,
                 min_snv_callers=self.min_snv_callers,
                 min_indel_callers=self.min_indel_callers,
                 annotator=self.annotator,
@@ -323,6 +327,7 @@ class VariantCallingWorkflow(Processor):
 
     variant_flagging_criteria: Optional[str]
     variant_removal_flags: List[str]
+    only_pass: bool
 
     min_snv_callers: int
     min_indel_callers: int
@@ -354,6 +359,7 @@ class VariantCallingWorkflow(Processor):
 
             variant_flagging_criteria: Optional[str],
             variant_removal_flags: List[str],
+            only_pass: bool,
 
             min_snv_callers: int,
             min_indel_callers: int,
@@ -380,6 +386,7 @@ class VariantCallingWorkflow(Processor):
 
         self.variant_flagging_criteria = variant_flagging_criteria
         self.variant_removal_flags = variant_removal_flags
+        self.only_pass = only_pass
 
         self.min_snv_callers = min_snv_callers
         self.min_indel_callers = min_indel_callers
@@ -412,7 +419,8 @@ class VariantCallingWorkflow(Processor):
             panel_of_normal_vcf=self.panel_of_normal_vcf,
             germline_resource_vcf=self.germline_resource_vcf,
             variant_flagging_criteria=self.variant_flagging_criteria,
-            variant_removal_flags=self.variant_removal_flags)
+            variant_removal_flags=self.variant_removal_flags,
+            only_pass=self.only_pass)
 
     def variant_picking(self):
         self.vcf = VariantPicking(self.settings).main(

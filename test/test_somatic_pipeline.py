@@ -34,6 +34,7 @@ class TestSomaticPipeline(TestCase):
 
             variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=[],
+            only_pass=True,
 
             min_snv_callers=1,
             min_indel_callers=1,
@@ -78,6 +79,7 @@ class TestSomaticPipeline(TestCase):
 
             variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=['panel_of_normals', 'map_qual'],
+            only_pass=True,
 
             min_snv_callers=1,
             min_indel_callers=1,

@@ -37,6 +37,7 @@ class Run:
 
             variant_flagging_criteria: str,
             variant_removal_flags: str,
+            only_pass: bool,
 
             min_snv_callers: int,
             min_indel_callers: int,
@@ -81,6 +82,7 @@ class Run:
 
             variant_flagging_criteria=None if variant_flagging_criteria.lower() == 'none' else variant_flagging_criteria,
             variant_removal_flags=[] if variant_removal_flags.lower() == 'none' else variant_removal_flags.split(','),
+            only_pass=only_pass,
 
             min_snv_callers=min_snv_callers,
             min_indel_callers=min_indel_callers,

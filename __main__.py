@@ -260,6 +260,13 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'help': 'comma-separated flags for variant removal, e.g. "panel_of_normals,map_qual" (default: %(default)s)',
                 }
             },
+            {
+                'keys': ['--only-pass'],
+                'properties': {
+                    'action': 'store_true',
+                    'help': 'only keep the variants with PASS in FILTER column',
+                }
+            },
         ],
 
     'variant picking':
@@ -527,6 +534,7 @@ class EntryPoint:
 
                 variant_flagging_criteria=args.variant_flagging_criteria,
                 variant_removal_flags=args.variant_removal_flags,
+                only_pass=args.only_pass,
 
                 min_snv_callers=args.min_snv_callers,
                 min_indel_callers=args.min_indel_callers,
