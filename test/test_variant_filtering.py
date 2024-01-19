@@ -100,7 +100,17 @@ class TestRemoveVariants(TestCase):
     def test_main(self):
         actual = RemoveVariants(self.settings).main(
             vcf=f'{self.indir}/tiny-flagged.vcf',
-            flags=['LOW_DP']
+            flags=['LOW_DP'],
+            only_pass=False,
         )
         expected = f'{self.indir}/tiny-flagged-variant-removal.vcf'
+        self.assertFileEqual(expected, actual)
+
+    def test_only_pass(self):
+        actual = RemoveVariants(self.settings).main(
+            vcf=f'{self.indir}/tiny-flagged.vcf',
+            flags=[],
+            only_pass=True,
+        )
+        expected = f'{self.indir}/tiny-flagged-only-pass.vcf'
         self.assertFileEqual(expected, actual)

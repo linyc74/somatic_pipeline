@@ -196,15 +196,21 @@ class RemoveVariants(Processor):
 
     vcf: str
     flags: List[str]
+    only_pass: bool
 
     output_vcf: str
     reader: IO
     writer: IO
 
-    def main(self, vcf: str, flags: List[str]) -> str:
+    def main(
+            self,
+            vcf: str,
+            flags: List[str],
+            only_pass: bool) -> str:
 
         self.vcf = vcf
         self.flags = flags
+        self.only_pass = only_pass
 
         self.set_output_vcf()
         self.open_files()
@@ -241,8 +247,14 @@ class RemoveVariants(Processor):
 
     def __passed(self, line: str) -> bool:
         variant_flags = line.split('\t')[6].split(';')
-        red_flags = set(variant_flags).intersection(set(self.flags))
-        return len(red_flags) == 0
+
+        if self.only_pass:
+            passed = line.split('\t')[6] == 'PASS'
+        else:  # look for the presence of red flags
+            red_flags = set(variant_flags).intersection(set(self.flags))
+            passed = len(red_flags) == 0
+
+        return passed
 
     def __log_result(self, total: int, passed: int):
         percentage = passed / total * 100 if total > 0 else 0.

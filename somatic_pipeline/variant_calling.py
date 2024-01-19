@@ -8,7 +8,7 @@ from .variant_filtering import FlagVariants, RemoveVariants
 from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam
 
 
-class CallerParams:
+class Params:
 
     def __init__(
             self,
@@ -40,7 +40,7 @@ class VariantCalling(Processor):
     TUMOR_ONLY_MODE = 'tumor-only'
 
     variant_callers: List[str]
-    params: CallerParams
+    params: Params
 
     dstdir: str
     mode: str
@@ -61,7 +61,7 @@ class VariantCalling(Processor):
             only_pass: bool) -> List[str]:
 
         self.variant_callers = variant_callers
-        self.params = CallerParams(
+        self.params = Params(
             ref_fa=ref_fa,
             tumor_bam=tumor_bam,
             normal_bam=normal_bam,
@@ -132,11 +132,11 @@ class VariantCalling(Processor):
 
 class CallerBase(Processor, ABC):
 
-    params: CallerParams
+    params: Params
 
     vcf: str
 
-    def main(self, params: CallerParams) -> str:
+    def main(self, params: Params) -> str:
         self.params = params
         self.main__()
         return self.vcf
@@ -153,7 +153,8 @@ class CallerBase(Processor, ABC):
         if len(self.params.variant_removal_flags) > 0:
             self.vcf = RemoveVariants(self.settings).main(
                 vcf=self.vcf,
-                flags=self.params.variant_removal_flags)
+                flags=self.params.variant_removal_flags,
+                only_pass=self.params.only_pass)
 
 
 #
