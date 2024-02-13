@@ -233,7 +233,7 @@ class Alignment(Processor):
     discard_bam: bool
 
     tumor_bam: str
-    normal_bam: str
+    normal_bam: Optional[str]
 
     def main(
             self,
@@ -243,7 +243,7 @@ class Alignment(Processor):
             tumor_fq2: str,
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
-            discard_bam: bool) -> Tuple[str, str]:
+            discard_bam: bool) -> Tuple[str, Optional[str]]:
 
         self.read_aligner = read_aligner
         self.ref_fa = ref_fa
