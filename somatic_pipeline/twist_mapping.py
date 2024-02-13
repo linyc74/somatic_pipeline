@@ -23,7 +23,6 @@ class TwistMapping(Processor):
         self.sample_name = sample_name
 
         self.output_bam = f'{self.workdir}/{self.sample_name}_twist_consensus_mapping.bam'
-
         self.call_extremely_long_commands()
 
         return self.output_bam
