@@ -150,11 +150,10 @@ class CallerBase(Processor, ABC):
                 vcf=self.vcf,
                 variant_flagging_criteria=self.params.variant_flagging_criteria)
 
-        if len(self.params.variant_removal_flags) > 0:
-            self.vcf = RemoveVariants(self.settings).main(
-                vcf=self.vcf,
-                flags=self.params.variant_removal_flags,
-                only_pass=self.params.only_pass)
+        self.vcf = RemoveVariants(self.settings).main(
+            vcf=self.vcf,
+            flags=self.params.variant_removal_flags,
+            only_pass=self.params.only_pass)
 
 
 #

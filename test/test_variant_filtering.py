@@ -97,7 +97,7 @@ class TestRemoveVariants(TestCase):
     def tearDown(self):
         self.tear_down()
 
-    def test_main(self):
+    def test_remove_by_flags(self):
         actual = RemoveVariants(self.settings).main(
             vcf=f'{self.indir}/tiny-flagged.vcf',
             flags=['LOW_DP'],
@@ -113,4 +113,13 @@ class TestRemoveVariants(TestCase):
             only_pass=True,
         )
         expected = f'{self.indir}/tiny-flagged-only-pass.vcf'
+        self.assertFileEqual(expected, actual)
+
+    def test_no_removal(self):
+        actual = RemoveVariants(self.settings).main(
+            vcf=f'{self.indir}/tiny.vcf',
+            flags=[],
+            only_pass=False,
+        )
+        expected = f'{self.indir}/tiny.vcf'
         self.assertFileEqual(expected, actual)
