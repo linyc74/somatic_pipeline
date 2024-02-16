@@ -8,6 +8,8 @@ class TwistUMIConsensusMapping(Processor):
 
     Commands in the PDF were buggy and had to be fixed.
     The fixed commands are in the `call_extremely_long_commands` method.
+
+    This pipeline is not yet integrated into the main pipeline, due to its complexity.
     """
 
     ref_fa: str
