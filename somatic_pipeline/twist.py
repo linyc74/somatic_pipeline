@@ -1,7 +1,14 @@
 from .template import Processor
 
 
-class TwistMapping(Processor):
+class TwistUMIConsensusMapping(Processor):
+    """
+    This class is an adaptation of the Twist UMI Consensus Mapping pipeline:
+    https://www.twistbioscience.com/resources/guideguideline/processing-sequencing-data-utilizing-twist-unique-molecular-identifier-umi
+
+    Commands in the PDF were buggy and had to be fixed.
+    The fixed commands are in the `call_extremely_long_commands` method.
+    """
 
     ref_fa: str
     fq1: str
@@ -22,7 +29,7 @@ class TwistMapping(Processor):
         self.fq2 = fq2
         self.sample_name = sample_name
 
-        self.output_bam = f'{self.workdir}/{self.sample_name}_twist_consensus_mapping.bam'
+        self.output_bam = f'{self.workdir}/{self.sample_name}_twist_umi_consensus_mapping.bam'
         self.call_extremely_long_commands()
 
         return self.output_bam
