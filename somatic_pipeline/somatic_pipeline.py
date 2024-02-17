@@ -1,6 +1,5 @@
 from typing import Optional, Tuple, List
 from .bqsr import BQSR
-from .cnv import ComputeCNV
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
 from .vcf2csv import Vcf2Csv
@@ -65,11 +64,6 @@ class SomaticPipeline(Processor):
     dbsnp_vcf_gz: Optional[str]
     snpsift_dbnsfp_txt_gz: Optional[str]
 
-    # cnv
-    skip_cnv: bool
-    cnvkit_annotate_txt: Optional[str]
-    exome_target_bed: Optional[str]
-
     def main(
             self,
             ref_fa: str,
@@ -108,11 +102,7 @@ class SomaticPipeline(Processor):
             cadd_resource: Optional[str],
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str],
-
-            skip_cnv: bool,
-            exome_target_bed: Optional[str],
-            cnvkit_annotate_txt: Optional[str]):
+            snpsift_dbnsfp_txt_gz: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -152,15 +142,10 @@ class SomaticPipeline(Processor):
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
         self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
 
-        self.skip_cnv = skip_cnv
-        self.exome_target_bed = exome_target_bed
-        self.cnvkit_annotate_txt = cnvkit_annotate_txt
-
         self.copy_ref_fa()
         self.trimming()
         self.alignment_preprocessing_workflow()
         self.variant_calling_workflow()
-        self.compute_cnv()
         self.clean_up()
 
     def copy_ref_fa(self):
@@ -220,17 +205,6 @@ class SomaticPipeline(Processor):
                 vep_buffer_size=self.vep_buffer_size,
                 cadd_resource=self.cadd_resource,
                 dbnsfp_resource=self.dbnsfp_resource)
-
-    def compute_cnv(self):
-        if self.skip_cnv:
-            self.logger.info(f'Skip all CNV tasks')
-        else:
-            ComputeCNV(self.settings).main(
-                ref_fa=self.ref_fa,
-                tumor_bam=self.tumor_bam,
-                normal_bam=self.normal_bam,
-                exome_target_bed=self.exome_target_bed,
-                annotate_txt=self.cnvkit_annotate_txt)
 
     def clean_up(self):
         CleanUp(self.settings).main()

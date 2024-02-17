@@ -51,11 +51,7 @@ class Run:
             cadd_resource: str,
             clinvar_vcf_gz: str,
             dbsnp_vcf_gz: str,
-            snpsift_dbnsfp_txt_gz: str,
-
-            skip_cnv: bool,
-            exome_target_bed: str,
-            cnvkit_annotate_txt: str):
+            snpsift_dbnsfp_txt_gz: str):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -96,11 +92,7 @@ class Run:
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
-            snpsift_dbnsfp_txt_gz=None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz,
-
-            skip_cnv=skip_cnv,
-            exome_target_bed=None if exome_target_bed.lower() == 'none' else exome_target_bed,
-            cnvkit_annotate_txt=None if cnvkit_annotate_txt.lower() == 'none' else cnvkit_annotate_txt
+            snpsift_dbnsfp_txt_gz=None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz
         )
 
     def annotate(

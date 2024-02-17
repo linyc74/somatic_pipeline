@@ -48,11 +48,7 @@ class TestSomaticPipeline(TestCase):
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
-            snpsift_dbnsfp_txt_gz=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
-
-            skip_cnv=False,
-            exome_target_bed=f'{self.indir}/chr9-exome-probes.bed',
-            cnvkit_annotate_txt=f'{self.indir}/chr9-refFlat.txt'
+            snpsift_dbnsfp_txt_gz=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz'
         )
 
     def test_tumor_only(self):
@@ -93,9 +89,5 @@ class TestSomaticPipeline(TestCase):
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
-            snpsift_dbnsfp_txt_gz=None,
-
-            skip_cnv=False,
-            exome_target_bed=None,
-            cnvkit_annotate_txt=None
+            snpsift_dbnsfp_txt_gz=None
         )

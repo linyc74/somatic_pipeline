@@ -384,35 +384,6 @@ GROUP_NAME_TO_ARGUMENTS = {
                 }
             },
         ],
-
-    'copy number variation':
-        [
-            {
-                'keys': ['--skip-cnv'],
-                'properties': {
-                    'action': 'store_true',
-                    'help': 'do not compute copy number variation',
-                }
-            },
-            {
-                'keys': ['--exome-target-bed'],
-                'properties': {
-                    'type': str,
-                    'required': False,
-                    'default': 'None',
-                    'help': 'BED file of exome target probes to compute CNV (default: %(default)s)',
-                }
-            },
-            {
-                'keys': ['--cnvkit-annotate-txt'],
-                'properties': {
-                    'type': str,
-                    'required': False,
-                    'default': 'None',
-                    'help': 'CNVkit annotation file, usually UCSC refFlat.txt (default: %(default)s)',
-                }
-            },
-        ],
 }
 
 
@@ -548,11 +519,7 @@ class EntryPoint:
                 cadd_resource=args.cadd_resource,
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
                 dbsnp_vcf_gz=args.dbsnp_vcf_gz,
-                snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz,
-
-                skip_cnv=args.skip_cnv,
-                exome_target_bed=args.exome_target_bed,
-                cnvkit_annotate_txt=args.cnvkit_annotate_txt
+                snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz
             )
 
         elif args.mode == 'annotate':
