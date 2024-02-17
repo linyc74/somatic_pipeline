@@ -38,15 +38,15 @@ class TestVariantCalling(TestCase):
             call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_flagging_criteria='low_depth:DP<20',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
-            only_pass=True,
+            only_pass=False,
         )
         expected = [
-            f'{self.outdir}/callers/lofreq.vcf.gz',
-            f'{self.outdir}/callers/somatic-sniper.vcf.gz',
-            f'{self.outdir}/callers/vardict.vcf.gz',
-            f'{self.outdir}/callers/varscan.vcf.gz',
-            f'{self.outdir}/callers/muse.vcf.gz',
-            f'{self.outdir}/callers/mutect2.vcf.gz',
+            f'{self.outdir}/callers/lofreq-filtered.vcf.gz',
+            f'{self.outdir}/callers/somatic-sniper-filtered.vcf.gz',
+            f'{self.outdir}/callers/vardict-filtered.vcf.gz',
+            f'{self.outdir}/callers/varscan-filtered.vcf.gz',
+            f'{self.outdir}/callers/muse-filtered.vcf.gz',
+            f'{self.outdir}/callers/mutect2-filtered.vcf.gz',
         ]
         for a, e in zip(actual, expected):
             self.assertFileExists(e, a)
@@ -68,13 +68,13 @@ class TestVariantCalling(TestCase):
             call_region_bed=f'{self.indir}/chr9-exome-probes.bed',
             variant_flagging_criteria='low_depth:DP<10',
             variant_removal_flags=['panel_of_normals,map_qual,base_qual'],
-            only_pass=True,
+            only_pass=False,
         )
         expected = [
-            f'{self.outdir}/callers/lofreq.vcf',
-            f'{self.outdir}/callers/vardict.vcf',
-            f'{self.outdir}/callers/haplotype-caller.vcf',
-            f'{self.outdir}/callers/mutect2.vcf',
+            f'{self.outdir}/callers/lofreq-filtered.vcf.gz',
+            f'{self.outdir}/callers/vardict-filtered.vcf.gz',
+            f'{self.outdir}/callers/haplotype-caller-filtered.vcf.gz',
+            f'{self.outdir}/callers/mutect2-filtered.vcf.gz',
         ]
         for a, e in zip(actual, expected):
             self.assertFileExists(e, a)
@@ -91,5 +91,5 @@ class TestVariantCalling(TestCase):
                 call_region_bed=None,
                 variant_flagging_criteria=None,
                 variant_removal_flags=[],
-                only_pass=True
+                only_pass=False
             )

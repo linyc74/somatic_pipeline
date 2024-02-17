@@ -80,13 +80,10 @@ class VariantCalling(Processor):
         for caller in self.variant_callers:
 
             method = self.get_caller_method(caller)
-            vcf = method(self.params)
+            flagged_vcf, filtered_vcf = method(self.params)
 
-            self.call(f'mv {vcf} {self.dstdir}/{caller}.vcf')
-            vcf = f'{self.dstdir}/{caller}.vcf'
-
-            Vcf2Csv(self.settings).main(vcf=vcf)
-            vcf_gz = BgzipIndex(self.settings).main(vcf=vcf, keep=False)
+            self.move_and_process(vcf=flagged_vcf, dstname=caller)
+            vcf_gz = self.move_and_process(vcf=filtered_vcf, dstname=f'{caller}-filtered')
 
             self.vcfs.append(vcf_gz)
 
@@ -102,7 +99,7 @@ class VariantCalling(Processor):
         self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
         os.makedirs(self.dstdir, exist_ok=True)
 
-    def get_caller_method(self, caller: str) -> Callable[[Params], str]:
+    def get_caller_method(self, caller: str) -> Callable[[Params], Tuple[str, str]]:
         if self.params.normal_bam is not None:
             mode = 'tumor-normal paired'
             ret = {
@@ -122,9 +119,16 @@ class VariantCalling(Processor):
                 'lofreq': LoFreqTumorOnly(self.settings).main,
             }.get(caller, None)
 
-        assert ret is not None, f'Variant caller "{caller}" not available for {mode} mode'
+        assert ret is not None, f'For {mode} mode, variant caller "{caller}" does not work'
 
         return ret
+
+    def move_and_process(self, vcf: str, dstname: str) -> str:
+        dst_vcf = f'{self.dstdir}/{dstname}.vcf'
+        self.call(f'mv {vcf} {dst_vcf}')
+        Vcf2Csv(self.settings).main(vcf=dst_vcf)
+        vcf_gz = BgzipIndex(self.settings).main(vcf=dst_vcf, keep=False)
+        return vcf_gz
 
 
 #
@@ -135,11 +139,13 @@ class CallerBase(Processor, ABC):
     params: Params
 
     vcf: str  # dynamically track the VCF file path
+    flagged_vcf: str  # static, the VCF file before variant removal
+    filtered_vcf: str  # static, the VCF file after variant removal
 
-    def main(self, params: Params) -> str:
+    def main(self, params: Params) -> Tuple[str, str]:
         self.params = params
         self.main__()
-        return self.vcf
+        return self.flagged_vcf, self.filtered_vcf
 
     def main__(self):
         pass
@@ -150,10 +156,14 @@ class CallerBase(Processor, ABC):
                 vcf=self.vcf,
                 variant_flagging_criteria=self.params.variant_flagging_criteria)
 
+        self.flagged_vcf = self.vcf
+
         self.vcf = RemoveVariants(self.settings).main(
             vcf=self.vcf,
             flags=self.params.variant_removal_flags,
             only_pass=self.params.only_pass)
+
+        self.filtered_vcf = self.vcf
 
 
 #
