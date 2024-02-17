@@ -1,4 +1,4 @@
-from os.path import basename
+from os.path import basename, exists
 from .template import Processor
 
 
@@ -10,20 +10,25 @@ class CopyRefFa(Processor):
     def main(self, ref_fa: str) -> str:
         self.ref_fa = ref_fa
 
-        self.set_copied_fa()
         self.unzip_or_copy()
+        self.copy_bwa_index_files()
 
         return self.copied_ref_fa
 
-    def set_copied_fa(self):
-        fname = basename(self.ref_fa)
-        if self.ref_fa.endswith('.gz'):
-            fname = fname[:-3]
-        self.copied_ref_fa = f'{self.workdir}/{fname}'
-
     def unzip_or_copy(self):
+        fname = basename(self.ref_fa).rstrip('.gz')
+        dst = f'{self.workdir}/{fname}'
+
         if self.ref_fa.endswith('.gz'):
-            cmd = f'gzip --decompress --stdout {self.ref_fa} > {self.copied_ref_fa}'
+            self.call(f'gzip --decompress --stdout {self.ref_fa} > {dst}')
         else:
-            cmd = f'cp {self.ref_fa} {self.copied_ref_fa}'
-        self.call(cmd)
+            self.call(f'cp {self.ref_fa} {dst}')
+
+        self.copied_ref_fa = dst
+
+    def copy_bwa_index_files(self):
+        fname = self.ref_fa.rstrip('.gz')
+        for ext in ['.amb', '.ann', '.bwt', '.pac', '.sa']:
+            if exists(f'{fname}{ext}'):
+                cmd = f'cp {fname}{ext} {self.workdir}/bwa-index{ext}'
+                self.call(cmd)

@@ -1,11 +1,11 @@
 from typing import Optional, Tuple, List
 from .bqsr import BQSR
+from .mapping import Mapping
+from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
-from .vcf2csv import Vcf2Csv
 from .template import Processor
 from .trimming import TrimGalore
-from .alignment import Alignment
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
 from .map_stats import MappingStats
@@ -144,7 +144,7 @@ class SomaticPipeline(Processor):
 
         self.copy_ref_fa()
         self.trimming()
-        self.alignment_preprocessing_workflow()
+        self.preprocessing_workflow()
         self.variant_calling_workflow()
         self.clean_up()
 
@@ -166,8 +166,8 @@ class SomaticPipeline(Processor):
                 clip_r1_5_prime=self.clip_r1_5_prime,
                 clip_r2_5_prime=self.clip_r2_5_prime)
 
-    def alignment_preprocessing_workflow(self):
-        self.tumor_bam, self.normal_bam = AlignmentPreprocessingWorkflow(self.settings).main(
+    def preprocessing_workflow(self):
+        self.tumor_bam, self.normal_bam = PreprocessingWorkflow(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
             tumor_fq2=self.tumor_fq2,
@@ -210,7 +210,7 @@ class SomaticPipeline(Processor):
         CleanUp(self.settings).main()
 
 
-class AlignmentPreprocessingWorkflow(Processor):
+class PreprocessingWorkflow(Processor):
 
     ref_fa: str
     tumor_fq1: str
@@ -247,15 +247,15 @@ class AlignmentPreprocessingWorkflow(Processor):
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
 
-        self.alignment()
+        self.mapping()
         self.mark_duplicates()
         self.bqsr()
         self.mapping_stats()
 
         return self.tumor_bam, self.normal_bam
 
-    def alignment(self):
-        self.tumor_bam, self.normal_bam = Alignment(self.settings).main(
+    def mapping(self):
+        self.tumor_bam, self.normal_bam = Mapping(self.settings).main(
             read_aligner=self.read_aligner,
             ref_fa=self.ref_fa,
             tumor_fq1=self.tumor_fq1,
