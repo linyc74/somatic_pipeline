@@ -440,7 +440,6 @@ class EntryPoint:
                 'variant filtering',
                 'variant picking',
                 'variant annotation',
-                'copy number variation',
             ]
         )
 
