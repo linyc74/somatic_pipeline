@@ -1,11 +1,11 @@
 from .setup import TestCase
 import numpy as np
 import pandas as pd
-from somatic_pipeline.parse_vcf import ParseVcf, GetInfoIDToDescription, \
+from somatic_pipeline.vcf2csv import Vcf2Csv, GetInfoIDToDescription, \
     VcfLineToRow, UnrollSnpEffAnnotation, UnrollVEPAnnotation, GetAllColumns
 
 
-class TestParseVcf(TestCase):
+class TestVcf2Csv(TestCase):
 
     def setUp(self):
         self.set_up(py_path=__file__)
@@ -14,24 +14,20 @@ class TestParseVcf(TestCase):
         self.tear_down()
 
     def test_snpeff(self):
-        ParseVcf(self.settings).main(
+        actual = Vcf2Csv(self.settings).main(
             vcf=f'{self.indir}/snpeff.vcf',
             dstdir=self.workdir
         )
-        self.assertDataFrameEqual(
-            first=pd.read_csv(f'{self.indir}/snpeff.csv'),
-            second=pd.read_csv(f'{self.workdir}/snpeff.csv'),
-        )
+        expected = f'{self.indir}/snpeff.csv'
+        self.assertFileEqual(expected, actual)
 
     def test_vep(self):
-        ParseVcf(self.settings).main(
+        actual = Vcf2Csv(self.settings).main(
             vcf=f'{self.indir}/vep.vcf',
             dstdir=self.workdir
         )
-        self.assertDataFrameEqual(
-            first=pd.read_csv(f'{self.indir}/vep.csv'),
-            second=pd.read_csv(f'{self.indir}/vep.csv'),
-        )
+        expected = f'{self.indir}/vep.csv'
+        self.assertFileEqual(expected, actual)
 
 
 class TestGetInfoIDToDescription(TestCase):

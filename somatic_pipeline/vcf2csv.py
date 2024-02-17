@@ -5,7 +5,7 @@ from .tools import edit_fpath
 from .template import Processor, Settings
 
 
-class ParseVcf(Processor):
+class Vcf2Csv(Processor):
 
     LOG_INTERVAL = 10000  # variants
 
@@ -22,16 +22,18 @@ class ParseVcf(Processor):
         self.vcf_line_to_row = VcfLineToRow(self.settings).main
         self.save_data_to_csv = SaveDataToCsv(self.settings).main
 
-    def main(self, vcf: str, dstdir: Optional[str]):
+    def main(self, vcf: str, dstdir: Optional[str] = None) -> str:
         self.vcf = vcf
         self.dstdir = dstdir
 
-        self.logger.info(msg='Start parsing annotated VCF')
+        self.logger.info(msg=f'Start parsing VCF: {self.vcf}')
         self.set_vcf_header()
         self.set_info_id_to_description()
         self.set_all_columns()
         self.set_output_csv()
         self.process_vcf_data()
+
+        return self.output_csv
 
     def set_vcf_header(self):
         self.vcf_header = ''

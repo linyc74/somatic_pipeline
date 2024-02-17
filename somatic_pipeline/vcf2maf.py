@@ -21,7 +21,7 @@ class Vcf2Maf(Processor):
             self,
             vcf: str,
             ref_fa: str,
-            dstdir: Optional[str]) -> str:
+            dstdir: Optional[str] = None) -> str:
 
         self.vcf = vcf
         self.ref_fa = ref_fa

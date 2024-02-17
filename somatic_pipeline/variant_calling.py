@@ -3,9 +3,10 @@ from abc import ABC
 from typing import Optional, List, Dict, Callable, Tuple
 from .tools import edit_fpath
 from .template import Processor
+from .vcf2csv import Vcf2Csv
 from .constant import TUMOR, NORMAL
 from .variant_filtering import FlagVariants, RemoveVariants
-from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam
+from .index_files import SamtoolsIndexFa, GATKIndexVcf, GATKCreateSequenceDictionary, SamtoolsIndexBam, BgzipIndex
 
 
 class Params:
@@ -74,22 +75,20 @@ class VariantCalling(Processor):
 
         self.index_ref_fa_and_bams()
         self.make_dstdir()
-        self.set_mode()
-        self.set_mode_caller_to_method()
 
         self.vcfs = []
         for caller in self.variant_callers:
 
-            method = self.get_method(caller)
+            method = self.get_caller_method(caller)
+            vcf = method(self.params)
 
-            if method is not None:
-                vcf = method(self.params)
-                dst = f'{self.dstdir}/{caller}.vcf'
-                self.call(f'mv {vcf} {dst}')
-                self.vcfs.append(dst)
+            self.call(f'mv {vcf} {self.dstdir}/{caller}.vcf')
+            vcf = f'{self.dstdir}/{caller}.vcf'
 
-            else:
-                raise AssertionError(f'Variant caller "{caller}" not available for {self.mode} mode')
+            Vcf2Csv(self.settings).main(vcf=vcf)
+            vcf_gz = BgzipIndex(self.settings).main(vcf=vcf, keep=False)
+
+            self.vcfs.append(vcf_gz)
 
         return self.vcfs
 
@@ -103,29 +102,30 @@ class VariantCalling(Processor):
         self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
         os.makedirs(self.dstdir, exist_ok=True)
 
-    def set_mode(self):
-        self.mode = self.TUMOR_ONLY_MODE if (self.params.normal_bam is None) else self.TN_PAIRED_MODE
-
-    def set_mode_caller_to_method(self):
-        self.mode_caller_to_method = {
-            self.TN_PAIRED_MODE: {
+    def get_caller_method(self, caller: str) -> Callable[[Params], str]:
+        if self.params.normal_bam is not None:
+            mode = 'tumor-normal paired'
+            ret = {
                 'mutect2': Mutect2TNPaired(self.settings).main,
                 'muse': Muse(self.settings).main,
                 'varscan': Varscan(self.settings).main,
                 'vardict': VarDictTNPaired(self.settings).main,
                 'lofreq': LoFreqTNPaired(self.settings).main,
                 'somatic-sniper': SomaticSniper(self.settings).main,
-            },
-            self.TUMOR_ONLY_MODE: {
+            }.get(caller, None)
+        else:
+            mode = 'tumor-only'
+            ret = {
                 'mutect2': Mutect2TumorOnly(self.settings).main,
                 'haplotype-caller': HaplotypeCaller(self.settings).main,
                 'vardict': VarDictTumorOnly(self.settings).main,
                 'lofreq': LoFreqTumorOnly(self.settings).main,
-            }
-        }
+            }.get(caller, None)
 
-    def get_method(self, caller: str) -> Optional[Callable]:
-        return self.mode_caller_to_method[self.mode].get(caller, None)
+        assert ret is not None, f'Variant caller "{caller}" not available for {mode} mode'
+
+        return ret
+
 
 #
 
@@ -134,7 +134,7 @@ class CallerBase(Processor, ABC):
 
     params: Params
 
-    vcf: str
+    vcf: str  # dynamically track the VCF file path
 
     def main(self, params: Params) -> str:
         self.params = params
@@ -284,14 +284,11 @@ class FilterMutectCalls(Processor):
 class Mutect2TNPaired(Mutect2Base):
 
     def main__(self):
-
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
         self.filter_mutect_calls()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
@@ -320,14 +317,11 @@ class Mutect2TNPaired(Mutect2Base):
 class Mutect2TumorOnly(Mutect2Base):
 
     def main__(self):
-
         self.create_sequence_dictionary()
         self.prepare_mutect2_resource_vcfs()
         self.mutect2()
         self.filter_mutect_calls()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def mutect2(self):
         log = f'{self.outdir}/gatk-Mutect2.log'
@@ -351,13 +345,10 @@ class Mutect2TumorOnly(Mutect2Base):
 class HaplotypeCaller(GATKBase):
 
     def main__(self):
-
         self.create_sequence_dictionary()
         self.haplotype_caller()
         self.filter_haplotype_variants()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def haplotype_caller(self):
         log = f'{self.outdir}/gatk-HaplotypeCaller.log'
@@ -510,13 +501,10 @@ class Muse(CallerBase):
     call_result_txt: str
 
     def main__(self):
-
         self.clean_up_call_region_bed()
         self.muse_call()
         self.muse_sump()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def clean_up_call_region_bed(self):
         if self.params.call_region_bed is not None:
@@ -584,15 +572,12 @@ class Varscan(CallerBase):
     indel_vcf: str
 
     def main__(self):
-
         self.samtools_mpileup()
         self.varscan_somatic()
         self.compress_vcfs()
         self.index_vcfs()
         self.concat_snp_indel_vcfs()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def samtools_mpileup(self):
         self.tumor_pileup = f'{self.workdir}/{TUMOR}-pileup'
@@ -696,13 +681,10 @@ class VarDictBase(CallerBase):
 class VarDictTumorOnly(VarDictBase):
 
     def main__(self):
-
         if self.params.call_region_bed is None:
             self.build_call_region_bed_for_wgs_mode()
         self.run_vardict()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def run_vardict(self):
         log = f'{self.outdir}/vardict.log'
@@ -737,13 +719,10 @@ class VarDictTumorOnly(VarDictBase):
 class VarDictTNPaired(VarDictBase):
 
     def main__(self):
-
         if self.params.call_region_bed is None:
             self.build_call_region_bed_for_wgs_mode()
         self.run_vardict()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def run_vardict(self):
         log = f'{self.outdir}/vardict.log'
@@ -780,11 +759,8 @@ class VarDictTNPaired(VarDictBase):
 class LoFreqTumorOnly(CallerBase):
 
     def main__(self):
-
         self.lofreq_call_parallel()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def lofreq_call_parallel(self):
         self.vcf = f'{self.workdir}/lofreq.vcf'
@@ -807,7 +783,6 @@ class LoFreqTumorOnly(CallerBase):
 class LoFreqTNPaired(CallerBase):
 
     def main__(self):
-
         self.lofreq_somatic()
         self.concat_snp_indel_vcfs()
         self.flag_and_remove_variants()
@@ -854,11 +829,8 @@ class LoFreqTNPaired(CallerBase):
 class SomaticSniper(CallerBase):
 
     def main__(self):
-
         self.run_somatic_sniper()
         self.flag_and_remove_variants()
-
-        return self.vcf
 
     def run_somatic_sniper(self):
         self.vcf = f'{self.workdir}/somatic-sniper.vcf'

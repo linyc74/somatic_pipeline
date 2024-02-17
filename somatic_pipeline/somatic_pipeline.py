@@ -3,7 +3,7 @@ from .bqsr import BQSR
 from .cnv import ComputeCNV
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
-from .parse_vcf import ParseVcf
+from .vcf2csv import Vcf2Csv
 from .template import Processor
 from .trimming import TrimGalore
 from .alignment import Alignment
@@ -405,9 +405,9 @@ class VariantCallingWorkflow(Processor):
         self.variant_calling()
         self.variant_picking()
         self.annotation()
-        self.parse_vcf()
-        self.vcf_2_maf()
-        self.compress_index_vcf()
+        Vcf2Csv(self.settings).main(vcf=self.vcf)
+        Vcf2Maf(self.settings).main(vcf=self.vcf, ref_fa=self.ref_fa)
+        BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)
 
     def variant_calling(self):
         self.vcfs = VariantCalling(self.settings).main(
@@ -443,21 +443,3 @@ class VariantCallingWorkflow(Processor):
                 vep_buffer_size=self.vep_buffer_size,
                 cadd_resource=self.cadd_resource,
                 dbnsfp_resource=self.dbnsfp_resource)
-
-    def parse_vcf(self):
-        for vcf in self.vcfs + [self.vcf]:
-            ParseVcf(self.settings).main(
-                vcf=vcf,
-                dstdir=None  # same dir of input vcf
-            )
-
-    def vcf_2_maf(self):
-        Vcf2Maf(self.settings).main(
-            vcf=self.vcf,
-            ref_fa=self.ref_fa,
-            dstdir=None  # same dir of input vcf
-        )
-
-    def compress_index_vcf(self):
-        for vcf in self.vcfs + [self.vcf]:
-            BgzipIndex(self.settings).main(vcf=vcf, keep=False)

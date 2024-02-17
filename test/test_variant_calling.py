@@ -41,12 +41,12 @@ class TestVariantCalling(TestCase):
             only_pass=True,
         )
         expected = [
-            f'{self.outdir}/callers/lofreq.vcf',
-            f'{self.outdir}/callers/somatic-sniper.vcf',
-            f'{self.outdir}/callers/vardict.vcf',
-            f'{self.outdir}/callers/varscan.vcf',
-            f'{self.outdir}/callers/muse.vcf',
-            f'{self.outdir}/callers/mutect2.vcf',
+            f'{self.outdir}/callers/lofreq.vcf.gz',
+            f'{self.outdir}/callers/somatic-sniper.vcf.gz',
+            f'{self.outdir}/callers/vardict.vcf.gz',
+            f'{self.outdir}/callers/varscan.vcf.gz',
+            f'{self.outdir}/callers/muse.vcf.gz',
+            f'{self.outdir}/callers/mutect2.vcf.gz',
         ]
         for a, e in zip(actual, expected):
             self.assertFileExists(e, a)
