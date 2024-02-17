@@ -42,7 +42,6 @@ class Run:
             min_snv_callers: int,
             min_indel_callers: int,
 
-            annotator: str,
             skip_variant_annotation: bool,
             vep_db_tar_gz: str,
             vep_db_type: str,
@@ -50,8 +49,7 @@ class Run:
             dbnsfp_resource: str,
             cadd_resource: str,
             clinvar_vcf_gz: str,
-            dbsnp_vcf_gz: str,
-            snpsift_dbnsfp_txt_gz: str):
+            dbsnp_vcf_gz: str):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -83,7 +81,6 @@ class Run:
             min_snv_callers=min_snv_callers,
             min_indel_callers=min_indel_callers,
 
-            annotator=annotator,
             skip_variant_annotation=skip_variant_annotation,
             vep_db_tar_gz=None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz,
             vep_db_type=vep_db_type,
@@ -92,7 +89,6 @@ class Run:
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
-            snpsift_dbnsfp_txt_gz=None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz
         )
 
     def annotate(
@@ -104,15 +100,13 @@ class Run:
             threads: str,
             debug: bool,
 
-            annotator: str,
             vep_db_tar_gz: str,
             vep_db_type: str,
             vep_buffer_size: int,
             dbnsfp_resource: str,
             cadd_resource: str,
             clinvar_vcf_gz: str,
-            dbsnp_vcf_gz: str,
-            snpsift_dbnsfp_txt_gz: str):
+            dbsnp_vcf_gz: str):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -120,7 +114,6 @@ class Run:
             vcf=vcf,
             ref_fa=ref_fa,
 
-            annotator=annotator,
             vep_db_tar_gz=None if vep_db_tar_gz.lower() == 'none' else vep_db_tar_gz,
             vep_db_type=vep_db_type,
             vep_buffer_size=vep_buffer_size,
@@ -128,7 +121,6 @@ class Run:
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
-            snpsift_dbnsfp_txt_gz=None if snpsift_dbnsfp_txt_gz.lower() == 'none' else snpsift_dbnsfp_txt_gz,
         )
 
     def config_settings(self, outdir: str, threads: int, debug: bool):

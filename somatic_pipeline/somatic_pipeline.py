@@ -53,7 +53,6 @@ class SomaticPipeline(Processor):
     min_indel_callers: int
 
     # annotation
-    annotator: str
     skip_variant_annotation: bool
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
@@ -62,7 +61,6 @@ class SomaticPipeline(Processor):
     cadd_resource: Optional[str]
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
-    snpsift_dbnsfp_txt_gz: Optional[str]
 
     def main(
             self,
@@ -93,7 +91,6 @@ class SomaticPipeline(Processor):
             min_snv_callers: int,
             min_indel_callers: int,
 
-            annotator: str,
             skip_variant_annotation: bool,
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
@@ -101,8 +98,7 @@ class SomaticPipeline(Processor):
             dbnsfp_resource: Optional[str],
             cadd_resource: Optional[str],
             clinvar_vcf_gz: Optional[str],
-            dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str]):
+            dbsnp_vcf_gz: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -131,7 +127,6 @@ class SomaticPipeline(Processor):
         self.min_snv_callers = min_snv_callers
         self.min_indel_callers = min_indel_callers
 
-        self.annotator = annotator
         self.skip_variant_annotation = skip_variant_annotation
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
@@ -140,7 +135,6 @@ class SomaticPipeline(Processor):
         self.cadd_resource = cadd_resource
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
-        self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
 
         self.copy_ref_fa()
         self.trimming()
@@ -195,11 +189,9 @@ class SomaticPipeline(Processor):
                 only_pass=self.only_pass,
                 min_snv_callers=self.min_snv_callers,
                 min_indel_callers=self.min_indel_callers,
-                annotator=self.annotator,
                 skip_variant_annotation=self.skip_variant_annotation,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
-                snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
                 vep_db_tar_gz=self.vep_db_tar_gz,
                 vep_db_type=self.vep_db_type,
                 vep_buffer_size=self.vep_buffer_size,
@@ -306,11 +298,9 @@ class VariantCallingWorkflow(Processor):
     min_snv_callers: int
     min_indel_callers: int
 
-    annotator: str
     skip_variant_annotation: bool
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
-    snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
     vep_buffer_size: int
@@ -338,11 +328,9 @@ class VariantCallingWorkflow(Processor):
             min_snv_callers: int,
             min_indel_callers: int,
 
-            annotator: str,
             skip_variant_annotation: bool,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
             vep_buffer_size: int,
@@ -365,11 +353,10 @@ class VariantCallingWorkflow(Processor):
         self.min_snv_callers = min_snv_callers
         self.min_indel_callers = min_indel_callers
 
-        self.annotator = annotator
+
         self.skip_variant_annotation = skip_variant_annotation
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
-        self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
         self.vep_buffer_size = vep_buffer_size
@@ -407,12 +394,10 @@ class VariantCallingWorkflow(Processor):
     def annotation(self):
         if not self.skip_variant_annotation:
             self.vcf = Annotation(self.settings).main(
-                annotator=self.annotator,
                 vcf=self.vcf,
                 ref_fa=self.ref_fa,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,
                 dbsnp_vcf_gz=self.dbsnp_vcf_gz,
-                snpsift_dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz,
                 vep_db_tar_gz=self.vep_db_tar_gz,
                 vep_db_type=self.vep_db_type,
                 vep_buffer_size=self.vep_buffer_size,

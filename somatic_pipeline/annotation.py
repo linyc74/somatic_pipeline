@@ -10,12 +10,10 @@ class Annotation(Processor):
     VEP = 'vep'
     SNPEFF = 'snpeff'
 
-    annotator: str
     vcf: str
     ref_fa: str
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
-    snpsift_dbnsfp_txt_gz: Optional[str]
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
     vep_buffer_size: int
@@ -24,50 +22,30 @@ class Annotation(Processor):
 
     def main(
             self,
-            annotator: str,
             vcf: str,
             ref_fa: str,
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
-            snpsift_dbnsfp_txt_gz: Optional[str],
             vep_db_tar_gz: Optional[str],
             vep_db_type: str,
             vep_buffer_size: int,
             cadd_resource: Optional[str],
             dbnsfp_resource: Optional[str]) -> str:
 
-        self.annotator = annotator
         self.vcf = vcf
         self.ref_fa = ref_fa
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
-        self.snpsift_dbnsfp_txt_gz = snpsift_dbnsfp_txt_gz
         self.vep_db_tar_gz = vep_db_tar_gz
         self.vep_db_type = vep_db_type
         self.vep_buffer_size = vep_buffer_size
         self.cadd_resource = cadd_resource
         self.dbnsfp_resource = dbnsfp_resource
 
-        assert self.annotator in [self.SNPEFF, self.VEP]
-
-        if self.annotator == self.SNPEFF:
-            self.run_snpeff()
-            self.run_snpsift_dbnsfp()
-        else:
-            self.run_vep()
-
-        self.annotate_by_vcf_gz()  # independent of the choice of annotator
+        self.run_vep()
+        self.annotate_by_vcf_gz()
 
         return self.vcf
-
-    def run_snpeff(self):
-        self.vcf = SnpEff(self.settings).main(vcf=self.vcf)
-
-    def run_snpsift_dbnsfp(self):
-        if self.snpsift_dbnsfp_txt_gz is not None:
-            self.vcf = SnpSiftDbNSFP(self.settings).main(
-                vcf=self.vcf,
-                dbnsfp_txt_gz=self.snpsift_dbnsfp_txt_gz)
 
     def run_vep(self):
         assert self.vep_db_tar_gz is not None
@@ -84,135 +62,6 @@ class Annotation(Processor):
         for vcf_gz in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if vcf_gz is not None:
                 self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
-
-
-class SnpEff(Processor):
-
-    GENOME_ID = 'GRCh38.99'
-    SUMMARY_PREFIX = 'snpeff-summary'
-
-    vcf: str
-    output_vcf: str
-
-    def main(self, vcf: str) -> str:
-        self.vcf = vcf
-        self.set_output_vcf()
-        self.execute()
-        self.move_summary_files()
-        return self.output_vcf
-
-    def set_output_vcf(self):
-        self.output_vcf = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix='-snpeff.vcf',
-            dstdir=self.workdir)
-
-    def execute(self):
-        html = f'{self.outdir}/{self.SUMMARY_PREFIX}.html'
-        stderr = f'{self.outdir}/snpeff.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'snpeff',
-            '-verbose',
-            f'-htmlStats {html}',
-            self.GENOME_ID,
-            self.vcf,
-            f'> {self.output_vcf}',
-            f'2> {stderr}',
-        ])
-        self.call(cmd)
-
-    def move_summary_files(self):
-        dstdir = f'{self.outdir}/snpeff'
-        os.makedirs(dstdir, exist_ok=True)
-        self.call(f'mv {self.outdir}/{self.SUMMARY_PREFIX}* {dstdir}/')
-
-
-class SnpSiftAnnotate(Processor):
-
-    vcf: str
-    resource_vcf_gz: str
-
-    output_vcf: str
-
-    def main(self, vcf: str, resource_vcf_gz: str) -> str:
-
-        self.vcf = vcf
-        self.resource_vcf_gz = resource_vcf_gz
-
-        self.prepare_resource()
-        self.set_output_vcf()
-        self.execute()
-
-        return self.output_vcf
-
-    def prepare_resource(self):
-        self.resource_vcf_gz = CopyAndTabixVcfGz(self.settings).main(self.resource_vcf_gz)
-
-    def set_output_vcf(self):
-        suffix = basename(self.resource_vcf_gz).rstrip('.vcf.gz')
-        self.output_vcf = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix=f'-{suffix}.vcf',
-            dstdir=self.workdir)
-
-    def execute(self):
-        stderr = f'{self.outdir}/snpsift-annotate.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'snpsift annotate',
-            self.resource_vcf_gz,
-            self.vcf,
-            f'> {self.output_vcf}',
-            f'2>> {stderr}',
-        ])
-        self.call(cmd)
-
-
-class SnpSiftDbNSFP(Processor):
-
-    vcf: str
-    dbnsfp_txt_gz: str
-
-    output_vcf: str
-
-    def main(
-            self,
-            vcf: str,
-            dbnsfp_txt_gz: str) -> str:
-        self.vcf = vcf
-        self.dbnsfp_txt_gz = dbnsfp_txt_gz
-
-        self.prepare_dbnsfp_txt_gz()
-        self.set_output_vcf()
-        self.execute()
-
-        return self.output_vcf
-
-    def prepare_dbnsfp_txt_gz(self):
-        self.dbnsfp_txt_gz = CopyAndTabixTsvGz(self.settings).main(
-            file=self.dbnsfp_txt_gz,
-            seqname_column=1,
-            start_column=2,
-            end_column=2)
-
-    def set_output_vcf(self):
-        self.output_vcf = edit_fpath(
-            fpath=self.vcf,
-            old_suffix='.vcf',
-            new_suffix='-snpsift-dbnsfp.vcf',
-            dstdir=self.workdir)
-
-    def execute(self):
-        stderr = f'{self.outdir}/snpsift-dbnsfp.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'snpsift dbnsfp',
-            f'-db {self.dbnsfp_txt_gz}',
-            self.vcf,
-            f'> {self.output_vcf}',
-            f'2> {stderr}',
-        ])
-        self.call(cmd)
 
 
 class VEP(Processor):
@@ -328,6 +177,47 @@ class VEP(Processor):
         self.call(f'mv {src} {dst}')
 
 
+class SnpSiftAnnotate(Processor):
+
+    vcf: str
+    resource_vcf_gz: str
+
+    output_vcf: str
+
+    def main(self, vcf: str, resource_vcf_gz: str) -> str:
+
+        self.vcf = vcf
+        self.resource_vcf_gz = resource_vcf_gz
+
+        self.prepare_resource()
+        self.set_output_vcf()
+        self.execute()
+
+        return self.output_vcf
+
+    def prepare_resource(self):
+        self.resource_vcf_gz = CopyAndTabixVcfGz(self.settings).main(self.resource_vcf_gz)
+
+    def set_output_vcf(self):
+        suffix = basename(self.resource_vcf_gz).rstrip('.vcf.gz')
+        self.output_vcf = edit_fpath(
+            fpath=self.vcf,
+            old_suffix='.vcf',
+            new_suffix=f'-{suffix}.vcf',
+            dstdir=self.workdir)
+
+    def execute(self):
+        stderr = f'{self.outdir}/snpsift-annotate.log'
+        cmd = self.CMD_LINEBREAK.join([
+            'snpsift annotate',
+            self.resource_vcf_gz,
+            self.vcf,
+            f'> {self.output_vcf}',
+            f'2>> {stderr}',
+        ])
+        self.call(cmd)
+
+
 class CopyAndTabix(Processor):
 
     file: str
@@ -338,23 +228,6 @@ class CopyAndTabix(Processor):
             fpath=self.file,
             dstdir=self.workdir)
         self.call(f'cp {self.file} {self.output}')
-
-
-class CopyAndTabixVcfGz(CopyAndTabix):
-
-    def main(self, file: str) -> str:
-        self.file = file
-        self.copy()
-        self.tabix()
-        return self.output
-
-    def tabix(self):
-        cmd = self.CMD_LINEBREAK.join([
-            'tabix',
-            '--preset vcf',
-            self.output
-        ])
-        self.call(cmd)
 
 
 class CopyAndTabixTsvGz(CopyAndTabix):
@@ -387,6 +260,23 @@ class CopyAndTabixTsvGz(CopyAndTabix):
             f'--begin {self.start_column}',
             f'--end {self.end_column}',
             self.output,
+        ])
+        self.call(cmd)
+
+
+class CopyAndTabixVcfGz(CopyAndTabix):
+
+    def main(self, file: str) -> str:
+        self.file = file
+        self.copy()
+        self.tabix()
+        return self.output
+
+    def tabix(self):
+        cmd = self.CMD_LINEBREAK.join([
+            'tabix',
+            '--preset vcf',
+            self.output
         ])
         self.call(cmd)
 

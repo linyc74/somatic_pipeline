@@ -39,7 +39,6 @@ class TestSomaticPipeline(TestCase):
             min_snv_callers=1,
             min_indel_callers=1,
 
-            annotator='vep',
             skip_variant_annotation=False,
             vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
@@ -47,8 +46,7 @@ class TestSomaticPipeline(TestCase):
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
-            dbsnp_vcf_gz=None,
-            snpsift_dbnsfp_txt_gz=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz'
+            dbsnp_vcf_gz=None
         )
 
     def test_tumor_only(self):
@@ -80,7 +78,6 @@ class TestSomaticPipeline(TestCase):
             min_snv_callers=1,
             min_indel_callers=1,
 
-            annotator='snpeff',
             skip_variant_annotation=False,
             vep_db_tar_gz=None,
             vep_db_type='merged',
@@ -88,6 +85,5 @@ class TestSomaticPipeline(TestCase):
             dbnsfp_resource=None,
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
-            dbsnp_vcf_gz=None,
-            snpsift_dbnsfp_txt_gz=None
+            dbsnp_vcf_gz=None
         )

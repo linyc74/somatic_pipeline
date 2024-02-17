@@ -294,16 +294,6 @@ GROUP_NAME_TO_ARGUMENTS = {
     'variant annotation':
         [
             {
-                'keys': ['--annotator'],
-                'properties': {
-                    'type': str,
-                    'required': False,
-                    'choices': ['vep', 'snpeff'],
-                    'default': 'vep',
-                    'help': 'variant annotator (default: %(default)s)',
-                }
-            },
-            {
                 'keys': ['--skip-variant-annotation'],
                 'properties': {
                     'action': 'store_true',
@@ -372,15 +362,6 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'required': False,
                     'default': 'None',
                     'help': 'dbSNP VCF file (Bgzip VCF) (default: %(default)s)',
-                }
-            },
-            {
-                'keys': ['--snpsift-dbnsfp-txt-gz'],
-                'properties': {
-                    'type': str,
-                    'required': False,
-                    'default': 'None',
-                    'help': 'SnpSift dbNSFP database file (Bgzip VCF) (default: %(default)s)',
                 }
             },
         ],
@@ -509,7 +490,6 @@ class EntryPoint:
                 min_snv_callers=args.min_snv_callers,
                 min_indel_callers=args.min_indel_callers,
 
-                annotator=args.annotator,
                 skip_variant_annotation=args.skip_variant_annotation,
                 vep_db_tar_gz=args.vep_db_tar_gz,
                 vep_db_type=args.vep_db_type,
@@ -517,8 +497,7 @@ class EntryPoint:
                 dbnsfp_resource=args.dbnsfp_resource,
                 cadd_resource=args.cadd_resource,
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
-                dbsnp_vcf_gz=args.dbsnp_vcf_gz,
-                snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz
+                dbsnp_vcf_gz=args.dbsnp_vcf_gz
             )
 
         elif args.mode == 'annotate':
@@ -531,15 +510,13 @@ class EntryPoint:
                 threads=args.threads,
                 debug=args.debug,
 
-                annotator=args.annotator,
                 vep_db_tar_gz=args.vep_db_tar_gz,
                 vep_db_type=args.vep_db_type,
                 vep_buffer_size=args.vep_buffer_size,
                 dbnsfp_resource=args.dbnsfp_resource,
                 cadd_resource=args.cadd_resource,
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
-                dbsnp_vcf_gz=args.dbsnp_vcf_gz,
-                snpsift_dbnsfp_txt_gz=args.snpsift_dbnsfp_txt_gz
+                dbsnp_vcf_gz=args.dbsnp_vcf_gz
             )
 
 
