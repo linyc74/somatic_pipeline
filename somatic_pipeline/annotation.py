@@ -57,7 +57,6 @@ class Annotation(Processor):
             self.run_vep()
 
         self.annotate_by_vcf_gz()  # independent of the choice of annotator
-        self.move_vcf_to_outdir()
 
         return self.vcf
 
@@ -85,11 +84,6 @@ class Annotation(Processor):
         for vcf_gz in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if vcf_gz is not None:
                 self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
-
-    def move_vcf_to_outdir(self):
-        dst = f'{self.outdir}/variants.vcf'
-        self.call(f'mv {self.vcf} {dst}')
-        self.vcf = dst
 
 
 class SnpEff(Processor):

@@ -379,6 +379,7 @@ class VariantCallingWorkflow(Processor):
         self.variant_calling()
         self.variant_picking()
         self.annotation()
+        self.move_vcf_to_outdir()
         Vcf2Csv(self.settings).main(vcf=self.vcf)
         Vcf2Maf(self.settings).main(vcf=self.vcf, ref_fa=self.ref_fa)
         BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)
@@ -417,3 +418,8 @@ class VariantCallingWorkflow(Processor):
                 vep_buffer_size=self.vep_buffer_size,
                 cadd_resource=self.cadd_resource,
                 dbnsfp_resource=self.dbnsfp_resource)
+
+    def move_vcf_to_outdir(self):
+        dst = f'{self.outdir}/variants.vcf'
+        self.call(f'mv {self.vcf} {dst}')
+        self.vcf = dst
