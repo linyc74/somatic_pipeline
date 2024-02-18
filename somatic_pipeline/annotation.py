@@ -1,6 +1,6 @@
 import os
-from os.path import basename
 from typing import Optional, List
+from os.path import basename, isdir
 from .tools import edit_fpath
 from .template import Processor
 
@@ -114,7 +114,10 @@ class VEP(Processor):
         return self.output_vcf
 
     def extract_db_tar_gz(self):
-        self.cache_dir = f'{self.workdir}/.vep'
+        if isdir(self.vep_db_tar_gz):  # already extracted and placed in `vep_cache` dir
+            self.cache_dir = self.vep_db_tar_gz
+            return
+        self.cache_dir = f'{self.workdir}/vep_cache'
         os.makedirs(self.cache_dir, exist_ok=True)
         self.call(f'tar -xzf {self.vep_db_tar_gz} -C "{self.cache_dir}"')
 

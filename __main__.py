@@ -3,7 +3,7 @@ from typing import List
 from somatic_pipeline import Run
 
 
-__VERSION__ = '1.9.1'
+__VERSION__ = '1.9.2-beta'
 
 
 PURPLE = '\033[95m'
@@ -306,7 +306,7 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'type': str,
                     'required': False,
                     'default': 'None',
-                    'help': 'VEP database tar.gz file, required for VEP annotation (default: %(default)s)',
+                    'help': 'VEP database tar.gz file or "vep_cache" dir, required for VEP annotation (default: %(default)s)',
                 }
             },
             {
