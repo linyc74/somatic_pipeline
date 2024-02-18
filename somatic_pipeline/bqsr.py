@@ -77,6 +77,7 @@ class RunBQSR(Processor):
 
         self.base_recalibrator()
         self.apply_bqsr()
+        self.remove_input_bam()  # the bam file before BQSR is no longer needed
 
         return self.out_bam
 
@@ -111,3 +112,6 @@ class RunBQSR(Processor):
             f'2> {log}',
         ])
         self.call(cmd)
+
+    def remove_input_bam(self):
+        self.call(f'rm {self.bam}')
