@@ -11,6 +11,8 @@ class BQSR(Processor):
     ref_fa: str
     known_variant_vcf: str
 
+    temp_known_variant_vcf: str
+
     def main(
             self,
             tumor_bam: str,
@@ -25,10 +27,12 @@ class BQSR(Processor):
 
         self.prepare_ref_fa()
         self.prepare_known_variant_vcf()
+
         self.tumor_bam = self.run_bqsr(self.tumor_bam)
         if self.normal_bam is not None:
             self.normal_bam = self.run_bqsr(self.normal_bam)
-        self.remove_known_variant_vcf()
+
+        self.call(f'rm {self.temp_known_variant_vcf}')  # remove temp file to save disk space
 
         return self.tumor_bam, self.normal_bam
 
@@ -37,23 +41,19 @@ class BQSR(Processor):
         GATKCreateSequenceDictionary(self.settings).main(ref_fa=self.ref_fa)
 
     def prepare_known_variant_vcf(self):
-        src = self.known_variant_vcf
-        dst = edit_fpath(
+        self.temp_known_variant_vcf = edit_fpath(
             fpath=self.known_variant_vcf,
             dstdir=self.workdir)
-        self.call(f'cp {src} {dst}')
-        self.known_variant_vcf = dst
 
-        GATKIndexVcf(self.settings).main(vcf=self.known_variant_vcf)
+        self.call(f'cp {self.known_variant_vcf} {self.temp_known_variant_vcf}')
+
+        GATKIndexVcf(self.settings).main(vcf=self.temp_known_variant_vcf)
 
     def run_bqsr(self, bam: str) -> str:
         return RunBQSR(self.settings).main(
             bam=bam,
             ref_fa=self.ref_fa,
-            known_variant_vcf=self.known_variant_vcf)
-
-    def remove_known_variant_vcf(self):
-        self.call(f'rm {self.known_variant_vcf}')  # dbSNP.vcf.gz in workdir, delete it to save space
+            known_variant_vcf=self.temp_known_variant_vcf)
 
 
 class RunBQSR(Processor):
