@@ -353,7 +353,6 @@ class VariantCallingWorkflow(Processor):
         self.min_snv_callers = min_snv_callers
         self.min_indel_callers = min_indel_callers
 
-
         self.skip_variant_annotation = skip_variant_annotation
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz

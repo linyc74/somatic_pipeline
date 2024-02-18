@@ -185,6 +185,8 @@ class BwaAligner(Aligner):
             f'2> {log}',
         ])
         self.call(cmd)
+        for fq in [self.fq1, self.fq2]:
+            self.call(f'rm {fq}')  # to save disk space
 
 
 class Bowtie2Aligner(Aligner):
@@ -206,3 +208,5 @@ class Bowtie2Aligner(Aligner):
             f'2> {log}',
         ])
         self.call(cmd)
+        for fq in [self.fq1, self.fq2]:
+            self.call(f'rm {fq}')  # to save disk space

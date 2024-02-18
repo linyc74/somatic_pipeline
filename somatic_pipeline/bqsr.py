@@ -28,6 +28,7 @@ class BQSR(Processor):
         self.tumor_bam = self.run_bqsr(self.tumor_bam)
         if self.normal_bam is not None:
             self.normal_bam = self.run_bqsr(self.normal_bam)
+        self.remove_known_variant_vcf()
 
         return self.tumor_bam, self.normal_bam
 
@@ -50,6 +51,9 @@ class BQSR(Processor):
             bam=bam,
             ref_fa=self.ref_fa,
             known_variant_vcf=self.known_variant_vcf)
+
+    def remove_known_variant_vcf(self):
+        self.call(f'rm {self.known_variant_vcf}')  # dbSNP.vcf.gz in workdir, delete it to save space
 
 
 class RunBQSR(Processor):
