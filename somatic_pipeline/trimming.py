@@ -9,8 +9,9 @@ class TrimGalore(Processor):
     QUALITY = 20
     LENGTH = 20
     MAX_N = 0
-    CUTADAPT_TOTAL_CORES = 2
+    CUTADAPT_TOTAL_CORES = 1
     # According to the help message of trim_galore, 2 cores for cutadapt -> actually up to 9 cores
+    # Set it to 1 to avoid overloading the system when multiple jobs are running simultaneously
 
     fq1: str
     fq2: str
