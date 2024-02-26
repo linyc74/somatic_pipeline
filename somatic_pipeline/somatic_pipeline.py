@@ -1,3 +1,4 @@
+from os.path import exists
 from typing import Optional, Tuple, List
 from .bqsr import BQSR
 from .mapping import Mapping
@@ -136,11 +137,32 @@ class SomaticPipeline(Processor):
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
 
+        self.check_files_exist()
         self.copy_ref_fa()
         self.trimming()
         self.preprocessing_workflow()
         self.variant_calling_workflow()
         self.clean_up()
+
+    def check_files_exist(self):
+        for file in [
+            self.ref_fa,
+            self.tumor_fq1,
+            self.tumor_fq2,
+            self.normal_fq1,
+            self.normal_fq2,
+            self.bqsr_known_variant_vcf,
+            self.call_region_bed,
+            self.panel_of_normal_vcf,
+            self.germline_resource_vcf,
+            self.vep_db_tar_gz,
+            self.clinvar_vcf_gz,
+            self.dbsnp_vcf_gz,
+            self.dbnsfp_resource,
+            self.cadd_resource
+        ]:
+            if file is not None:
+                assert exists(file), f'{file} not found'
 
     def copy_ref_fa(self):
         self.ref_fa = CopyRefFa(self.settings).main(
