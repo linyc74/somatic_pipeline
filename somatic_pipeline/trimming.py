@@ -1,7 +1,48 @@
 import os
-from typing import Tuple
+from typing import Tuple, Optional
 from os.path import basename
 from .template import Processor
+
+
+class Trimming(Processor):
+
+    tumor_fq1: str
+    tumor_fq2: str
+    normal_fq1: Optional[str]
+    normal_fq2: Optional[str]
+    clip_r1_5_prime: int
+    clip_r2_5_prime: int
+
+    def main(
+            self,
+            tumor_fq1: str,
+            tumor_fq2: str,
+            normal_fq1: Optional[str],
+            normal_fq2: Optional[str],
+            clip_r1_5_prime: int,
+            clip_r2_5_prime: int) -> Tuple[str, str, Optional[str], Optional[str]]:
+
+        self.tumor_fq1 = tumor_fq1
+        self.tumor_fq2 = tumor_fq2
+        self.normal_fq1 = normal_fq1
+        self.normal_fq2 = normal_fq2
+        self.clip_r1_5_prime = clip_r1_5_prime
+        self.clip_r2_5_prime = clip_r2_5_prime
+
+        self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
+            fq1=self.tumor_fq1,
+            fq2=self.tumor_fq2,
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime)
+
+        if self.normal_fq1 is not None:
+            self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
+                fq1=self.normal_fq1,
+                fq2=self.normal_fq2,
+                clip_r1_5_prime=self.clip_r1_5_prime,
+                clip_r2_5_prime=self.clip_r2_5_prime)
+
+        return self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2
 
 
 class TrimGalore(Processor):

@@ -6,7 +6,7 @@ from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
 from .template import Processor
-from .trimming import TrimGalore
+from .trimming import TrimGalore, Trimming
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
 from .map_stats import MappingStats
@@ -139,7 +139,6 @@ class SomaticPipeline(Processor):
 
         self.check_files_exist()
         self.copy_ref_fa()
-        self.trimming()
         self.preprocessing_workflow()
         self.variant_calling_workflow()
         self.clean_up()
@@ -168,20 +167,6 @@ class SomaticPipeline(Processor):
         self.ref_fa = CopyRefFa(self.settings).main(
             ref_fa=self.ref_fa)
 
-    def trimming(self):
-        self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
-            fq1=self.tumor_fq1,
-            fq2=self.tumor_fq2,
-            clip_r1_5_prime=self.clip_r1_5_prime,
-            clip_r2_5_prime=self.clip_r2_5_prime)
-
-        if self.normal_fq1 is not None:
-            self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
-                fq1=self.normal_fq1,
-                fq2=self.normal_fq2,
-                clip_r1_5_prime=self.clip_r1_5_prime,
-                clip_r2_5_prime=self.clip_r2_5_prime)
-
     def preprocessing_workflow(self):
         self.tumor_bam, self.normal_bam = PreprocessingWorkflow(self.settings).main(
             ref_fa=self.ref_fa,
@@ -189,6 +174,8 @@ class SomaticPipeline(Processor):
             tumor_fq2=self.tumor_fq2,
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime,
             read_aligner=self.read_aligner,
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
             discard_bam=self.discard_bam,
@@ -231,6 +218,8 @@ class PreprocessingWorkflow(Processor):
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    clip_r1_5_prime: int
+    clip_r2_5_prime: int
     read_aligner: str
     bqsr_known_variant_vcf: Optional[str]
     discard_bam: bool
@@ -246,6 +235,8 @@ class PreprocessingWorkflow(Processor):
             tumor_fq2: str,
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
+            clip_r1_5_prime: int,
+            clip_r2_5_prime: int,
             read_aligner: str,
             bqsr_known_variant_vcf: Optional[str],
             discard_bam: bool,
@@ -256,17 +247,29 @@ class PreprocessingWorkflow(Processor):
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.clip_r1_5_prime = clip_r1_5_prime
+        self.clip_r2_5_prime = clip_r2_5_prime
         self.read_aligner = read_aligner
         self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
         self.discard_bam = discard_bam
         self.skip_mark_duplicates = skip_mark_duplicates
 
+        self.trimming()
         self.mapping()
         self.mark_duplicates()
         self.bqsr()
         self.mapping_stats()
 
         return self.tumor_bam, self.normal_bam
+
+    def trimming(self):
+        self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2 = Trimming(self.settings).main(
+            tumor_fq1=self.tumor_fq1,
+            tumor_fq2=self.tumor_fq2,
+            normal_fq1=self.normal_fq1,
+            normal_fq2=self.normal_fq2,
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime)
 
     def mapping(self):
         self.tumor_bam, self.normal_bam = Mapping(self.settings).main(
