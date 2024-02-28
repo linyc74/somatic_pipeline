@@ -1,9 +1,9 @@
 import os
 import gzip
-from typing import Tuple, Optional, IO
+from typing import Tuple, Optional, IO, List
 from os.path import basename
-from .tools import rev_comp
 from .template import Processor
+from .tools import rev_comp, edit_fpath
 
 
 class Trimming(Processor):
@@ -12,8 +12,11 @@ class Trimming(Processor):
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    umi_length: int
     clip_r1_5_prime: int
     clip_r2_5_prime: int
+
+    files_to_be_removed: List[str]
 
     def main(
             self,
@@ -21,6 +24,7 @@ class Trimming(Processor):
             tumor_fq2: str,
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
+            umi_length: int,
             clip_r1_5_prime: int,
             clip_r2_5_prime: int) -> Tuple[str, str, Optional[str], Optional[str]]:
 
@@ -28,8 +32,27 @@ class Trimming(Processor):
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.umi_length = umi_length
         self.clip_r1_5_prime = clip_r1_5_prime
         self.clip_r2_5_prime = clip_r2_5_prime
+
+        self.files_to_be_removed = []
+
+        if self.umi_length > 0:
+            self.tumor_fq1, self.tumor_fq2 = RemoveUmiAndAdapter(self.settings).main(
+                fq1=self.tumor_fq1,
+                fq2=self.tumor_fq2,
+                umi_length=self.umi_length,
+                gz=False)
+            self.files_to_be_removed += [self.tumor_fq1, self.tumor_fq2]
+
+            if self.normal_fq1 is not None:
+                self.normal_fq1, self.normal_fq2 = RemoveUmiAndAdapter(self.settings).main(
+                    fq1=self.normal_fq1,
+                    fq2=self.normal_fq2,
+                    umi_length=self.umi_length,
+                    gz=False)
+                self.files_to_be_removed += [self.normal_fq1, self.normal_fq2]
 
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
             fq1=self.tumor_fq1,
@@ -43,6 +66,9 @@ class Trimming(Processor):
                 fq2=self.normal_fq2,
                 clip_r1_5_prime=self.clip_r1_5_prime,
                 clip_r2_5_prime=self.clip_r2_5_prime)
+
+        for file in self.files_to_be_removed:
+            self.call(f'rm {file}')
 
         return self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2
 
@@ -126,15 +152,15 @@ class TrimGalore(Processor):
 
     def set_out_fq1(self):
         f = basename(self.fq1)
-        f = self.__strip_file_extension(f)
+        f = self.__strip_fastq_extension(f)
         self.out_fq1 = f'{self.workdir}/{f}_val_1.fq.gz'
 
     def set_out_fq2(self):
         f = basename(self.fq2)
-        f = self.__strip_file_extension(f)
+        f = self.__strip_fastq_extension(f)
         self.out_fq2 = f'{self.workdir}/{f}_val_2.fq.gz'
 
-    def __strip_file_extension(self, f):
+    def __strip_fastq_extension(self, f):
         for suffix in [
             '.fq',
             '.fq.gz',
@@ -170,7 +196,7 @@ class RemoveUmiAndAdapter(Processor):
 
         self.open_files()
 
-        self.logger.info(f'Start removing UMI and universal adapters')
+        self.logger.info(f'Start removing UMI ({self.umi_length} bp) and universal adapters of "{self.fq1}" and "{self.fq2}"...')
 
         total_1, total_2, remain_1, remain_2 = 0, 0, 0, 0
         while True:
@@ -182,12 +208,15 @@ class RemoveUmiAndAdapter(Processor):
 
             assert header1.split()[0] == header2.split()[0]
 
-            seq1 = self.fq1_reader.readline().strip()[self.umi_length:]
-            seq2 = self.fq2_reader.readline().strip()[self.umi_length:]
-            new_seq2 = strip_mate_3prime_umi(read=seq1, mate=seq2)
-            new_seq1 = strip_mate_3prime_umi(read=seq2, mate=seq1)
+            seq1 = self.fq1_reader.readline().strip()
+            seq2 = self.fq2_reader.readline().strip()
             total_1 += len(seq1)
             total_2 += len(seq2)
+
+            seq1 = seq1[self.umi_length:]  # 5' clip
+            seq2 = seq2[self.umi_length:]
+            new_seq2 = strip_mate_3prime_umi(read=seq1, mate=seq2)
+            new_seq1 = strip_mate_3prime_umi(read=seq2, mate=seq1)
             remain_1 += len(new_seq1)
             remain_2 += len(new_seq2)
 
@@ -223,8 +252,19 @@ class RemoveUmiAndAdapter(Processor):
         return self.out_fq1, self.out_fq2
 
     def open_files(self):
-        self.out_fq1 = f'{self.workdir}/umi_adapter_removed_R1.fastq'
-        self.out_fq2 = f'{self.workdir}/umi_adapter_removed_R2.fastq'
+
+        self.out_fq1 = edit_fpath(
+            fpath=self.fq1,
+            old_suffix=get_fastq_ext(self.fq1),
+            new_suffix='_umi_adapter_removed.fastq',
+            dstdir=self.workdir)
+
+        self.out_fq2 = edit_fpath(
+            fpath=self.fq2,
+            old_suffix=get_fastq_ext(self.fq2),
+            new_suffix='_umi_adapter_removed.fastq',
+            dstdir=self.workdir)
+
         self.fq1_reader = gzip.open(self.fq1, 'rt') if self.fq1.endswith('.gz') else open(self.fq1, 'r')
         self.fq2_reader = gzip.open(self.fq2, 'rt') if self.fq2.endswith('.gz') else open(self.fq2, 'r')
         self.fq1_writer = open(self.out_fq1, 'w')
@@ -238,8 +278,8 @@ class RemoveUmiAndAdapter(Processor):
 
     def gzip_output(self):
         if self.gz:
-            self.call(self.out_fq1)
-            self.call(self.out_fq2)
+            self.call(f'gzip {self.out_fq1}')
+            self.call(f'gzip {self.out_fq2}')
             self.out_fq1 += '.gz'
             self.out_fq2 += '.gz'
 
@@ -248,3 +288,15 @@ def strip_mate_3prime_umi(read: str, mate: str) -> str:
     mate_rc = rev_comp(mate)
     pos = mate_rc.find(read[:15])  # 4^15 = 1,073,741,824 should be specific enough
     return mate[:-pos] if pos > 0 else mate
+
+
+def get_fastq_ext(fq: str) -> str:
+    for suffix in [
+        '.fq',
+        '.fq.gz',
+        '.fastq',
+        '.fastq.gz',
+    ]:
+        if fq.endswith(suffix):
+            return suffix
+    return ''
