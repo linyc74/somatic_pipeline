@@ -22,6 +22,7 @@ class Run:
             threads: str,
             debug: bool,
 
+            umi_length: int,
             clip_r1_5_prime: int,
             clip_r2_5_prime: int,
             read_aligner: str,
@@ -61,6 +62,7 @@ class Run:
             normal_fq1=None if normal_fq1.lower() == 'none' else normal_fq1,
             normal_fq2=None if normal_fq2.lower() == 'none' else normal_fq2,
 
+            umi_length=umi_length,
             clip_r1_5_prime=clip_r1_5_prime,
             clip_r2_5_prime=clip_r2_5_prime,
             read_aligner=read_aligner,

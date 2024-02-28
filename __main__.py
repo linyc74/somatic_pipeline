@@ -140,6 +140,15 @@ GROUP_NAME_TO_ARGUMENTS = {
     'pre-processing':
         [
             {
+                'keys': ['--umi-length'],
+                'properties': {
+                    'type': int,
+                    'required': False,
+                    'default': 0,
+                    'help': 'UMI length (bp) to be removed (default: %(default)s)',
+                }
+            },
+            {
                 'keys': ['--clip-r1-5-prime'],
                 'properties': {
                     'type': int,
@@ -470,6 +479,7 @@ class EntryPoint:
                 threads=args.threads,
                 debug=args.debug,
 
+                umi_length=args.umi_length,
                 clip_r1_5_prime=args.clip_r1_5_prime,
                 clip_r2_5_prime=args.clip_r2_5_prime,
                 read_aligner=args.read_aligner,

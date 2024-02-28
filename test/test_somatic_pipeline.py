@@ -19,6 +19,7 @@ class TestSomaticPipeline(TestCase):
             normal_fq1=f'{self.indir}/normal.1.fq.gz',
             normal_fq2=f'{self.indir}/normal.2.fq.gz',
 
+            umi_length=3,
             clip_r1_5_prime=1,
             clip_r2_5_prime=1,
             read_aligner='bwa',
@@ -58,6 +59,7 @@ class TestSomaticPipeline(TestCase):
             normal_fq1=None,
             normal_fq2=None,
 
+            umi_length=0,
             clip_r1_5_prime=1,
             clip_r2_5_prime=1,
             read_aligner='bwa',

@@ -28,6 +28,7 @@ class SomaticPipeline(Processor):
     normal_fq2: Optional[str]
 
     # preprocessing
+    umi_length: int
     clip_r1_5_prime: int
     clip_r2_5_prime: int
     read_aligner: str
@@ -72,6 +73,7 @@ class SomaticPipeline(Processor):
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
 
+            umi_length: int,
             clip_r1_5_prime: int,
             clip_r2_5_prime: int,
             read_aligner: str,
@@ -108,6 +110,7 @@ class SomaticPipeline(Processor):
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
 
+        self.umi_length = umi_length
         self.clip_r1_5_prime = clip_r1_5_prime
         self.clip_r2_5_prime = clip_r2_5_prime
         self.read_aligner = read_aligner
@@ -174,6 +177,7 @@ class SomaticPipeline(Processor):
             tumor_fq2=self.tumor_fq2,
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
+            umi_length=self.umi_length,
             clip_r1_5_prime=self.clip_r1_5_prime,
             clip_r2_5_prime=self.clip_r2_5_prime,
             read_aligner=self.read_aligner,
@@ -218,6 +222,7 @@ class PreprocessingWorkflow(Processor):
     tumor_fq2: str
     normal_fq1: Optional[str]
     normal_fq2: Optional[str]
+    umi_length: int
     clip_r1_5_prime: int
     clip_r2_5_prime: int
     read_aligner: str
@@ -235,6 +240,7 @@ class PreprocessingWorkflow(Processor):
             tumor_fq2: str,
             normal_fq1: Optional[str],
             normal_fq2: Optional[str],
+            umi_length: int,
             clip_r1_5_prime: int,
             clip_r2_5_prime: int,
             read_aligner: str,
@@ -247,6 +253,7 @@ class PreprocessingWorkflow(Processor):
         self.tumor_fq2 = tumor_fq2
         self.normal_fq1 = normal_fq1
         self.normal_fq2 = normal_fq2
+        self.umi_length = umi_length
         self.clip_r1_5_prime = clip_r1_5_prime
         self.clip_r2_5_prime = clip_r2_5_prime
         self.read_aligner = read_aligner
@@ -268,6 +275,7 @@ class PreprocessingWorkflow(Processor):
             tumor_fq2=self.tumor_fq2,
             normal_fq1=self.normal_fq1,
             normal_fq2=self.normal_fq2,
+            umi_length=self.umi_length,
             clip_r1_5_prime=self.clip_r1_5_prime,
             clip_r2_5_prime=self.clip_r2_5_prime)
 
