@@ -244,8 +244,8 @@ class RemoveUmiAndAdapter(Processor):
         self.close_files()
 
         self.logger.info(f'''\
-{self.fq1} ({total_1:,} bp) -> ({remain_1:,} bp = {remain_1/total_1:.2f}%) {self.out_fq1}
-{self.fq2} ({total_2:,} bp) -> ({remain_2:,} bp = {remain_2/total_2:.2f}%) {self.out_fq2}''')
+{self.fq1} ({total_1:,} bp) -> ({remain_1:,} bp = {remain_1/total_1*100:.2f}%) {self.out_fq1}
+{self.fq2} ({total_2:,} bp) -> ({remain_2:,} bp = {remain_2/total_2*100:.2f}%) {self.out_fq2}''')
 
         self.gzip_output()
 
