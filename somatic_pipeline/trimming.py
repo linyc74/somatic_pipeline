@@ -1,6 +1,6 @@
 import os
 import gzip
-from typing import Tuple, Optional, IO, List
+from typing import Tuple, Optional, IO
 from os.path import basename
 from .template import Processor
 from .tools import rev_comp, edit_fpath
@@ -15,8 +15,6 @@ class Trimming(Processor):
     umi_length: int
     clip_r1_5_prime: int
     clip_r2_5_prime: int
-
-    files_to_be_removed: List[str]
 
     def main(
             self,
@@ -36,7 +34,14 @@ class Trimming(Processor):
         self.clip_r1_5_prime = clip_r1_5_prime
         self.clip_r2_5_prime = clip_r2_5_prime
 
-        self.files_to_be_removed = []
+        self.trim_tumor_fastqs()
+        if self.normal_fq1 is not None:
+            self.trim_normal_fastqs()
+
+        return self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2
+
+    def trim_tumor_fastqs(self):
+        to_be_removed = []
 
         if self.umi_length > 0:
             self.tumor_fq1, self.tumor_fq2 = RemoveUmiAndAdapter(self.settings).main(
@@ -44,15 +49,7 @@ class Trimming(Processor):
                 fq2=self.tumor_fq2,
                 umi_length=self.umi_length,
                 gz=False)
-            self.files_to_be_removed += [self.tumor_fq1, self.tumor_fq2]
-
-            if self.normal_fq1 is not None:
-                self.normal_fq1, self.normal_fq2 = RemoveUmiAndAdapter(self.settings).main(
-                    fq1=self.normal_fq1,
-                    fq2=self.normal_fq2,
-                    umi_length=self.umi_length,
-                    gz=False)
-                self.files_to_be_removed += [self.normal_fq1, self.normal_fq2]
+            to_be_removed += [self.tumor_fq1, self.tumor_fq2]
 
         self.tumor_fq1, self.tumor_fq2 = TrimGalore(self.settings).main(
             fq1=self.tumor_fq1,
@@ -60,17 +57,28 @@ class Trimming(Processor):
             clip_r1_5_prime=self.clip_r1_5_prime,
             clip_r2_5_prime=self.clip_r2_5_prime)
 
-        if self.normal_fq1 is not None:
-            self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
-                fq1=self.normal_fq1,
-                fq2=self.normal_fq2,
-                clip_r1_5_prime=self.clip_r1_5_prime,
-                clip_r2_5_prime=self.clip_r2_5_prime)
-
-        for file in self.files_to_be_removed:
+        for file in to_be_removed:
             self.call(f'rm {file}')
 
-        return self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2
+    def trim_normal_fastqs(self):
+        to_be_removed = []
+
+        if self.umi_length > 0:
+            self.normal_fq1, self.normal_fq2 = RemoveUmiAndAdapter(self.settings).main(
+                fq1=self.normal_fq1,
+                fq2=self.normal_fq2,
+                umi_length=self.umi_length,
+                gz=False)
+            to_be_removed += [self.normal_fq1, self.normal_fq2]
+
+        self.normal_fq1, self.normal_fq2 = TrimGalore(self.settings).main(
+            fq1=self.normal_fq1,
+            fq2=self.normal_fq2,
+            clip_r1_5_prime=self.clip_r1_5_prime,
+            clip_r2_5_prime=self.clip_r2_5_prime)
+
+        for file in to_be_removed:
+            self.call(f'rm {file}')
 
 
 class TrimGalore(Processor):
