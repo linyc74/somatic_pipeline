@@ -1,7 +1,83 @@
+import os
+from os.path import samefile, dirname
 from typing import Optional, Tuple
 from .tools import edit_fpath
 from .template import Processor
 from .index_files import SamtoolsIndexFa, GATKCreateSequenceDictionary, GATKIndexVcf
+
+
+class MarkDuplicates(Processor):
+
+    tumor_bam: str
+    normal_bam: Optional[str]
+
+    out_tumor_bam: str
+    out_normal_bam: Optional[str]
+
+    def main(
+            self,
+            tumor_bam: str,
+            normal_bam: Optional[str]) -> Tuple[str, Optional[str]]:
+
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+
+        self.out_tumor_bam = GATKMarkDuplicates(self.settings).main(
+            bam=self.tumor_bam)
+
+        self.out_normal_bam = None if self.normal_bam is None else \
+            GATKMarkDuplicates(self.settings).main(bam=self.normal_bam)
+
+        return self.out_tumor_bam, self.out_normal_bam
+
+
+class GATKMarkDuplicates(Processor):
+
+    REMOVE_DUPLICATES = 'false'
+    METRICS_DIRNAME = 'duplicate-metrics'
+
+    bam: str
+
+    metrics_txt: str
+    out_bam: str
+
+    def main(self, bam: str) -> str:
+        self.bam = bam
+        self.set_out_bam()
+        self.set_metrics_txt()
+        self.execute()
+        return self.out_bam
+
+    def set_out_bam(self):
+        self.out_bam = edit_fpath(
+            fpath=self.bam,
+            old_suffix='.bam',
+            new_suffix='-mark-duplicates.bam',
+            dstdir=self.workdir)
+
+    def set_metrics_txt(self):
+        dstdir = f'{self.outdir}/{self.METRICS_DIRNAME}'
+        os.makedirs(dstdir, exist_ok=True)
+        self.metrics_txt = edit_fpath(
+            fpath=self.bam,
+            old_suffix='.bam',
+            new_suffix='-duplicate-metrics.txt',
+            dstdir=dstdir)
+
+    def execute(self):
+        log = f'{self.outdir}/gatk-MarkDuplicates.log'
+        cmd = self.CMD_LINEBREAK.join([
+            'gatk MarkDuplicates',
+            f'--INPUT {self.bam}',
+            f'--METRICS_FILE {self.metrics_txt}',
+            f'--OUTPUT {self.out_bam}',
+            f'--REMOVE_DUPLICATES {self.REMOVE_DUPLICATES}',
+            f'1> {log} 2> {log}',
+        ])
+        self.call(cmd)
+
+
+#
 
 
 class BQSR(Processor):
@@ -114,4 +190,52 @@ class RunBQSR(Processor):
         self.call(cmd)
 
     def remove_input_bam(self):
-        self.call(f'rm {self.bam}')
+        if samefile(dirname(self.bam), self.workdir):  # if the input bam is in the workdir
+            self.call(f'rm {self.bam}')
+
+
+#
+
+
+class MappingStats(Processor):
+
+    tumor_bam: str
+    normal_bam: Optional[str]
+
+    def main(
+            self,
+            tumor_bam: str,
+            normal_bam: Optional[str]):
+
+        self.tumor_bam = tumor_bam
+        self.normal_bam = normal_bam
+
+        SamtoolsStats(self.settings).main(self.tumor_bam)
+        if self.normal_bam is not None:
+            SamtoolsStats(self.settings).main(self.normal_bam)
+
+
+class SamtoolsStats(Processor):
+
+    DSTDIR_NAME = 'mapping-stats'
+
+    bam: str
+
+    dstdir: str
+
+    def main(self, bam: str):
+        self.bam = bam
+        self.make_dstdir()
+        self.execute()
+
+    def make_dstdir(self):
+        self.dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
+        os.makedirs(self.dstdir, exist_ok=True)
+
+    def execute(self):
+        txt = edit_fpath(
+            fpath=self.bam,
+            old_suffix='.bam',
+            new_suffix='.txt',
+            dstdir=self.dstdir)
+        self.call(f'samtools stats {self.bam} > {txt}')

@@ -1,19 +1,17 @@
 from os.path import exists
 from typing import Optional, Tuple, List
-from .bqsr import BQSR
 from .mapping import Mapping
 from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
 from .template import Processor
-from .trimming import TrimGalore, Trimming
+from .trimming import Trimming
 from .annotation import Annotation
 from .copy_ref_fa import CopyRefFa
-from .map_stats import MappingStats
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
-from .mark_duplicates import MarkDuplicates
 from .variant_picking import VariantPicking
+from .post_mapping import BQSR, MappingStats, MarkDuplicates
 
 
 class SomaticPipeline(Processor):
