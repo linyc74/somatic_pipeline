@@ -1,6 +1,6 @@
-from os.path import exists
 from typing import Optional, Tuple
 from abc import ABC, abstractmethod
+from os.path import exists, dirname, samefile
 from .template import Processor
 from .constant import TUMOR, NORMAL
 
@@ -15,6 +15,7 @@ class Mapping(Processor):
     normal_fq2: Optional[str]
     discard_bam: bool
 
+    index: str
     tumor_bam: str
     normal_bam: Optional[str]
 
@@ -45,10 +46,10 @@ class Mapping(Processor):
         else:
             raise ValueError(f'Invalid read aligner: {self.read_aligner}')
 
-        index = indexer(fna=self.ref_fa)
+        self.index = indexer(fna=self.ref_fa)
 
         self.tumor_bam = aligner(
-            index=index,
+            index=self.index,
             fq1=self.tumor_fq1,
             fq2=self.tumor_fq2,
             sample_name=TUMOR,
@@ -56,13 +57,15 @@ class Mapping(Processor):
 
         if self.normal_fq1 is not None:
             self.normal_bam = aligner(
-                index=index,
+                index=self.index,
                 fq1=self.normal_fq1,
                 fq2=self.normal_fq2,
                 sample_name=NORMAL,
                 discard_bam=self.discard_bam)
         else:
             self.normal_bam = None
+
+        self.call(f'rm {self.index}*')  # to save disk space
 
         return self.tumor_bam, self.normal_bam
 
@@ -148,6 +151,7 @@ class Aligner(Processor, ABC):
         self.discard_bam = discard_bam
 
         self.align()
+        self.remove_fastqs()
         self.sam_to_bam()
         self.sort_bam()
 
@@ -156,6 +160,11 @@ class Aligner(Processor, ABC):
     @abstractmethod
     def align(self):
         return
+
+    def remove_fastqs(self):
+        for fq in [self.fq1, self.fq2]:
+            if samefile(dirname(fq), self.workdir):  # fq in the workdir
+                self.call(f'rm {fq}')
 
     def sam_to_bam(self):
         self.bam = f'{self.workdir}/{self.sample_name}.bam'
@@ -185,8 +194,6 @@ class BwaAligner(Aligner):
             f'2> {log}',
         ])
         self.call(cmd)
-        for fq in [self.fq1, self.fq2]:
-            self.call(f'rm {fq}')  # to save disk space
 
 
 class Bowtie2Aligner(Aligner):
@@ -208,5 +215,3 @@ class Bowtie2Aligner(Aligner):
             f'2> {log}',
         ])
         self.call(cmd)
-        for fq in [self.fq1, self.fq2]:
-            self.call(f'rm {fq}')  # to save disk space

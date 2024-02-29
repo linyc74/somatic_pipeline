@@ -3,7 +3,7 @@ from typing import List
 from somatic_pipeline import Run
 
 
-__VERSION__ = '1.10.1'
+__VERSION__ = '1.10.2-beta'
 
 
 PURPLE = '\033[95m'

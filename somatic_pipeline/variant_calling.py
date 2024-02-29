@@ -1,5 +1,6 @@
 import os
 from abc import ABC
+from os.path import samefile, dirname
 from typing import Optional, List, Dict, Callable, Tuple
 from .tools import edit_fpath
 from .template import Processor
@@ -87,6 +88,8 @@ class VariantCalling(Processor):
 
             self.vcfs.append(vcf_gz)
 
+        self.remove_bams()
+
         return self.vcfs
 
     def index_ref_fa_and_bams(self):
@@ -129,6 +132,13 @@ class VariantCalling(Processor):
         Vcf2Csv(self.settings).main(vcf=dst_vcf)
         vcf_gz = BgzipIndex(self.settings).main(vcf=dst_vcf, keep=False)
         return vcf_gz
+
+    def remove_bams(self):
+        for bam in [self.params.tumor_bam, self.params.normal_bam]:
+            if bam is None:
+                continue
+            if samefile(dirname(bam), self.workdir):  # bam in the workdir
+                self.call(f'rm {bam}')
 
 
 #
