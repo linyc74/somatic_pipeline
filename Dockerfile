@@ -91,7 +91,7 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/110.zip \
  && cd ..
 
 # make vep executable
-ENV PATH /ensembl-vep-release-106:$PATH
+ENV PATH /ensembl-vep-release-110:$PATH
 
 
 
