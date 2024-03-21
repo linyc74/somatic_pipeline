@@ -8,6 +8,7 @@ class TestAnnotation(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
         self.copy_and_set_files()
+        self.settings.threads = 2
 
     def tearDown(self):
         self.tear_down()
@@ -23,9 +24,9 @@ class TestAnnotation(TestCase):
             ref_fa=self.ref_fa,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
-            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
+            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_110_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
-            vep_buffer_size=100,
+            vep_buffer_size=10,
             cadd_resource=None,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
         )
@@ -38,6 +39,7 @@ class TestVEP(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
         self.copy_and_set_files()
+        self.settings.threads = 2
 
     def tearDown(self):
         self.tear_down()
@@ -51,9 +53,9 @@ class TestVEP(TestCase):
         actual = VEP(self.settings).main(
             vcf=f'{self.indir}/picked-variants.vcf',
             ref_fa=self.ref_fa,
-            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
+            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_110_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
-            vep_buffer_size=100,
+            vep_buffer_size=10,
             cadd_resource=None,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
         )
