@@ -88,7 +88,7 @@ RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/110.zip \
  && rm 110.zip \
  && cd ensembl-vep-release-110 \
  && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB --NO_UPDATE \
- && cd .. \
+ && cd ..
 
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
