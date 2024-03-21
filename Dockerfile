@@ -77,17 +77,18 @@ RUN conda install -c conda-forge -n somatic \
  && conda install -c bioconda -n somatic \
     perl-app-cpanminus=1.7044 \
  && cpan DBI \
- && cpan Try::Tiny
+ && cpan Try::Tiny \
+ && cpan LWP::Simple
 
 # install vep
 # include "--NO_UPDATE" so that the installation process will not be disrupted by update check
 # disruption of installation will result in missing perl modules (e.g. Bio/EnsEMBL/Registry.pm) and plugins 
-RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
- && unzip 106.zip \
- && cd ensembl-vep-release-106 \
+RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/110.zip \
+ && unzip 110.zip \
+ && rm 110.zip \
+ && cd ensembl-vep-release-110 \
  && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB --NO_UPDATE \
  && cd .. \
- && rm 106.zip
 
 # make vep executable
 ENV PATH /ensembl-vep-release-106:$PATH
