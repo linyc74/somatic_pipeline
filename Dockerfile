@@ -69,10 +69,10 @@ RUN Rscript -e 'install.packages("BiocManager", version="3.16")' \
 # --- vep ---
 # perl dependency for vep
 # perl build must be "5.26.2=h470a237_0" to avoid bad version (hard-coded gcc path)
-RUN apt-get install libcrypt-dev \
- && conda install -c conda-forge -n somatic \
+RUN conda install -c conda-forge -n somatic \
     perl=5.26.2=h470a237_0 \
     gcc=12.1.0 \
+ && cp /usr/include/crypt.h /opt/conda/envs/somatic/lib/5.26.2/x86_64-linux-thread-multi/CORE/crypt.h \
  && conda install -c anaconda -n somatic \
     make=4.2.1 \
  && conda install -c bioconda -n somatic \
