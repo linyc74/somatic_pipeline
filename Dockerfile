@@ -81,9 +81,8 @@ ENV PATH /snpEff/exec:$PATH
 
 RUN apt-get install -y \
     build-essential \
-    make=4.3 \
-    perl=5.32.1 \
-    cpanminus=1.7044 \
+    perl \
+    cpanminus \
  && cpanm DBI \
  && cpanm Try::Tiny
 
