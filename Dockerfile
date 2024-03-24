@@ -40,8 +40,7 @@ RUN conda install -c bioconda -n somatic \
     somatic-sniper=1.0.5.0
 
 # --- VarDict ---
-RUN apt-get update \
- && apt-get install -y dos2unix \
+RUN apt-get install -y dos2unix \
  && git clone --recursive https://github.com/AstraZeneca-NGS/VarDictJava.git \
  && cd VarDictJava \
  && dos2unix gradlew \
