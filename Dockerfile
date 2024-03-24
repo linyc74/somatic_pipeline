@@ -3,7 +3,7 @@ FROM continuumio/miniconda3:4.12.0
 RUN apt-get update
 
 RUN conda install -c anaconda \
-    pandas=2.1.3 \
+    pandas=1.3.5 \
  && conda create -n somatic \
  && conda install -n somatic -c conda-forge \
     tbb=2020.2 \
