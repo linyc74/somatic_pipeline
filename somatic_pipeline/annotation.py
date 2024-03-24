@@ -162,7 +162,7 @@ class VEP(Processor):
             f'--dir_cache {self.cache_dir}',
             self.VEP_DB_TYPE_TO_FLAG[self.vep_db_type],
             '--everything',
-            f'--fork {self.NUM_THREADS}',
+            f'--fork {self.threads}',
             f'--buffer_size {self.vep_buffer_size}',
         ]
         args += self.plugin_args
