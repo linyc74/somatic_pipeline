@@ -1,9 +1,13 @@
 FROM continuumio/miniconda3:4.12.0
 
-RUN conda create -n somatic \
- && conda install -c conda-forge -n somatic \
+RUN apt-get update
+
+RUN conda install -c anaconda \
+    pandas=2.1.3 \
+ && conda create -n somatic \
+ && conda install -n somatic -c conda-forge \
     tbb=2020.2 \
- && conda install -c bioconda -n somatic \
+ && conda install -n somatic -c bioconda \
     trim-galore=0.6.6 \
     bwa=0.7.17 \
     samtools=1.11 \
@@ -12,9 +16,7 @@ RUN conda create -n somatic \
     muse=1.0 \
     varscan=2.3.7 \
     bcftools=1.8 \
-    vcf2maf=1.6.21 \
- && conda install -c anaconda -n somatic \
-    pandas=1.3.5
+    vcf2maf=1.6.21
 
 # Activate somatic env
 ENV PATH $PATH:/opt/conda/envs/somatic/bin
