@@ -42,7 +42,8 @@ RUN conda install -c bioconda -n somatic \
     somatic-sniper=1.0.5.0
 
 # --- vardict ---
-RUN apt-get install -y dos2unix \
+RUN apt-get update \
+ && apt-get install -y dos2unix \
  && git clone --recursive https://github.com/AstraZeneca-NGS/VarDictJava.git \
  && cd VarDictJava \
  && dos2unix gradlew \
@@ -68,28 +69,35 @@ ENV PATH /snpEff/exec:$PATH
 # --- vep ---
 # perl dependency for vep
 # perl build must be "5.26.2=h470a237_0" to avoid bad version (hard-coded gcc path)
-RUN conda install -c conda-forge -n somatic \
-    perl=5.26.2=h470a237_0 \
-    gcc=12.1.0 \
- && cp /usr/include/crypt.h /opt/conda/envs/somatic/lib/5.26.2/x86_64-linux-thread-multi/CORE/crypt.h \
- && conda install -c anaconda -n somatic \
-    make=4.2.1 \
- && conda install -c bioconda -n somatic \
-    perl-app-cpanminus=1.7044 \
- && cpan DBI \
- && cpan Try::Tiny \
- && cpan LWP::Simple
+#RUN conda install -c conda-forge -n somatic \
+#    perl=5.26.2=h470a237_0 \
+#    gcc=12.1.0 \
+# && conda install -c anaconda -n somatic \
+#    make=4.2.1 \
+# && conda install -c bioconda -n somatic \
+#    perl-app-cpanminus=1.7044 \
+# && cpan DBI \
+# && cpan Try::Tiny
+
+RUN apt-get install -y \
+    build-essential \
+    make=4.3 \
+    perl=5.32.1 \
+    cpanminus=1.7044 \
+ && cpanm DBI \
+ && cpanm Try::Tiny
+
 # install vep
 # include "--NO_UPDATE" so that the installation process will not be disrupted by update check
 # disruption of installation will result in missing perl modules (e.g. Bio/EnsEMBL/Registry.pm) and plugins 
-RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/110.zip \
- && unzip 110.zip \
- && rm 110.zip \
- && cd ensembl-vep-release-110 \
+RUN wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip \
+ && unzip 106.zip \
+ && rm 106.zip \
+ && cd ensembl-vep-release-106 \
  && perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB --NO_UPDATE \
  && cd ..
 # make vep executable
-ENV PATH /ensembl-vep-release-110:$PATH
+ENV PATH /ensembl-vep-release-106:$PATH
 
 # clean up
 RUN apt-get autoremove \
