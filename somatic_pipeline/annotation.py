@@ -169,8 +169,8 @@ class VEP(Processor):
         args += [
             '--vcf',  # output in vcf format
             f'--output_file {self.output_vcf}',
-            f'1> {log}',
-            f'2> {log}',
+            f'1>> {log}',
+            f'2>> {log}',
         ]
 
         tried = 0
