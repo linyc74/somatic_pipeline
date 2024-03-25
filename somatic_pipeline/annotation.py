@@ -172,7 +172,20 @@ class VEP(Processor):
             f'1> {log}',
             f'2> {log}',
         ]
-        self.call(self.CMD_LINEBREAK.join(args))
+
+        tried = 0
+        while True:
+            try:
+                self.call('sleep 2')
+                self.call(self.CMD_LINEBREAK.join(args))
+                break
+            except Exception as e:
+                self.logger.info(f'VEP failed: {e}')
+                self.call(f'rm {self.output_vcf}*')  # remove residual files to allow retry
+                tried += 1
+
+            if tried >= 3:
+                raise Exception('VEP failed too many times')
 
     def move_summary_html(self):
         src = f'{self.output_vcf}_summary.html'
