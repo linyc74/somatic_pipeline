@@ -173,12 +173,13 @@ class VEP(Processor):
             f'2>> {log}',
         ]
 
+        # vep is very unstable on low-level memory management, so retry if it fails
         tried = 0
         while True:
             try:
-                self.call('sleep 2')
+                self.call('sleep 2')  # may help, I don't know
                 self.call(self.CMD_LINEBREAK.join(args))
-                break
+                break  # succeed and break from the loop
             except Exception as e:
                 self.logger.info(f'VEP failed: {e}')
                 self.call(f'rm {self.output_vcf}*')  # remove residual files to allow retry
