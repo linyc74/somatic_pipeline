@@ -34,15 +34,18 @@ class PCGR(Processor):
 
     def untar_reference_data(self):
         self.call(f'tar xzf {self.pcgr_ref_data_tgz} -C {self.workdir}')  # creates data/ in workdir
-        self.call(f'tar xzf {self.pcgr_vep_tar_gz} -C {self.workdir}')  # creates homo_sapiens/ in workdir
-
         self.refdata_dir = self.workdir
         # workdir/data/grch38/...
         # ^^^^^^^  the PCGR refdata dir should be at this level, which contains the 'data/' dir
 
-        self.vep_dir = self.workdir
-        # workdir/homo_sapiens/112_GRCh38/...
-        # ^^^^^^^  the VEP cache dir should be at this level, which contains the 'homo_sapiens/' dir
+        if os.path.isfile(self.pcgr_vep_tar_gz):
+            self.call(f'tar xzf {self.pcgr_vep_tar_gz} -C {self.workdir}')  # creates homo_sapiens/ in workdir
+            self.vep_dir = self.workdir
+            # workdir/homo_sapiens/112_GRCh38/...
+            # ^^^^^^^  the VEP cache dir should be at this level, which contains the 'homo_sapiens/' dir
+
+        else:  # already extracted, with `homo_sapiens` placed in the `vep_cache` dir
+            self.vep_dir = self.pcgr_vep_tar_gz
 
     def index_vcf(self):
         if not os.path.exists(f'{self.vcf}.tbi'):
