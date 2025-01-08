@@ -480,6 +480,7 @@ class EntryPoint:
                 'variant filtering',
                 'variant picking',
                 'variant annotation',
+                'PCGR',
             ]
         )
 

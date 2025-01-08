@@ -1,5 +1,5 @@
 import shutil
-from somatic_pipeline.annotation import Annotation, VEP, SnpSiftAnnotate, AssertDbnsfpResourceFilenameForVEP
+from somatic_pipeline.variant_annotation import VariantAnnotation, VEP, SnpSiftAnnotate, AssertDbnsfpResourceFilenameForVEP
 from .setup import TestCase
 
 
@@ -18,7 +18,7 @@ class TestAnnotation(TestCase):
         self.ref_fa = f'{self.workdir}/chr9.fa'
 
     def test_main(self):
-        actual = Annotation(self.settings).main(
+        actual = VariantAnnotation(self.settings).main(
             vcf=f'{self.indir}/picked-variants.vcf',
             ref_fa=self.ref_fa,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',

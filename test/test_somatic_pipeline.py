@@ -47,7 +47,13 @@ class TestSomaticPipeline(TestCase):
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
-            dbsnp_vcf_gz=None
+            dbsnp_vcf_gz=None,
+
+            pcgr_ref_data_tgz=None,
+            pcgr_vep_tar_gz=None,
+            pcgr_tumor_site=12,
+            pcgr_tmb_target_size_mb=34,
+            pcgr_tmb_display='coding_and_silent',
         )
 
     def test_tumor_only(self):
@@ -87,5 +93,11 @@ class TestSomaticPipeline(TestCase):
             dbnsfp_resource=None,
             cadd_resource=None,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
-            dbsnp_vcf_gz=None
+            dbsnp_vcf_gz=None,
+
+            pcgr_ref_data_tgz=None,
+            pcgr_vep_tar_gz=None,
+            pcgr_tumor_site=12,
+            pcgr_tmb_target_size_mb=34,
+            pcgr_tmb_display='coding_and_silent',
         )

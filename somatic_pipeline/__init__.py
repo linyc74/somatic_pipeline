@@ -1,7 +1,7 @@
 import os
 from .template import Settings
 from .tools import get_temp_path
-from .annotation import Annotation
+from .variant_annotation import VariantAnnotation
 from .somatic_pipeline import SomaticPipeline
 
 
@@ -124,7 +124,7 @@ class Run:
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
-        Annotation(self.settings).main(
+        VariantAnnotation(self.settings).main(
             vcf=vcf,
             ref_fa=ref_fa,
 

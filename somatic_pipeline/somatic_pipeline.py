@@ -7,7 +7,7 @@ from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
 from .template import Processor
 from .trimming import Trimming
-from .annotation import Annotation
+from .variant_annotation import VariantAnnotation
 from .copy_ref_fa import CopyRefFa
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
@@ -478,7 +478,7 @@ class VariantCallingWorkflow(Processor):
 
     def variant_annotation(self):
         if not self.skip_variant_annotation:
-            self.vcf = Annotation(self.settings).main(
+            self.vcf = VariantAnnotation(self.settings).main(
                 vcf=self.vcf,
                 ref_fa=self.ref_fa,
                 clinvar_vcf_gz=self.clinvar_vcf_gz,

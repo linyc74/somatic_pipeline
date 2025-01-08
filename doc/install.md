@@ -96,12 +96,12 @@ conda create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock
 conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 ```
 
-In `.bashrc` add the following to make `pcgr` executable:
+In `.bashrc` add the following line to make `pcgr` executable:
 ```bash
 export PATH=$PATH:$HOME/anaconda3/envs/pcgr/bin
 ```
 
-Make `pcgrr.R` available in the current `somatic` environment
+Make `pcgrr.R` available in the current `somatic` environment:
 ```bash
 ENVS=$HOME/anaconda3/envs
 cp $ENVS/pcgr/bin/pcgrr.R $ENVS/somatic/bin/

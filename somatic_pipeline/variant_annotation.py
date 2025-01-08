@@ -5,7 +5,7 @@ from .tools import edit_fpath
 from .template import Processor
 
 
-class Annotation(Processor):
+class VariantAnnotation(Processor):
 
     VEP = 'vep'
     SNPEFF = 'snpeff'
