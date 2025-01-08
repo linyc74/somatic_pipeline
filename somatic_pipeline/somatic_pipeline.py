@@ -1,5 +1,6 @@
 from os.path import exists
 from typing import Optional, Tuple, List
+from .pcgr import PCGR
 from .mapping import Mapping
 from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
@@ -52,7 +53,7 @@ class SomaticPipeline(Processor):
     min_snv_callers: int
     min_indel_callers: int
 
-    # annotation
+    # variant annotation
     skip_variant_annotation: bool
     vep_db_tar_gz: Optional[str]
     vep_db_type: str
@@ -61,6 +62,13 @@ class SomaticPipeline(Processor):
     cadd_resource: Optional[str]
     clinvar_vcf_gz: Optional[str]
     dbsnp_vcf_gz: Optional[str]
+
+    # PCGR
+    pcgr_ref_data_tgz: Optional[str]
+    pcgr_vep_tar_gz: Optional[str]
+    pcgr_tumor_site: int
+    pcgr_tmb_target_size_mb: int
+    pcgr_tmb_display: str
 
     def main(
             self,
@@ -99,7 +107,13 @@ class SomaticPipeline(Processor):
             dbnsfp_resource: Optional[str],
             cadd_resource: Optional[str],
             clinvar_vcf_gz: Optional[str],
-            dbsnp_vcf_gz: Optional[str]):
+            dbsnp_vcf_gz: Optional[str],
+
+            pcgr_ref_data_tgz: Optional[str],
+            pcgr_vep_tar_gz: Optional[str],
+            pcgr_tumor_site: int,
+            pcgr_tmb_target_size_mb: int,
+            pcgr_tmb_display: str):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -137,6 +151,12 @@ class SomaticPipeline(Processor):
         self.cadd_resource = cadd_resource
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
+
+        self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
+        self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
+        self.pcgr_tumor_site = pcgr_tumor_site
+        self.pcgr_tmb_target_size_mb = pcgr_tmb_target_size_mb
+        self.pcgr_tmb_display = pcgr_tmb_display
 
         self.check_files_exist()
         self.copy_ref_fa()
@@ -207,7 +227,12 @@ class SomaticPipeline(Processor):
                 vep_db_type=self.vep_db_type,
                 vep_buffer_size=self.vep_buffer_size,
                 cadd_resource=self.cadd_resource,
-                dbnsfp_resource=self.dbnsfp_resource)
+                dbnsfp_resource=self.dbnsfp_resource,
+                pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
+                pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
+                pcgr_tumor_site=self.pcgr_tumor_site,
+                pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
+                pcgr_tmb_display=self.pcgr_tmb_display)
 
     def clean_up(self):
         CleanUp(self.settings).main()
@@ -338,6 +363,12 @@ class VariantCallingWorkflow(Processor):
     cadd_resource: Optional[str]
     dbnsfp_resource: Optional[str]
 
+    pcgr_ref_data_tgz: Optional[str]
+    pcgr_vep_tar_gz: Optional[str]
+    pcgr_tumor_site: int
+    pcgr_tmb_target_size_mb: int
+    pcgr_tmb_display: str
+
     vcfs: List[str]
     vcf: str
 
@@ -366,7 +397,13 @@ class VariantCallingWorkflow(Processor):
             vep_db_type: str,
             vep_buffer_size: int,
             cadd_resource: Optional[str],
-            dbnsfp_resource: Optional[str]):
+            dbnsfp_resource: Optional[str],
+
+            pcgr_ref_data_tgz: Optional[str],
+            pcgr_vep_tar_gz: Optional[str],
+            pcgr_tumor_site: int,
+            pcgr_tmb_target_size_mb: int,
+            pcgr_tmb_display: str):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
@@ -393,9 +430,16 @@ class VariantCallingWorkflow(Processor):
         self.cadd_resource = cadd_resource
         self.dbnsfp_resource = dbnsfp_resource
 
+        self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
+        self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
+        self.pcgr_tumor_site = pcgr_tumor_site
+        self.pcgr_tmb_target_size_mb = pcgr_tmb_target_size_mb
+        self.pcgr_tmb_display = pcgr_tmb_display
+
         self.variant_calling()
         self.variant_picking()
-        self.annotation()
+        self.pcgr()  # Use the un-annotated VCF to run PCGR before VEP annotation
+        self.variant_annotation()
         self.move_vcf_to_outdir()
         Vcf2Csv(self.settings).main(vcf=self.vcf)
         Vcf2Maf(self.settings).main(vcf=self.vcf, ref_fa=self.ref_fa)
@@ -421,7 +465,18 @@ class VariantCallingWorkflow(Processor):
             min_snv_callers=self.min_snv_callers,
             min_indel_callers=self.min_indel_callers)
 
-    def annotation(self):
+    def pcgr(self):
+        if (self.pcgr_ref_data_tgz is not None) and (self.pcgr_vep_tar_gz is not None):
+            PCGR(self.settings).main(
+                vcf=self.vcf,
+                pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
+                pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
+                vep_buffer_size=self.vep_buffer_size,
+                pcgr_tumor_site=self.pcgr_tumor_site,
+                pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
+                pcgr_tmb_display=self.pcgr_tmb_display)
+
+    def variant_annotation(self):
         if not self.skip_variant_annotation:
             self.vcf = Annotation(self.settings).main(
                 vcf=self.vcf,

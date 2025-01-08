@@ -374,6 +374,56 @@ GROUP_NAME_TO_ARGUMENTS = {
                 }
             },
         ],
+
+    'PCGR':
+        [
+            {
+                'keys': ['--pcgr-ref-data-tgz'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'default': 'None',
+                    'help': 'PCGR reference bundle .tgz file, if None then skip PCGR (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--pcgr-vep-tar-gz'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'default': 'None',
+                    'help': 'VEP database tar.gz file or "vep_cache" dir for PCGR, if None then skip PCGR (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--pcgr-tumor-site'],
+                'properties': {
+                    'type': int,
+                    'required': False,
+                    'default': 12,
+                    'help': '12 for Head and Neck (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--pcgr-tmb-target-size-mb'],
+                'properties': {
+                    'type': int,
+                    'required': False,
+                    'default': 34,
+                    'help': 'effective target size in Mb for TMB analysis (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--pcgr-tmb-display'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'choices': ['coding_and_silent', 'coding_non_silent', 'missense_only'],
+                    'default': 'coding_and_silent',
+                    'help': 'type of TMB measure to show in report (default: %(default)s)',
+                }
+            },
+        ],
 }
 
 
@@ -507,7 +557,13 @@ class EntryPoint:
                 dbnsfp_resource=args.dbnsfp_resource,
                 cadd_resource=args.cadd_resource,
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
-                dbsnp_vcf_gz=args.dbsnp_vcf_gz
+                dbsnp_vcf_gz=args.dbsnp_vcf_gz,
+
+                pcgr_ref_data_tgz=args.pcgr_ref_data_tgz,
+                pcgr_vep_tar_gz=args.pcgr_vep_tar_gz,
+                pcgr_tumor_site=args.pcgr_tumor_site,
+                pcgr_tmb_target_size_mb=args.pcgr_tmb_target_size_mb,
+                pcgr_tmb_display=args.pcgr_tmb_display
             )
 
         elif args.mode == 'annotate':

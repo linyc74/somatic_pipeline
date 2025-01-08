@@ -50,7 +50,13 @@ class Run:
             dbnsfp_resource: str,
             cadd_resource: str,
             clinvar_vcf_gz: str,
-            dbsnp_vcf_gz: str):
+            dbsnp_vcf_gz: str,
+
+            pcgr_ref_data_tgz: str,
+            pcgr_vep_tar_gz: str,
+            pcgr_tumor_site: int,
+            pcgr_tmb_target_size_mb: int,
+            pcgr_tmb_display: str):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -91,6 +97,12 @@ class Run:
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
+
+            pcgr_ref_data_tgz=None if pcgr_ref_data_tgz.lower() == 'none' else pcgr_ref_data_tgz,
+            pcgr_vep_tar_gz=None if pcgr_vep_tar_gz.lower() == 'none' else pcgr_vep_tar_gz,
+            pcgr_tumor_site=pcgr_tumor_site,
+            pcgr_tmb_target_size_mb=pcgr_tmb_target_size_mb,
+            pcgr_tmb_display=pcgr_tmb_display,
         )
 
     def annotate(

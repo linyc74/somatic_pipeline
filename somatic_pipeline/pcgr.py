@@ -6,14 +6,14 @@ class PCGR(Processor):
 
     GENOME_ASSEMBLY = 'grch38'
     SEQUENCING_ASSAY = 'WES'
-    VEP_BUFFER_SIZE = 100
-    EFFECTIVE_TARGET_SIZE_MB = 34  # Effective target size in Mb (potentially limited by read depth) of sequencing assay (for TMB analysis) (default: 34 (WES/WGS))
-    TMB_DISPLAY = 'coding_and_silent'  # type of TMB measure to show in report: coding_and_silent, coding_non_silent, missense_only
-    TUMOR_SITE = 12  # head and neck
 
     vcf: str
     pcgr_ref_data_tgz: str
     pcgr_vep_tar_gz: str
+    vep_buffer_size: int
+    pcgr_tumor_site: int
+    pcgr_tmb_target_size_mb: int
+    pcgr_tmb_display: str
 
     refdata_dir: str
     vep_dir: str
@@ -22,11 +22,19 @@ class PCGR(Processor):
             self,
             vcf: str,
             pcgr_ref_data_tgz: str,
-            pcgr_vep_tar_gz: str):
+            pcgr_vep_tar_gz: str,
+            vep_buffer_size: int,
+            pcgr_tumor_site: int,
+            pcgr_tmb_target_size_mb: int,
+            pcgr_tmb_display: str):
 
         self.vcf = vcf
         self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
         self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
+        self.vep_buffer_size = vep_buffer_size
+        self.pcgr_tumor_site = pcgr_tumor_site
+        self.pcgr_tmb_target_size_mb = pcgr_tmb_target_size_mb
+        self.pcgr_tmb_display = pcgr_tmb_display
 
         self.untar_reference_data()
         self.index_vcf()
@@ -52,6 +60,7 @@ class PCGR(Processor):
             self.call(f'tabix --preset vcf {self.vcf}')
 
     def run_pcgr(self):
+        log = f'{self.outdir}/pcgr.log'
         cmd = self.CMD_LINEBREAK.join([
             'pcgr',
             f'--input_vcf {self.vcf}',
@@ -64,14 +73,16 @@ class PCGR(Processor):
 
             f'--vcfanno_n_proc {self.threads}',
             f'--vep_n_forks {self.threads}',
-            f'--vep_buffer_size {self.VEP_BUFFER_SIZE}',
+            f'--vep_buffer_size {self.vep_buffer_size}',
 
-            f'--effective_target_size_mb {self.EFFECTIVE_TARGET_SIZE_MB}',
+            f'--effective_target_size_mb {self.pcgr_tmb_target_size_mb}',
             f'--estimate_tmb',
-            f'--tmb_display {self.TMB_DISPLAY}',
+            f'--tmb_display {self.pcgr_tmb_display}',
 
             f'--estimate_signatures',  # Estimate relative contributions of reference mutational signatures in query sample (re-fitting), default: False
 
-            f'--tumor_site {self.TUMOR_SITE}',
+            f'--tumor_site {self.pcgr_tumor_site}',
+
+            f'1>> {log} 2>> {log}',
         ])
         self.call(cmd)
