@@ -17,7 +17,7 @@ RUN conda install -n somatic -c bioconda \
     bowtie2=2.5.4 \
     muse=1.0 \
     varscan=2.3.7 \
-    bcftools=1.21 \
+    bcftools=1.11 \
     vcf2maf=1.6.21
 
 # Activate somatic env but do not prioritize over the system env (for the perl used by VEP)
