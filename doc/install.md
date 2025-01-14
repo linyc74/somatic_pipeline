@@ -1,21 +1,21 @@
 ## Conda
 
 ```bash
-conda create -n somatic
+conda create -n somatic python=3.10
 conda activate somatic
 
-conda install -c anaconda pandas=1.3.5
-conda install -c conda-forge tbb=2020.2
+conda install -c anaconda pandas=2.1.4
+conda install -c conda-forge tbb=2020.2 unzip=6.0
 conda install -c bioconda \
 trim-galore=0.6.6 \
-bwa=0.7.17 \
-samtools=1.11 \
-gatk4=4.2.4.1 \
-bowtie2=2.3.5 \
+bwa=0.7.18 \
+samtools=1.21 \
+gatk4=4.6.1.0 \
+bowtie2=2.5.4 \
 muse=1.0 \
 varscan=2.3.7 \
-bcftools=1.8 \
-vcf2maf=1.6.21
+bcftools=1.21 \
+vcf2maf=1.6.21 \
 bedtools=2.30.0 \
 somatic-sniper=1.0.5.0
 
@@ -67,6 +67,8 @@ RUN apt-get install -y \
     build-essential \
     perl \
     cpanminus \
+    curl \
+    libwww-perl \
  && cpanm DBI \
  && cpanm Try::Tiny
 
