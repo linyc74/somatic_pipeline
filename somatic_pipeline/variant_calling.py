@@ -821,7 +821,7 @@ class LoFreqTNPaired(CallerBase):
         ] + bed + [
             f'--threads {self.threads}',
             '--call-indels',  # works only when BAM file contains indel qualities, GATK BQSR does that
-            f'-o {self.workdir}/lofreq-somatic',
+            f'-o {self.workdir}/lofreq-',
             f'1> {log}',
             f'2> {log}',
         ]
