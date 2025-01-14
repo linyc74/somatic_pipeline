@@ -17,23 +17,15 @@ varscan=2.3.7 \
 bcftools=1.21 \
 vcf2maf=1.6.21 \
 bedtools=2.30.0 \
-somatic-sniper=1.0.5.0
+somatic-sniper=1.0.5.0 \
+lofreq=2.1.5
 
 conda clean --all --yes
-```
 
-## LoFreq
-
-```bash
-cd ~/opt
-wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz
-tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz
-rm lofreq_star-2.1.5_linux-x86-64.tgz
-```
-
-In `.bashrc` add:
-```bash
-export PATH=$PATH:$HOME/opt/lofreq_star-2.1.5_linux-x86-64/bin
+# LoFreq dependency issues
+sudo apt-get install libopenblas-dev
+cd ~/anaconda3/envs/somatic/lib
+ln -s libgsl.so.27.0.0 libgsl.so.25
 ```
 
 ## VarDict
