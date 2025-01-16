@@ -37,6 +37,7 @@ class PCGR(Processor):
         self.pcgr_tmb_display = pcgr_tmb_display
 
         self.untar_reference_data()
+        self.bgzip_vcf()
         self.index_vcf()
         self.run_pcgr()
 
@@ -54,6 +55,12 @@ class PCGR(Processor):
 
         else:  # already extracted, with `homo_sapiens` placed in the `vep_cache` dir
             self.vep_dir = self.pcgr_vep_tar_gz
+
+    def bgzip_vcf(self):
+        if not self.vcf.endswith('.gz'):
+            vcf_gz = f'{self.workdir}/{os.path.basename(self.vcf)}.gz'
+            self.call(f'bgzip --threads {self.threads} --stdout {self.vcf} > {vcf_gz}')
+            self.vcf = vcf_gz
 
     def index_vcf(self):
         if not os.path.exists(f'{self.vcf}.tbi'):

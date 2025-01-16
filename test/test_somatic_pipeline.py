@@ -7,8 +7,8 @@ class TestSomaticPipeline(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    def tearDown(self):
-        self.tear_down()
+    # def tearDown(self):
+    #     self.tear_down()
 
     def test_tumor_normal_paired(self):
         SomaticPipeline(self.settings).main(
@@ -49,8 +49,8 @@ class TestSomaticPipeline(TestCase):
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
 
-            pcgr_ref_data_tgz=None,
-            pcgr_vep_tar_gz=None,
+            pcgr_ref_data_tgz=f'{self.indir}/homo_sapiens_vep_112_GRCh38_chr9_chr22.tar.gz',
+            pcgr_vep_tar_gz=f'{self.indir}/pcgr_ref_data.20240927.grch38.tgz',
             pcgr_tumor_site=12,
             pcgr_tmb_target_size_mb=34,
             pcgr_tmb_display='coding_and_silent',

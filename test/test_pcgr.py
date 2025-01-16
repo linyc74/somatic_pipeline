@@ -12,7 +12,7 @@ class TestPCGR(TestCase):
 
     def test_main(self):
         PCGR(self.settings).main(
-            vcf=f'{self.indir}/mutect2.vcf.gz',
+            vcf=f'{self.indir}/picked-variants.vcf',
             pcgr_ref_data_tgz=f'{self.indir}/pcgr_ref_data.20240927.grch38.tgz',
             pcgr_vep_tar_gz=f'{self.indir}/homo_sapiens_vep_112_GRCh38_chr9_chr22.tar.gz',
             vep_buffer_size=100,
