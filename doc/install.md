@@ -1,24 +1,12 @@
 ## Conda
 
 ```bash
+sudo apt install trim-galore bowtie2  # sometimes these two do not work well with conda
 conda create -n somatic python=3.10
 conda activate somatic
-
-conda install -c anaconda pandas=2.1.4
-conda install -c conda-forge tbb=2020.2 unzip=6.0
-conda install -c bioconda \
-trim-galore=0.6.6 \
-bwa=0.7.18 \
-samtools=1.21 \
-gatk4=4.6.1.0 \
-bowtie2=2.5.4 \
-muse=1.0 \
-varscan=2.3.7 \
-bcftools=1.8 \
-vcf2maf=1.6.21 \
-bedtools=2.30.0 \
-somatic-sniper=1.0.5.0
-
+conda install -c anaconda pandas
+conda install -c bioconda trim-galore bwa samtools gatk4 bowtie2 muse varscan vcf2maf bedtools somatic-sniper lofreq
+conda install -c bioconda bcftools=1.8  # a specific version is needed to avoid segmentation fault
 conda clean --all --yes
 ```
 
@@ -63,14 +51,9 @@ export PATH=$PATH:$HOME/opt/VarDict-1.8.3/bin
 ## VEP
 
 ```bash
-RUN apt-get install -y \
-    build-essential \
-    perl \
-    cpanminus \
-    curl \
-    libwww-perl \
- && cpanm DBI \
- && cpanm Try::Tiny
+# Use the perl in the conda environment
+conda install -c bioconda perl-dbi
+conda install -c bioconda perl-try-tiny
 
 cd ~/opt
 wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip
