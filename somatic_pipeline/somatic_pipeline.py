@@ -64,6 +64,7 @@ class SomaticPipeline(Processor):
     dbsnp_vcf_gz: Optional[str]
 
     # PCGR
+    skip_pcgr: bool
     pcgr_ref_data_tgz: Optional[str]
     pcgr_vep_tar_gz: Optional[str]
     pcgr_tumor_site: int
@@ -109,6 +110,7 @@ class SomaticPipeline(Processor):
             clinvar_vcf_gz: Optional[str],
             dbsnp_vcf_gz: Optional[str],
 
+            skip_pcgr: bool,
             pcgr_ref_data_tgz: Optional[str],
             pcgr_vep_tar_gz: Optional[str],
             pcgr_tumor_site: int,
@@ -152,6 +154,7 @@ class SomaticPipeline(Processor):
         self.clinvar_vcf_gz = clinvar_vcf_gz
         self.dbsnp_vcf_gz = dbsnp_vcf_gz
 
+        self.skip_pcgr = skip_pcgr
         self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
         self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
         self.pcgr_tumor_site = pcgr_tumor_site
@@ -228,6 +231,7 @@ class SomaticPipeline(Processor):
                 vep_buffer_size=self.vep_buffer_size,
                 cadd_resource=self.cadd_resource,
                 dbnsfp_resource=self.dbnsfp_resource,
+                skip_pcgr=self.skip_pcgr,
                 pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
                 pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
                 pcgr_tumor_site=self.pcgr_tumor_site,
@@ -363,6 +367,7 @@ class VariantCallingWorkflow(Processor):
     cadd_resource: Optional[str]
     dbnsfp_resource: Optional[str]
 
+    skip_pcgr: bool
     pcgr_ref_data_tgz: Optional[str]
     pcgr_vep_tar_gz: Optional[str]
     pcgr_tumor_site: int
@@ -399,6 +404,7 @@ class VariantCallingWorkflow(Processor):
             cadd_resource: Optional[str],
             dbnsfp_resource: Optional[str],
 
+            skip_pcgr: bool,
             pcgr_ref_data_tgz: Optional[str],
             pcgr_vep_tar_gz: Optional[str],
             pcgr_tumor_site: int,
@@ -430,6 +436,7 @@ class VariantCallingWorkflow(Processor):
         self.cadd_resource = cadd_resource
         self.dbnsfp_resource = dbnsfp_resource
 
+        self.skip_pcgr = skip_pcgr
         self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
         self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
         self.pcgr_tumor_site = pcgr_tumor_site
@@ -466,15 +473,22 @@ class VariantCallingWorkflow(Processor):
             min_indel_callers=self.min_indel_callers)
 
     def pcgr(self):
-        if (self.pcgr_ref_data_tgz is not None) and (self.pcgr_vep_tar_gz is not None):
-            PCGR(self.settings).main(
-                vcf=self.vcf,
-                pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
-                pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
-                vep_buffer_size=self.vep_buffer_size,
-                pcgr_tumor_site=self.pcgr_tumor_site,
-                pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
-                pcgr_tmb_display=self.pcgr_tmb_display)
+        if self.skip_pcgr:
+            return
+        if self.pcgr_ref_data_tgz is None:
+            self.logger.info(f'pcgr-ref-data-tgz is None, skip PCGR')
+            return
+        if self.pcgr_vep_tar_gz is None:
+            self.logger.info(f'pcgr-vep-tar-gz is None, skip PCGR')
+            return
+        PCGR(self.settings).main(
+            vcf=self.vcf,
+            pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
+            pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
+            vep_buffer_size=self.vep_buffer_size,
+            pcgr_tumor_site=self.pcgr_tumor_site,
+            pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
+            pcgr_tmb_display=self.pcgr_tmb_display)
 
     def variant_annotation(self):
         if not self.skip_variant_annotation:

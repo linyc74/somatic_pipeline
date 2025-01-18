@@ -378,12 +378,19 @@ GROUP_NAME_TO_ARGUMENTS = {
     'PCGR':
         [
             {
+                'keys': ['--skip-pcgr'],
+                'properties': {
+                    'action': 'store_true',
+                    'help': 'do not run PCGR',
+                }
+            },
+            {
                 'keys': ['--pcgr-ref-data-tgz'],
                 'properties': {
                     'type': str,
                     'required': False,
                     'default': 'None',
-                    'help': 'PCGR reference bundle .tgz file, if None then skip PCGR (default: %(default)s)',
+                    'help': 'PCGR reference bundle .tgz file (default: %(default)s)',
                 }
             },
             {
@@ -392,7 +399,7 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'type': str,
                     'required': False,
                     'default': 'None',
-                    'help': 'VEP database tar.gz file or "vep_cache" dir for PCGR, if None then skip PCGR (default: %(default)s)',
+                    'help': 'VEP database tar.gz file or "vep_cache" dir for PCGR (default: %(default)s)',
                 }
             },
             {
@@ -560,6 +567,7 @@ class EntryPoint:
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
                 dbsnp_vcf_gz=args.dbsnp_vcf_gz,
 
+                skip_pcgr=args.skip_pcgr,
                 pcgr_ref_data_tgz=args.pcgr_ref_data_tgz,
                 pcgr_vep_tar_gz=args.pcgr_vep_tar_gz,
                 pcgr_tumor_site=args.pcgr_tumor_site,

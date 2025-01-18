@@ -52,6 +52,7 @@ class Run:
             clinvar_vcf_gz: str,
             dbsnp_vcf_gz: str,
 
+            skip_pcgr: bool,
             pcgr_ref_data_tgz: str,
             pcgr_vep_tar_gz: str,
             pcgr_tumor_site: int,
@@ -98,6 +99,7 @@ class Run:
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
 
+            skip_pcgr=skip_pcgr,
             pcgr_ref_data_tgz=None if pcgr_ref_data_tgz.lower() == 'none' else pcgr_ref_data_tgz,
             pcgr_vep_tar_gz=None if pcgr_vep_tar_gz.lower() == 'none' else pcgr_vep_tar_gz,
             pcgr_tumor_site=pcgr_tumor_site,

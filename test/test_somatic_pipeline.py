@@ -49,6 +49,7 @@ class TestSomaticPipeline(TestCase):
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
 
+            skip_pcgr=False,
             pcgr_ref_data_tgz=f'{self.indir}/homo_sapiens_vep_112_GRCh38_chr9_chr22.tar.gz',
             pcgr_vep_tar_gz=f'{self.indir}/pcgr_ref_data.20240927.grch38.tgz',
             pcgr_tumor_site=12,
@@ -95,6 +96,7 @@ class TestSomaticPipeline(TestCase):
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
 
+            skip_pcgr=True,
             pcgr_ref_data_tgz=None,
             pcgr_vep_tar_gz=None,
             pcgr_tumor_site=12,
