@@ -3,7 +3,7 @@ FROM continuumio/miniconda3:24.11.1-0
 RUN apt-get update \
  && apt-get install -y \
     trim-galore=0.6.7-1 \
-    bowtie2=.4.4-1
+    bowtie2=2.4.4-1
 
 RUN conda create -n somatic \
  && conda install -n somatic -c anaconda \
