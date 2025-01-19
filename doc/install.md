@@ -3,6 +3,7 @@
 ```bash
 sudo apt install trim-galore bowtie2  # sometimes these two do not work well with conda
 conda create -n somatic python=3.10
+
 conda activate somatic
 conda install -c anaconda pandas
 conda install -c bioconda trim-galore bwa samtools gatk4 bowtie2 muse varscan vcf2maf bedtools somatic-sniper lofreq

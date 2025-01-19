@@ -1,24 +1,27 @@
 FROM continuumio/miniconda3:24.11.1-0
 
-RUN apt-get update
+RUN apt-get update \
+ && apt-get install -y \
+    trim-galore=0.6.7-1 \
+    bowtie2=.4.4-1
 
 RUN conda create -n somatic \
  && conda install -n somatic -c anaconda \
-    pandas=2.1.4 \
+    pandas=2.2.3 \
  && conda install -n somatic -c conda-forge \
     tbb=2020.2 \
     unzip=6.0
 
 RUN conda install -n somatic -c bioconda \
-    trim-galore=0.6.6 \
-    bwa=0.7.18 \
-    samtools=1.21 \
-    gatk4=4.6.1.0 \
-    bowtie2=2.5.4 \
+    bwa=0.7.17 \
+    samtools=1.5 \
+    gatk4=4.0.5.1 \
     muse=1.0 \
     varscan=2.3.7 \
     bcftools=1.8 \
-    vcf2maf=1.6.21
+    vcf2maf=1.6.22 \
+    bedtools=2.26.0 \
+    somatic-sniper=1.0.5.0
 
 # Activate somatic env but do not prioritize over the system env (for the perl used by VEP)
 ENV PATH=$PATH:/opt/conda/envs/somatic/bin
@@ -35,11 +38,6 @@ RUN wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-
  && tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz \
  && rm lofreq_star-2.1.5_linux-x86-64.tgz
 ENV PATH=$PATH:/lofreq_star-2.1.5_linux-x86-64/bin
-
-# --- SomaticSniper ---
-RUN conda install -c bioconda -n somatic \
-    bedtools=2.30.0 \
-    somatic-sniper=1.0.5.0
 
 # --- VarDict ---
 RUN apt-get install -y dos2unix \
