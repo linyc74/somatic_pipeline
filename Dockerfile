@@ -1,11 +1,9 @@
 FROM continuumio/miniconda3:24.11.1-0
 
 RUN apt-get update \
- && apt-get install -y \
-    trim-galore=0.6.7-1 \
-    bowtie2=2.4.4-1
+ && apt-get install -y trim-galore bowtie2
 
-RUN conda create -n somatic \
+RUN conda create -n somatic python=3.10 \
  && conda install -n somatic -c anaconda \
     pandas=2.2.3 \
  && conda install -n somatic -c conda-forge \
@@ -14,7 +12,7 @@ RUN conda create -n somatic \
 
 RUN conda install -n somatic -c bioconda \
     bwa=0.7.17 \
-    samtools=1.5 \
+    samtools=1.11 \
     gatk4=4.0.5.1 \
     muse=1.0 \
     varscan=2.3.7 \
