@@ -79,7 +79,7 @@ ENV PLATFORM="linux"
 RUN conda create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock
 RUN conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 ENV PATH=$PATH:/opt/conda/envs/pcgr/bin
-RUN cp /opt/conda/envs/pcgr/bin/pcgrr.R /opt/conda/envs/somatic/bin/
+ENV CONDA_PREFIX=/opt/conda/envs/pcgr
 
 RUN apt-get autoremove \
  && apt-get clean \
