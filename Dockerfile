@@ -3,10 +3,12 @@ FROM continuumio/miniconda3:24.11.1-0
 RUN apt-get update \
  && apt-get install -y trim-galore bowtie2
 
-RUN conda create -n somatic python=3.10 \
- && conda install -n somatic -c anaconda \
-    pandas=2.2.3 \
- && conda install -n somatic -c conda-forge \
+# pandas needs to be in the base env
+RUN conda install -c anaconda pandas=2.2.3
+
+RUN conda create -n somatic python=3.10
+
+RUN conda install -n somatic -c conda-forge \
     tbb=2020.2 \
     unzip=6.0
 
