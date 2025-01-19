@@ -13,7 +13,7 @@ RUN conda create -n somatic python=3.10 \
 RUN conda install -n somatic -c bioconda \
     bwa=0.7.17 \
     samtools=1.11 \
-    gatk4=4.2.4.1 \
+    gatk4=4.6.1.0 \
     muse=1.0 \
     varscan=2.3.7 \
     bcftools=1.8 \
