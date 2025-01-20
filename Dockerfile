@@ -82,7 +82,10 @@ ENV PATH=$PATH:/opt/conda/envs/pcgr/bin
 ENV CONDA_PREFIX=/opt/conda/envs/pcgr
 
 # --- SnpEff ---
-RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
+RUN wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb \
+ && apt-get install -y ./jdk-21_linux-x64_bin.deb \
+ && rm jdk-21_linux-x64_bin.deb \
+ && wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
  && unzip snpEff_latest_core.zip \
  && rm snpEff_latest_core.zip
 ENV PATH $PATH:/snpEff/exec
