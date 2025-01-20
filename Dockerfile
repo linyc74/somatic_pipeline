@@ -82,8 +82,7 @@ ENV PATH=$PATH:/opt/conda/envs/pcgr/bin
 ENV CONDA_PREFIX=/opt/conda/envs/pcgr
 
 # --- SnpEff ---
-RUN conda install -c conda-forge unzip=6.0 \
- && wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
+RUN wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip \
  && unzip snpEff_latest_core.zip \
  && rm snpEff_latest_core.zip
 ENV PATH $PATH:/snpEff/exec
