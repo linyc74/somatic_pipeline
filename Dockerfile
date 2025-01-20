@@ -3,7 +3,7 @@ FROM continuumio/miniconda3:24.11.1-0
 RUN apt-get update \
  && apt-get install -y trim-galore bowtie2
 
-# pandas needs to be in the base env
+# Pandas needs to be in the base env
 RUN conda install -c anaconda pandas=2.2.3
 
 RUN conda create -n somatic python=3.10
