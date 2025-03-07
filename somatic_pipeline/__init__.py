@@ -153,14 +153,14 @@ class Run:
             os.makedirs(d, exist_ok=True)
 
     def vcf2csv(self, vcf: str, csv: str, debug: bool):
-        self.settings = Settings(
+        settings = Settings(
             workdir=get_temp_path(prefix='./somatic_pipeline_workdir_'),
             outdir='',
             threads=1,
             debug=debug,
             mock=False)
-        os.makedirs(self.settings.workdir)
-        Vcf2CsvWorkflow(self.settings).main(vcf=vcf, csv=csv)
+        os.makedirs(settings.workdir)
+        Vcf2CsvWorkflow(settings).main(vcf=vcf, csv=csv)
 
 
 class Vcf2CsvWorkflow(Processor):
