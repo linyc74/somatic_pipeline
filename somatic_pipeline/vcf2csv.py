@@ -48,6 +48,8 @@ class Vcf2Csv(Processor):
             vcf_header=self.vcf_header)
 
     def set_all_columns(self):
+        # Need to define all possible columns before processing data,
+        # as each row may have incomplete columns (key-value pairs)
         self.all_columns = GetAllColumns(self.settings).main(
             info_id_to_description=self.info_id_to_description)
 
@@ -229,7 +231,7 @@ class VcfLineToRow(Processor):
                 description = self.info_id_to_description.get(item, None)
 
             if description is not None:
-                self.row[description] = val
+                self.row[description] = val  # use description as key
 
     def __split(self, item: str) -> Tuple[str, str]:
         p = item.index('=')

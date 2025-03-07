@@ -3,7 +3,7 @@ from typing import List
 from somatic_pipeline import Run
 
 
-__VERSION__ = '1.11.1-beta'
+__VERSION__ = '1.12.0-beta'
 
 
 PURPLE = '\033[95m'
@@ -33,6 +33,13 @@ VERSION_ARG = {
         'action': 'version',
         'version': __VERSION__,
         'help': 'show version',
+    }
+}
+DEBUG_ARG = {
+    'keys': ['-d', '--debug'],
+    'properties': {
+        'action': 'store_true',
+        'help': 'debug mode',
     }
 }
 GROUP_NAME_TO_ARGUMENTS = {
@@ -126,13 +133,7 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'help': 'number of CPU threads (default: %(default)s)',
                 }
             },
-            {
-                'keys': ['-d', '--debug'],
-                'properties': {
-                    'action': 'store_true',
-                    'help': 'debug mode',
-                }
-            },
+            DEBUG_ARG,
             HELP_ARG,
             VERSION_ARG,
         ],
@@ -431,6 +432,33 @@ GROUP_NAME_TO_ARGUMENTS = {
                 }
             },
         ],
+
+    'vcf2csv':
+        [
+            {
+                'keys': ['-f', '--vcf'],
+                'properties': {
+                    'type': str,
+                    'required': True,
+                    'help': 'path to the vcf(.gz) file',
+                }
+            },
+            {
+                'keys': ['-c', '--csv'],
+                'properties': {
+                    'type': str,
+                    'required': True,
+                    'help': 'path to the output csv file',
+                }
+            },
+        ],
+
+    'others':
+        [
+            DEBUG_ARG,
+            HELP_ARG,
+            VERSION_ARG,
+        ]
 }
 
 
@@ -439,12 +467,14 @@ class EntryPoint:
     root_parser: argparse.ArgumentParser
     main_parser: argparse.ArgumentParser
     annotate_parser: argparse.ArgumentParser
+    vcf2csv_parser: argparse.ArgumentParser
 
     def main(self):
         self.set_parsers()
         self.add_root_parser_args()
         self.add_main_parser_args()
         self.add_annotate_parser_args()
+        self.add_vc2csv_parser_args()
         self.run()
 
     def set_parsers(self):
@@ -469,6 +499,12 @@ class EntryPoint:
             prog=f'{PROG} annotate',
             name='annotate',
             description=f'{DESCRIPTION} - {BOLD}{CYAN}annotate mode{END}',
+            add_help=False)
+
+        self.vcf2csv_parser = subparsers.add_parser(
+            prog=f'{PROG} vcf2csv',
+            name='vcf2csv',
+            description=f'{DESCRIPTION} - {BOLD}{CYAN}vcf2csv mode{END}',
             add_help=False)
 
     def add_root_parser_args(self):
@@ -498,6 +534,15 @@ class EntryPoint:
             optional_group_names=[
                 'general',
                 'variant annotation'
+            ]
+        )
+
+    def add_vc2csv_parser_args(self):
+        self.__add_arguments(
+            parser=self.vcf2csv_parser,
+            required_group_name='vcf2csv',
+            optional_group_names=[
+                'others',
             ]
         )
 
@@ -592,6 +637,14 @@ class EntryPoint:
                 cadd_resource=args.cadd_resource,
                 clinvar_vcf_gz=args.clinvar_vcf_gz,
                 dbsnp_vcf_gz=args.dbsnp_vcf_gz
+            )
+
+        elif args.mode == 'vcf2csv':
+            print(f'{prefix}vcf2csv mode\n', flush=True)
+            Run().vcf2csv(
+                vcf=args.vcf,
+                csv=args.csv,
+                debug=args.debug
             )
 
 

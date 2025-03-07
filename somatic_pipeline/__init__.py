@@ -1,8 +1,10 @@
 import os
-from .template import Settings
+from .vcf2csv import Vcf2Csv
+from .clean_up import CleanUp
 from .tools import get_temp_path
-from .variant_annotation import VariantAnnotation
+from .template import Settings, Processor
 from .somatic_pipeline import SomaticPipeline
+from .variant_annotation import VariantAnnotation
 
 
 class Run:
@@ -136,8 +138,9 @@ class Run:
             dbnsfp_resource=None if dbnsfp_resource.lower() == 'none' else dbnsfp_resource,
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
-            dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz,
+            dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz
         )
+        CleanUp(self.settings).main()
 
     def config_settings(self, outdir: str, threads: int, debug: bool):
         self.settings = Settings(
@@ -146,6 +149,34 @@ class Run:
             threads=threads,
             debug=debug,
             mock=False)
-
         for d in [self.settings.workdir, self.settings.outdir]:
             os.makedirs(d, exist_ok=True)
+
+    def vcf2csv(self, vcf: str, csv: str, debug: bool):
+        self.settings = Settings(
+            workdir=get_temp_path(prefix='./somatic_pipeline_workdir_'),
+            outdir='',
+            threads=1,
+            debug=debug,
+            mock=False)
+        os.makedirs(self.settings.workdir)
+        Vcf2CsvWorkflow(self.settings).main(vcf=vcf, csv=csv)
+
+
+class Vcf2CsvWorkflow(Processor):
+
+    def main(self, vcf: str, csv: str):
+
+        if vcf.endswith('.gz'):
+            new = f'{self.workdir}/temp.vcf'
+            self.call(f'gunzip -c {vcf} > {new}')
+            vcf = new
+
+        temp_csv = Vcf2Csv(settings=self.settings).main(
+            vcf=vcf,
+            dstdir=self.settings.workdir)
+
+        self.call(f'mv {temp_csv} {csv}')
+
+        if not self.debug:
+            self.call(f'rm -r {self.workdir}')
