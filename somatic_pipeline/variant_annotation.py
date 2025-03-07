@@ -8,7 +8,6 @@ from .template import Processor
 class VariantAnnotation(Processor):
 
     VEP = 'vep'
-    SNPEFF = 'snpeff'
 
     vcf: str
     ref_fa: str

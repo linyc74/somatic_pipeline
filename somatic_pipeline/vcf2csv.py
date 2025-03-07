@@ -153,7 +153,6 @@ class GetAllColumns(Processor):
 
         self.init_columns()
         self.add_info_descriptions()
-        self.unroll_snpeff_columns()
         self.unroll_vep_columns()
 
         return self.columns
@@ -164,22 +163,6 @@ class GetAllColumns(Processor):
     def add_info_descriptions(self):
         for description in self.info_id_to_description.values():
             self.columns.append(description)
-
-    def unroll_snpeff_columns(self):
-        """
-        "Functional annotations: 'Allele | Annotation | Gene_Name' "
-
-        ['Allele', 'Annotation', 'Gene_Name']
-        """
-        left_strip = "Functional annotations: '"
-        right_strip = "' "
-        sep = ' | '
-        for i, column in enumerate(self.columns):
-            if column.startswith(left_strip):
-                self.columns.pop(i)
-                new_columns = column.lstrip(left_strip).rstrip(right_strip).split(sep)
-                self.columns += new_columns
-                break
 
     def unroll_vep_columns(self):
         """
@@ -215,7 +198,7 @@ class VcfLineToRow(Processor):
 
         self.unpack_line_and_set_vcf_info()
         self.parse_vcf_info()
-        self.unroll_annotation()
+        self.row = UnrollVEPAnnotation(self.settings).main(row=self.row)
 
         return self.row
 
@@ -254,57 +237,126 @@ class VcfLineToRow(Processor):
         val = item[p+1:]
         return id_, val
 
-    def unroll_annotation(self):
-        for unroller in [
-            UnrollSnpEffAnnotation(self.settings),
-            UnrollVEPAnnotation(self.settings)
-        ]:
-            self.row = unroller.main(self.row)
 
+class UnrollVEPAnnotation(Processor):
 
-class UnrollAnnotation(Processor):
+    VEP_PREFIX = 'Consequence annotations from Ensembl VEP. Format: '
+    # https://gdc.cancer.gov/content/most-frequent-mutations-table-vep-impact-score-which-algorithm-vep-gdc-using-determine-%E2%80%9Ch-or-%E2%80%9Cm%E2%80%9D
+    IMPACT_ORDER = [
+        'HIGH',
+        'MODERATE',
+        'LOW',
+        'MODIFIER',
+    ]
+    CONSEQUENCE_ORDER = [
+        # amino acid change
+        'frameshift_variant',
+        'stop_gained',
+        'missense_variant',
+        'inframe_deletion',
+        'inframe_insertion',
+        'stop_lost',
+        'start_lost',
+        'stop_retained_variant',
+        'start_retained_variant',
+        'incomplete_terminal_codon_variant',
+        'coding_sequence_variant',
+        'protein_altering_variant',
 
-    LEFT_STRIP: str
-    RIGHT_STRIP: str
-    KEY_SEP: str
-    VALUE_SEP: str
+        # silent
+        'synonymous_variant',
 
-    d: Dict[str, str]
+        # splice
+        'splice_polypyrimidine_tract_variant',
+        'splice_donor_variant',
+        'splice_acceptor_variant',
+        'splice_donor_region_variant',
+        'splice_donor_5th_base_variant',
+        'splice_region_variant',
 
-    def main(self, d: Dict[str, str]) -> Dict[str, str]:
-        self.d = d.copy()
+        # UTR
+        '5_prime_UTR_variant',
+        '3_prime_UTR_variant',
 
-        keys = list(self.d.keys())
-        for key in keys:
-            if key.startswith(self.LEFT_STRIP):
-                val = self.d.pop(key)
-                self.unroll(key, val)
+        # regulatory
+        'upstream_gene_variant',
+        'downstream_gene_variant',
+        'regulatory_region_ablation',
+        'regulatory_region_variant',
+        'TF_binding_site_variant',
+        'TFBS_ablation',
 
-        return self.d
+        # intron and intergenic
+        'intron_variant',
+        'intergenic_variant',
 
-    def unroll(self, key: str, val: str):
-        keys = key.lstrip(self.LEFT_STRIP).rstrip(self.RIGHT_STRIP).split(self.KEY_SEP)
-        vals = val.split(self.VALUE_SEP)
+        # miRNA and lincRNA
+        'mature_miRNA_variant',
+        'NMD_transcript_variant',
+        'non_coding_transcript_exon_variant',
+        'non_coding_transcript_variant',
+    ]
+
+    row: Dict[str, str]
+
+    vep_key: Optional[str]
+    annotations: List[str]
+    fields: List[str]
+    values: List[str]
+
+    def main(self, row: Dict[str, str]) -> Dict[str, str]:
+        self.row = row.copy()
+
+        self.set_vep_key()
+        if self.vep_key is None:  # no VEP annotation
+            return self.row
+
+        self.set_annotations()
+        self.annotations = sorted(self.annotations, key=self.get_order)
+        self.set_fields_and_values()
+        self.pop_and_replace_with_new_dict()
+
+        return self.row
+
+    def set_vep_key(self):
+        self.vep_key = None
+        for key in self.row.keys():
+            if key.startswith(self.VEP_PREFIX):
+                self.vep_key = key
+                break
+
+    def set_annotations(self):
+        full_annotation = self.row[self.vep_key]
+        self.annotations = full_annotation.split(',')
+
+    def get_order(self, annotation: str) -> Tuple[int, int, int]:
+        consequence = annotation.split('|')[1].split('&')[0]
+        impact = annotation.split('|')[2]
+        symbol = annotation.split('|')[3]
+
+        s, i, c = 999, 999, 999  # last in order by default
+
+        if symbol != '':  # has symbol
+            s = 0
+
+        if impact in self.IMPACT_ORDER:
+            i = self.IMPACT_ORDER.index(impact)
+
+        if consequence in self.CONSEQUENCE_ORDER:
+            c = self.CONSEQUENCE_ORDER.index(consequence)
+
+        return s, i, c
+
+    def set_fields_and_values(self):
+        self.fields = self.vep_key[len(self.VEP_PREFIX):].split('|')
+        self.values = self.annotations[0].split('|')
+
+    def pop_and_replace_with_new_dict(self):
+        self.row.pop(self.vep_key)
         new_dict = {
-            k: v for k, v in zip(keys, vals)
+            k: v for k, v in zip(self.fields, self.values)
         }
-        self.d.update(new_dict)
-
-
-class UnrollSnpEffAnnotation(UnrollAnnotation):
-
-    LEFT_STRIP = "Functional annotations: '"
-    RIGHT_STRIP = "' "
-    KEY_SEP = ' | '
-    VALUE_SEP = '|'
-
-
-class UnrollVEPAnnotation(UnrollAnnotation):
-
-    LEFT_STRIP = 'Consequence annotations from Ensembl VEP. Format: '
-    RIGHT_STRIP = ''
-    KEY_SEP = '|'
-    VALUE_SEP = '|'
+        self.row.update(new_dict)
 
 
 class SaveDataToCsv(Processor):
