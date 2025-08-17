@@ -143,8 +143,14 @@ class Run:
         CleanUp(self.settings).main()
 
     def config_settings(self, outdir: str, threads: int, debug: bool):
+
+        prefix = os.path.basename(outdir)
+        for c in [' ', ',', '(', ')']:
+            prefix = prefix.replace(c, '_')
+        workdir = get_temp_path(prefix=f'./{prefix}_')
+
         self.settings = Settings(
-            workdir=get_temp_path(prefix='./somatic_pipeline_workdir_'),
+            workdir=workdir,
             outdir=outdir,
             threads=threads,
             debug=debug,
