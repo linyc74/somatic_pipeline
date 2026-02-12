@@ -7,8 +7,6 @@ from .template import Processor
 
 class VariantAnnotation(Processor):
 
-    VEP = 'vep'
-
     vcf: str
     ref_fa: str
     clinvar_vcf_gz: Optional[str]
@@ -41,25 +39,20 @@ class VariantAnnotation(Processor):
         self.cadd_resource = cadd_resource
         self.dbnsfp_resource = dbnsfp_resource
 
-        self.run_vep()
-        self.annotate_by_vcf_gz()
+        if self.vep_db_tar_gz is not None:
+            self.logger.info(f'Annotating with VEP')
+            self.vcf = VEP(self.settings).main(
+                vcf=self.vcf,
+                ref_fa=self.ref_fa,
+                vep_db_tar_gz=self.vep_db_tar_gz,
+                vep_db_type=self.vep_db_type,
+                vep_buffer_size=self.vep_buffer_size,
+                cadd_resource=self.cadd_resource,
+                dbnsfp_resource=self.dbnsfp_resource)
 
-        return self.vcf
-
-    def run_vep(self):
-        assert self.vep_db_tar_gz is not None
-        self.vcf = VEP(self.settings).main(
-            vcf=self.vcf,
-            ref_fa=self.ref_fa,
-            vep_db_tar_gz=self.vep_db_tar_gz,
-            vep_db_type=self.vep_db_type,
-            vep_buffer_size=self.vep_buffer_size,
-            cadd_resource=self.cadd_resource,
-            dbnsfp_resource=self.dbnsfp_resource)
-
-    def annotate_by_vcf_gz(self):
         for vcf_gz in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if vcf_gz is not None:
+                self.logger.info(f'Annotating with {vcf_gz} by snpsift annotate')
                 self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
 
 
