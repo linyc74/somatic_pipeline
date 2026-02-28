@@ -41,7 +41,7 @@ class TestSomaticPipeline(TestCase):
             min_indel_callers=1,
 
             skip_variant_annotation=False,
-            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
+            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_113_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
             vep_buffer_size=100,
             dbnsfp_resource=f'{self.indir}/22_0414_dbNSFP_chr9_4.1a.txt.gz',
@@ -50,8 +50,8 @@ class TestSomaticPipeline(TestCase):
             dbsnp_vcf_gz=None,
 
             skip_pcgr=False,
-            pcgr_ref_data_tgz=f'{self.indir}/homo_sapiens_vep_112_GRCh38_chr9_chr22.tar.gz',
-            pcgr_vep_tar_gz=f'{self.indir}/pcgr_ref_data.20240927.grch38.tgz',
+            pcgr_ref_data_tgz=f'{self.indir}/homo_sapiens_vep_113_GRCh38_chr9_chr22.tar.gz',
+            pcgr_vep_tar_gz=f'{self.indir}/pcgr_ref_data.20250314.grch38.tgz',
             pcgr_tumor_site=12,
             pcgr_tmb_target_size_mb=34,
             pcgr_tmb_display='coding_and_silent',

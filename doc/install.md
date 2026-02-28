@@ -1,31 +1,54 @@
-## Conda
+# Installation
+
+Use PCGR as the base environment for everything.
 
 ```bash
-sudo apt install trim-galore bowtie2  # sometimes these two do not work well with conda
-conda create -n somatic python=3.10
-
-conda activate somatic
-conda install -c anaconda pandas
-conda install -c bioconda trim-galore bwa samtools gatk4 bowtie2 muse varscan vcf2maf bedtools somatic-sniper lofreq
-conda install -c bioconda bcftools=1.8  # a specific version is needed to avoid segmentation fault
-conda clean --all --yes
+export PCGR_REPO="https://raw.githubusercontent.com/sigven/pcgr/v2.2.5/conda/env/lock/"
+export PLATFORM="linux"
+conda create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock
+conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 ```
 
-## LoFreq
+PCGR by default includes the following: `samtools`, `bcftools`, `vcf2maf`, `bedtools`. Install the remaining.
 
 ```bash
+conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper
+conda install -c bioconda muse=1.0  # needs to be 1.0, the new 2.1.2 is buggy
+```
+
+Re-install latest version of `bcftools` to avoid segmentation fault.
+
+```bash
+conda remove bcftools
+
+# https://www.htslib.org/download/
 cd ~/opt
-wget https://github.com/CSB5/lofreq/raw/master/dist/lofreq_star-2.1.5_linux-x86-64.tgz
-tar -xzf lofreq_star-2.1.5_linux-x86-64.tgz
-rm lofreq_star-2.1.5_linux-x86-64.tgz
+wget https://github.com/samtools/bcftools/releases/download/1.23/bcftools-1.23.tar.bz2
+bzip2 -d bcftools-1.23.tar.bz2
+tar xf bcftools-1.23.tar
+rm bcftools-1.23.tar
+cd bcftools-1.23
+./configure
+make
+
+export PATH=$PATH:$HOME/opt/bcftools-1.23  # in .bashrc
 ```
 
-In `.bashrc` add:
+Trim-Galore cannot be installed directly in the PCGR environment. Directly download from source.
+
 ```bash
-export PATH=$PATH:$HOME/opt/lofreq_star-2.1.5_linux-x86-64/bin
+pip install cutadapt
+conda install -c bioconda fastqc
+
+cd ~/opt
+curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.10.tar.gz -o trim_galore.tar.gz
+tar xvzf trim_galore.tar.gz
+rm trim_galore.tar.gz
+
+export PATH=$PATH:$HOME/opt/TrimGalore-0.6.10  # in .bashrc
 ```
 
-## VarDict
+Install VarDict from source.
 
 ```bash
 sudo apt install dos2unix
@@ -42,53 +65,6 @@ rm -rf VarDictJava
 
 dos2unix ~/opt/VarDict-1.8.3/bin/*.pl
 dos2unix ~/opt/VarDict-1.8.3/bin/*.R
-```
 
-In `.bashrc` add:
-```bash
-export PATH=$PATH:$HOME/opt/VarDict-1.8.3/bin
-```
-
-## VEP
-
-```bash
-# Use the perl in the conda environment
-conda install -c bioconda perl-dbi
-conda install -c bioconda perl-try-tiny
-
-cd ~/opt
-wget https://github.com/Ensembl/ensembl-vep/archive/release/106.zip
-unzip 106.zip
-rm 106.zip
-cd ensembl-vep-release-106
-
-# include "--NO_UPDATE" so that the installation process will not be disrupted by update check
-# disruption of installation will result in missing perl modules (e.g. Bio/EnsEMBL/Registry.pm) and plugins
-perl INSTALL.pl --AUTO ap --PLUGINS all --NO_HTSLIB --NO_UPDATE
-```
-
-In `.bashrc` add:
-```bash
-export PATH=$PATH:$HOME/opt/ensembl-vep-release-106
-```
-
-## PCGR
-
-```bash
-PCGR_VERSION="2.1.2"
-PCGR_REPO="https://raw.githubusercontent.com/sigven/pcgr/v${PCGR_VERSION}/conda/env/lock/"
-PLATFORM="linux"
-conda create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock
-conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
-```
-
-In `.bashrc` add the following line to make `pcgr` executable:
-```bash
-export PATH=$PATH:$HOME/anaconda3/envs/pcgr/bin
-```
-
-Make `pcgrr.R` available in the current `somatic` environment:
-```bash
-ENVS=$HOME/anaconda3/envs
-cp $ENVS/pcgr/bin/pcgrr.R $ENVS/somatic/bin/
+export PATH=$PATH:$HOME/opt/VarDict-1.8.3/bin  # in .bashrc
 ```

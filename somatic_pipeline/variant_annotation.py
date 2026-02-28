@@ -54,6 +54,8 @@ class VariantAnnotation(Processor):
             if vcf_gz is not None:
                 self.logger.info(f'Annotating with {vcf_gz} by snpsift annotate')
                 self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
+        
+        return self.vcf
 
 
 class VEP(Processor):

@@ -23,7 +23,7 @@ class TestAnnotation(TestCase):
             ref_fa=self.ref_fa,
             clinvar_vcf_gz=f'{self.indir}/clinvar.vcf.gz',
             dbsnp_vcf_gz=None,
-            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
+            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_113_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
             vep_buffer_size=100,
             cadd_resource=None,
@@ -51,7 +51,7 @@ class TestVEP(TestCase):
         actual = VEP(self.settings).main(
             vcf=f'{self.indir}/picked-variants.vcf',
             ref_fa=self.ref_fa,
-            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_106_GRCh38_chr9.tar.gz',
+            vep_db_tar_gz=f'{self.indir}/homo_sapiens_merged_vep_113_GRCh38_chr9.tar.gz',
             vep_db_type='merged',
             vep_buffer_size=100,
             cadd_resource=None,

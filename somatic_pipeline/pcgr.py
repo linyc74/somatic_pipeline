@@ -86,8 +86,6 @@ class PCGR(Processor):
             f'--estimate_tmb',
             f'--tmb_display {self.pcgr_tmb_display}',
 
-            f'--estimate_signatures',  # Estimate relative contributions of reference mutational signatures in query sample (re-fitting), default: False
-
             f'--tumor_site {self.pcgr_tumor_site}',
 
             f'1>> {log} 2>> {log}',
