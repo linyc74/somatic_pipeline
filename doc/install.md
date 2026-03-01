@@ -12,7 +12,7 @@ conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 PCGR by default includes the following: `samtools`, `bcftools`, `vcf2maf`, `bedtools`. Install the remaining.
 
 ```bash
-conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper
+conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper # mantis-msi
 conda install -c bioconda muse=1.0  # needs to be 1.0, the new 2.1.2 is buggy
 ```
 
@@ -67,4 +67,23 @@ dos2unix ~/opt/VarDict-1.8.3/bin/*.pl
 dos2unix ~/opt/VarDict-1.8.3/bin/*.R
 
 export PATH=$PATH:$HOME/opt/VarDict-1.8.3/bin  # in .bashrc
+```
+
+Install MSIsensor from source to avoid segmentation fault.
+
+```bash
+cd ~/opt
+wget https://github.com/ding-lab/msisensor/releases/download/0.6/msisensor.linux
+chmod 755 msisensor.linux
+mv msisensor.linux msisensor
+
+export PATH=$PATH:$HOME/opt  # in .bashrc
+```
+
+Install my bug fixed MANTIS fork.
+
+```bash
+git clone https://github.com/linyc74/MANTIS.git
+
+export PATH=$PATH:$HOME/opt/MANTIS  # in .bashrc
 ```
