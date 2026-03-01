@@ -453,6 +453,28 @@ GROUP_NAME_TO_ARGUMENTS = {
             },
         ],
 
+    'msi':
+        [
+            {
+                'keys': ['--skip-msi'],
+                'properties': {
+                    'action': 'store_true',
+                    'help': 'do not run MSI analysis',
+                }
+            },
+        ],
+
+    'cnv':
+        [
+            {
+                'keys': ['--skip-cnv'],
+                'properties': {
+                    'action': 'store_true',
+                    'help': 'do not run CNV analysis',
+                }
+            },
+        ],
+
     'others':
         [
             DEBUG_ARG,
@@ -524,6 +546,8 @@ class EntryPoint:
                 'variant picking',
                 'variant annotation',
                 'PCGR',
+                'msi',
+                'cnv',
             ]
         )
 
@@ -617,7 +641,10 @@ class EntryPoint:
                 pcgr_vep_tar_gz=args.pcgr_vep_tar_gz,
                 pcgr_tumor_site=args.pcgr_tumor_site,
                 pcgr_tmb_target_size_mb=args.pcgr_tmb_target_size_mb,
-                pcgr_tmb_display=args.pcgr_tmb_display
+                pcgr_tmb_display=args.pcgr_tmb_display,
+
+                skip_msi=args.skip_msi,
+                skip_cnv=args.skip_cnv,
             )
 
         elif args.mode == 'annotate':

@@ -5,13 +5,14 @@ from .mapping import Mapping
 from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
 from .clean_up import CleanUp
-from .template import Processor
 from .trimming import Trimming
-from .variant_annotation import VariantAnnotation
+from .template import Processor
+from .msi import MSIsensor, MANTIS
 from .copy_ref_fa import CopyRefFa
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
 from .variant_picking import VariantPicking
+from .variant_annotation import VariantAnnotation
 from .post_mapping import BQSR, MappingStats, MarkDuplicates
 
 
@@ -71,6 +72,12 @@ class SomaticPipeline(Processor):
     pcgr_tmb_target_size_mb: int
     pcgr_tmb_display: str
 
+    # MSI
+    skip_msi: bool
+
+    # CNV
+    skip_cnv: bool
+
     def main(
             self,
             ref_fa: str,
@@ -115,7 +122,10 @@ class SomaticPipeline(Processor):
             pcgr_vep_tar_gz: Optional[str],
             pcgr_tumor_site: int,
             pcgr_tmb_target_size_mb: int,
-            pcgr_tmb_display: str):
+            pcgr_tmb_display: str,
+
+            skip_msi: bool,
+            skip_cnv: bool):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -161,10 +171,15 @@ class SomaticPipeline(Processor):
         self.pcgr_tmb_target_size_mb = pcgr_tmb_target_size_mb
         self.pcgr_tmb_display = pcgr_tmb_display
 
+        self.skip_msi = skip_msi
+        self.skip_cnv = skip_cnv
+
         self.check_files_exist()
         self.copy_ref_fa()
         self.preprocessing_workflow()
-        self.variant_calling_workflow()
+        self.msi()
+        self.cnv()  # run msi and cnv before variant calling
+        self.variant_calling_workflow()  # because variant calling removes bam files to save space
         self.clean_up()
 
     def check_files_exist(self):
@@ -205,6 +220,31 @@ class SomaticPipeline(Processor):
             bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
             discard_bam=self.discard_bam,
             skip_mark_duplicates=self.skip_mark_duplicates)
+
+    def msi(self):
+        if self.skip_msi:
+            self.logger.info('Skip MSI analysis')
+            return
+
+        if self.normal_bam is None:
+            self.logger.info(f'Normal BAM not provided, skip MSI analysis')
+            return
+
+        MSIsensor(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            bed_file=self.call_region_bed)
+
+        MANTIS(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
+    
+    def cnv(self):
+        if self.skip_cnv:
+            return
+        # to be implemented
 
     def variant_calling_workflow(self):
         if self.skip_variant_calling:

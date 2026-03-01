@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from .template import Processor
 from .index_files import SamtoolsIndexBam
 
@@ -10,7 +11,7 @@ class MSIsensor(Processor):
     normal_bam: str
     bed_file: str
 
-    def main(self, ref_fa: str, tumor_bam: str, normal_bam: str, bed_file: str):
+    def main(self, ref_fa: str, tumor_bam: str, normal_bam: str, bed_file: Optional[str]):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
@@ -31,12 +32,16 @@ class MSIsensor(Processor):
                 SamtoolsIndexBam(self.settings).main(bam=bam)
 
         os.makedirs(f'{self.outdir}/msi', exist_ok=True)
+
         lines = [
             ' msisensor msi',
             f'-d {self.workdir}/microsatellites.list',
             f'-n {self.normal_bam}',
             f'-t {self.tumor_bam}',
-            f'-e {self.bed_file}',
+        ]
+        if self.bed_file is not None:
+            lines += [f'-e {self.bed_file}']
+        lines += [
             f'-o {self.outdir}/msi/msisensor',
             f'1> {self.outdir}/msisensor-msi.log',
             f'2> {self.outdir}/msisensor-msi.log',
@@ -49,13 +54,11 @@ class MANTIS(Processor):
     ref_fa: str
     tumor_bam: str
     normal_bam: str
-    bed_file: str
 
-    def main(self, ref_fa: str, tumor_bam: str, normal_bam: str, bed_file: str):
+    def main(self, ref_fa: str, tumor_bam: str, normal_bam: str):
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
-        self.bed_file = bed_file
 
         lines = [
             f'RepeatFinder',

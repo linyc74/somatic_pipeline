@@ -59,7 +59,10 @@ class Run:
             pcgr_vep_tar_gz: str,
             pcgr_tumor_site: int,
             pcgr_tmb_target_size_mb: int,
-            pcgr_tmb_display: str):
+            pcgr_tmb_display: str,
+
+            skip_msi: bool,
+            skip_cnv: bool):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -107,6 +110,9 @@ class Run:
             pcgr_tumor_site=pcgr_tumor_site,
             pcgr_tmb_target_size_mb=pcgr_tmb_target_size_mb,
             pcgr_tmb_display=pcgr_tmb_display,
+
+            skip_msi=skip_msi,
+            skip_cnv=skip_cnv,
         )
 
     def annotate(
