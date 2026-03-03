@@ -12,7 +12,7 @@ conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 PCGR by default includes the following: `samtools`, `bcftools`, `vcf2maf`, `bedtools`. Install the remaining.
 
 ```bash
-conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper # mantis-msi
+conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper
 conda install -c bioconda muse=1.0  # needs to be 1.0, the new 2.1.2 is buggy
 ```
 
@@ -86,4 +86,16 @@ Install my bug fixed MANTIS fork.
 git clone https://github.com/linyc74/MANTIS.git
 
 export PATH=$PATH:$HOME/opt/MANTIS  # in .bashrc
+```
+
+Install CNVkit.
+
+```bash
+pip install cnvkit
+
+conda install -n pcgrr -c bioconda bioconductor-dnacopy
+
+ENVS=$HOME/anaconda3/envs
+ln -s $ENVS/pcgrr/bin/R $ENVS/pcgr/bin/R
+ln -s $ENVS/pcgrr/bin/Rscript $ENVS/pcgr/bin/Rscript
 ```
