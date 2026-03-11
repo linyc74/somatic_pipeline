@@ -1,7 +1,9 @@
 import os
+import shutil
+import subprocess
 from .vcf2csv import Vcf2Csv
+from .template import Settings
 from .tools import get_temp_path
-from .template import Settings, Processor
 from .somatic_pipeline import SomaticPipeline
 from .variant_annotation import VariantAnnotation
 
@@ -118,7 +120,7 @@ class Run:
             segmentation_threshold=segmentation_threshold)
 
         if not self.settings.debug:
-            self.call(f'rm -r {self.settings.workdir}')
+            shutil.rmtree(self.settings.workdir)
 
     def annotate(
             self,
@@ -152,7 +154,7 @@ class Run:
             dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz)
 
         if not self.settings.debug:
-            self.call(f'rm -r {self.settings.workdir}')
+            shutil.rmtree(self.settings.workdir)
 
     def vcf2csv(self, vcf: str, csv: str, debug: bool):
 
@@ -160,18 +162,18 @@ class Run:
         
         if vcf.endswith('.gz'):
             new = f'{self.settings.workdir}/temp.vcf'
-            self.call(f'gunzip -c {vcf} > {new}')
+            subprocess.check_call(f'gunzip -c {vcf} > {new}', shell=True)
             vcf = new
 
         temp_csv = Vcf2Csv(settings=self.settings).main(
             vcf=vcf,
             dstdir=self.settings.workdir)
 
-        self.call(f'mv {temp_csv} {csv}')
+        shutil.move(temp_csv, csv)
 
         if not self.debug:
             for d in [self.settings.workdir, self.settings.outdir]:  # outdir not needed either
-                self.call(f'rm -r {d}')
+                shutil.rmtree(d)
 
     def config_settings(self, outdir: str, threads: int, debug: bool):
 
