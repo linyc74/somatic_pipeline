@@ -95,6 +95,7 @@ pip install cnvkit
 
 conda install -n pcgrr -c bioconda bioconductor-dnacopy
 
+# link the R/Rscript in pcgrr to pcgr environment
 ENVS=$HOME/anaconda3/envs
 ln -s $ENVS/pcgrr/bin/R $ENVS/pcgr/bin/R
 ln -s $ENVS/pcgrr/bin/Rscript $ENVS/pcgr/bin/Rscript

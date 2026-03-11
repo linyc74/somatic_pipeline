@@ -8,8 +8,8 @@ class TestCNV(TestCase):
     def setUp(self):
         self.set_up(py_path=__file__)
 
-    # def tearDown(self):
-    #     self.tear_down()
+    def tearDown(self):
+        self.tear_down()
 
     def test_main(self):
         for f in ['chr9.fa', 'tumor-sorted.bam', 'normal-sorted.bam']:
@@ -20,5 +20,6 @@ class TestCNV(TestCase):
             tumor_bam=f'{self.workdir}/tumor-sorted.bam',
             normal_bam=f'{self.workdir}/normal-sorted.bam',
             exome_target_bed=f'{self.indir}/chr9-exome-probes.bed',
-            annotate_txt=f'{self.indir}/refFlat.txt'
+            annotate_txt=f'{self.indir}/refFlat.txt',
+            segmentation_threshold=1e-6,
         )

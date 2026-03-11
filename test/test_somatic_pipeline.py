@@ -58,6 +58,8 @@ class TestSomaticPipeline(TestCase):
 
             skip_msi=False,
             skip_cnv=False,
+            ucsc_ref_flat_txt=f'{self.indir}/refFlat.txt',
+            segmentation_threshold=1e-4,
         )
 
     def test_tumor_only(self):
@@ -108,4 +110,6 @@ class TestSomaticPipeline(TestCase):
 
             skip_msi=False,
             skip_cnv=False,
+            ucsc_ref_flat_txt=None,
+            segmentation_threshold=1e-4,
         )

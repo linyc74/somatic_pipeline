@@ -473,6 +473,24 @@ GROUP_NAME_TO_ARGUMENTS = {
                     'help': 'do not run CNV analysis',
                 }
             },
+            {
+                'keys': ['--ucsc-ref-flat-txt'],
+                'properties': {
+                    'type': str,
+                    'required': False,
+                    'default': 'None',
+                    'help': 'UCSC refFlat.txt file for CNVkit gene name annotation (default: %(default)s)',
+                }
+            },
+            {
+                'keys': ['--segmentation-threshold'],
+                'properties': {
+                    'type': float,
+                    'required': False,
+                    'default': 1e-4,
+                    'help': 'segmentation threshold for CNVkit (default: %(default)s)',
+                }
+            },
         ],
 
     'others':
@@ -645,6 +663,8 @@ class EntryPoint:
 
                 skip_msi=args.skip_msi,
                 skip_cnv=args.skip_cnv,
+                ucsc_ref_flat_txt=args.ucsc_ref_flat_txt,
+                segmentation_threshold=args.segmentation_threshold,
             )
 
         elif args.mode == 'annotate':

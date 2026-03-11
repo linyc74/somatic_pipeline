@@ -1,10 +1,11 @@
+import os
 from os.path import exists
-from typing import Optional, Tuple, List
+from typing import Optional, List
+from .cnv import CNV
 from .pcgr import PCGR
 from .mapping import Mapping
 from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
-from .clean_up import CleanUp
 from .trimming import Trimming
 from .template import Processor
 from .msi import MSIsensor, MANTIS
@@ -77,6 +78,12 @@ class SomaticPipeline(Processor):
 
     # CNV
     skip_cnv: bool
+    ucsc_ref_flat_txt: Optional[str]
+    segmentation_threshold: float
+
+    # variant calling intermediate files
+    vcfs: List[str]
+    vcf: str
 
     def main(
             self,
@@ -125,7 +132,9 @@ class SomaticPipeline(Processor):
             pcgr_tmb_display: str,
 
             skip_msi: bool,
-            skip_cnv: bool):
+            skip_cnv: bool,
+            ucsc_ref_flat_txt: Optional[str],
+            segmentation_threshold: float):
 
         self.ref_fa = ref_fa
         self.tumor_fq1 = tumor_fq1
@@ -173,14 +182,35 @@ class SomaticPipeline(Processor):
 
         self.skip_msi = skip_msi
         self.skip_cnv = skip_cnv
-
+        self.ucsc_ref_flat_txt = ucsc_ref_flat_txt
+        self.segmentation_threshold = segmentation_threshold
+        
+        # preprocessing
         self.check_files_exist()
         self.copy_ref_fa()
-        self.preprocessing_workflow()
+        self.trimming()
+        self.mapping()
+        self.mark_duplicates()
+        self.bqsr()
+        self.mapping_stats()
+
+        # msi and cnv before variant calling, because variant calling removes bam files to save space
         self.msi()
-        self.cnv()  # run msi and cnv before variant calling
-        self.variant_calling_workflow()  # because variant calling removes bam files to save space
-        self.clean_up()
+        self.cnv()
+        
+        if self.skip_variant_calling:
+            self.logger.info(f'Skip all variant calling tasks')
+        else:
+            self.variant_calling()
+            self.variant_picking()
+            self.pcgr()  # use the un-annotated VCF to run PCGR before VEP annotation
+            self.vep()
+            self.move_vcf_to_outdir()
+            Vcf2Csv(self.settings).main(vcf=self.vcf)
+            Vcf2Maf(self.settings).main(vcf=self.vcf, ref_fa=self.ref_fa)
+            BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)
+
+        self.collect_log_files()
 
     def check_files_exist(self):
         for file in [
@@ -205,136 +235,6 @@ class SomaticPipeline(Processor):
     def copy_ref_fa(self):
         self.ref_fa = CopyRefFa(self.settings).main(
             ref_fa=self.ref_fa)
-
-    def preprocessing_workflow(self):
-        self.tumor_bam, self.normal_bam = PreprocessingWorkflow(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_fq1=self.tumor_fq1,
-            tumor_fq2=self.tumor_fq2,
-            normal_fq1=self.normal_fq1,
-            normal_fq2=self.normal_fq2,
-            umi_length=self.umi_length,
-            clip_r1_5_prime=self.clip_r1_5_prime,
-            clip_r2_5_prime=self.clip_r2_5_prime,
-            read_aligner=self.read_aligner,
-            bqsr_known_variant_vcf=self.bqsr_known_variant_vcf,
-            discard_bam=self.discard_bam,
-            skip_mark_duplicates=self.skip_mark_duplicates)
-
-    def msi(self):
-        if self.skip_msi:
-            self.logger.info('Skip MSI analysis')
-            return
-
-        if self.normal_bam is None:
-            self.logger.info(f'Normal BAM not provided, skip MSI analysis')
-            return
-
-        MSIsensor(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam,
-            bed_file=self.call_region_bed)
-
-        MANTIS(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
-    
-    def cnv(self):
-        if self.skip_cnv:
-            return
-        # to be implemented
-
-    def variant_calling_workflow(self):
-        if self.skip_variant_calling:
-            self.logger.info(f'Skip all variant calling tasks')
-        else:
-            VariantCallingWorkflow(self.settings).main(
-                ref_fa=self.ref_fa,
-                tumor_bam=self.tumor_bam,
-                normal_bam=self.normal_bam,
-                variant_callers=self.variant_callers,
-                call_region_bed=self.call_region_bed,
-                panel_of_normal_vcf=self.panel_of_normal_vcf,
-                germline_resource_vcf=self.germline_resource_vcf,
-                variant_flagging_criteria=self.variant_flagging_criteria,
-                variant_removal_flags=self.variant_removal_flags,
-                only_pass=self.only_pass,
-                min_snv_callers=self.min_snv_callers,
-                min_indel_callers=self.min_indel_callers,
-                skip_variant_annotation=self.skip_variant_annotation,
-                clinvar_vcf_gz=self.clinvar_vcf_gz,
-                dbsnp_vcf_gz=self.dbsnp_vcf_gz,
-                vep_db_tar_gz=self.vep_db_tar_gz,
-                vep_db_type=self.vep_db_type,
-                vep_buffer_size=self.vep_buffer_size,
-                cadd_resource=self.cadd_resource,
-                dbnsfp_resource=self.dbnsfp_resource,
-                skip_pcgr=self.skip_pcgr,
-                pcgr_ref_data_tgz=self.pcgr_ref_data_tgz,
-                pcgr_vep_tar_gz=self.pcgr_vep_tar_gz,
-                pcgr_tumor_site=self.pcgr_tumor_site,
-                pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
-                pcgr_tmb_display=self.pcgr_tmb_display)
-
-    def clean_up(self):
-        CleanUp(self.settings).main()
-
-
-class PreprocessingWorkflow(Processor):
-
-    ref_fa: str
-    tumor_fq1: str
-    tumor_fq2: str
-    normal_fq1: Optional[str]
-    normal_fq2: Optional[str]
-    umi_length: int
-    clip_r1_5_prime: int
-    clip_r2_5_prime: int
-    read_aligner: str
-    bqsr_known_variant_vcf: Optional[str]
-    discard_bam: bool
-    skip_mark_duplicates: bool
-
-    tumor_bam: str
-    normal_bam: Optional[str]
-
-    def main(
-            self,
-            ref_fa: str,
-            tumor_fq1: str,
-            tumor_fq2: str,
-            normal_fq1: Optional[str],
-            normal_fq2: Optional[str],
-            umi_length: int,
-            clip_r1_5_prime: int,
-            clip_r2_5_prime: int,
-            read_aligner: str,
-            bqsr_known_variant_vcf: Optional[str],
-            discard_bam: bool,
-            skip_mark_duplicates: bool) -> Tuple[str, str]:
-
-        self.ref_fa = ref_fa
-        self.tumor_fq1 = tumor_fq1
-        self.tumor_fq2 = tumor_fq2
-        self.normal_fq1 = normal_fq1
-        self.normal_fq2 = normal_fq2
-        self.umi_length = umi_length
-        self.clip_r1_5_prime = clip_r1_5_prime
-        self.clip_r2_5_prime = clip_r2_5_prime
-        self.read_aligner = read_aligner
-        self.bqsr_known_variant_vcf = bqsr_known_variant_vcf
-        self.discard_bam = discard_bam
-        self.skip_mark_duplicates = skip_mark_duplicates
-
-        self.trimming()
-        self.mapping()
-        self.mark_duplicates()
-        self.bqsr()
-        self.mapping_stats()
-
-        return self.tumor_bam, self.normal_bam
 
     def trimming(self):
         self.tumor_fq1, self.tumor_fq2, self.normal_fq1, self.normal_fq2 = Trimming(self.settings).main(
@@ -379,118 +279,42 @@ class PreprocessingWorkflow(Processor):
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam)
 
+    def msi(self):
+        if self.skip_msi:
+            self.logger.info('Skip MSI analysis')
+            return
 
-class VariantCallingWorkflow(Processor):
+        if self.normal_bam is None:
+            self.logger.info(f'Normal BAM not provided, skip MSI analysis')
+            return
 
-    ref_fa: str
-    tumor_bam: str
-    normal_bam: Optional[str]
+        MSIsensor(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            bed_file=self.call_region_bed)
 
-    variant_callers: List[str]
-    call_region_bed: Optional[str]
-    panel_of_normal_vcf: Optional[str]
-    germline_resource_vcf: Optional[str]
+        MANTIS(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam)
+    
+    def cnv(self):
+        if self.skip_cnv:
+            self.logger.info('Skip CNV analysis')
+            return
 
-    variant_flagging_criteria: Optional[str]
-    variant_removal_flags: List[str]
-    only_pass: bool
+        if self.normal_bam is None:
+            self.logger.info(f'Normal BAM not provided, skip CNV analysis')
+            return
 
-    min_snv_callers: int
-    min_indel_callers: int
-
-    skip_variant_annotation: bool
-    clinvar_vcf_gz: Optional[str]
-    dbsnp_vcf_gz: Optional[str]
-    vep_db_tar_gz: Optional[str]
-    vep_db_type: str
-    vep_buffer_size: int
-    cadd_resource: Optional[str]
-    dbnsfp_resource: Optional[str]
-
-    skip_pcgr: bool
-    pcgr_ref_data_tgz: Optional[str]
-    pcgr_vep_tar_gz: Optional[str]
-    pcgr_tumor_site: int
-    pcgr_tmb_target_size_mb: int
-    pcgr_tmb_display: str
-
-    vcfs: List[str]
-    vcf: str
-
-    def main(
-            self,
-            ref_fa: str,
-            tumor_bam: str,
-            normal_bam: Optional[str],
-
-            variant_callers: List[str],
-            call_region_bed: Optional[str],
-            panel_of_normal_vcf: Optional[str],
-            germline_resource_vcf: Optional[str],
-
-            variant_flagging_criteria: Optional[str],
-            variant_removal_flags: List[str],
-            only_pass: bool,
-
-            min_snv_callers: int,
-            min_indel_callers: int,
-
-            skip_variant_annotation: bool,
-            clinvar_vcf_gz: Optional[str],
-            dbsnp_vcf_gz: Optional[str],
-            vep_db_tar_gz: Optional[str],
-            vep_db_type: str,
-            vep_buffer_size: int,
-            cadd_resource: Optional[str],
-            dbnsfp_resource: Optional[str],
-
-            skip_pcgr: bool,
-            pcgr_ref_data_tgz: Optional[str],
-            pcgr_vep_tar_gz: Optional[str],
-            pcgr_tumor_site: int,
-            pcgr_tmb_target_size_mb: int,
-            pcgr_tmb_display: str):
-
-        self.ref_fa = ref_fa
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-
-        self.variant_callers = variant_callers
-        self.call_region_bed = call_region_bed
-        self.panel_of_normal_vcf = panel_of_normal_vcf
-        self.germline_resource_vcf = germline_resource_vcf
-
-        self.variant_flagging_criteria = variant_flagging_criteria
-        self.variant_removal_flags = variant_removal_flags
-        self.only_pass = only_pass
-
-        self.min_snv_callers = min_snv_callers
-        self.min_indel_callers = min_indel_callers
-
-        self.skip_variant_annotation = skip_variant_annotation
-        self.clinvar_vcf_gz = clinvar_vcf_gz
-        self.dbsnp_vcf_gz = dbsnp_vcf_gz
-        self.vep_db_tar_gz = vep_db_tar_gz
-        self.vep_db_type = vep_db_type
-        self.vep_buffer_size = vep_buffer_size
-        self.cadd_resource = cadd_resource
-        self.dbnsfp_resource = dbnsfp_resource
-
-        self.skip_pcgr = skip_pcgr
-        self.pcgr_ref_data_tgz = pcgr_ref_data_tgz
-        self.pcgr_vep_tar_gz = pcgr_vep_tar_gz
-        self.pcgr_tumor_site = pcgr_tumor_site
-        self.pcgr_tmb_target_size_mb = pcgr_tmb_target_size_mb
-        self.pcgr_tmb_display = pcgr_tmb_display
-
-        self.variant_calling()
-        self.variant_picking()
-        self.pcgr()  # Use the un-annotated VCF to run PCGR before VEP annotation
-        self.variant_annotation()
-        self.move_vcf_to_outdir()
-        Vcf2Csv(self.settings).main(vcf=self.vcf)
-        Vcf2Maf(self.settings).main(vcf=self.vcf, ref_fa=self.ref_fa)
-        BgzipIndex(self.settings).main(vcf=self.vcf, keep=False)
+        CNV(self.settings).main(
+            ref_fa=self.ref_fa,
+            tumor_bam=self.tumor_bam,
+            normal_bam=self.normal_bam,
+            exome_target_bed=self.call_region_bed,
+            annotate_txt=self.ucsc_ref_flat_txt,
+            segmentation_threshold=self.segmentation_threshold)
 
     def variant_calling(self):
         self.vcfs = VariantCalling(self.settings).main(
@@ -530,7 +354,7 @@ class VariantCallingWorkflow(Processor):
             pcgr_tmb_target_size_mb=self.pcgr_tmb_target_size_mb,
             pcgr_tmb_display=self.pcgr_tmb_display)
 
-    def variant_annotation(self):
+    def vep(self):
         if not self.skip_variant_annotation:
             self.vcf = VariantAnnotation(self.settings).main(
                 vcf=self.vcf,
@@ -547,3 +371,8 @@ class VariantCallingWorkflow(Processor):
         dst = f'{self.outdir}/variants.vcf'
         self.call(f'mv {self.vcf} {dst}')
         self.vcf = dst
+
+    def collect_log_files(self):
+        os.makedirs(f'{self.outdir}/log', exist_ok=True)
+        cmd = f'mv {self.outdir}/*.log {self.outdir}/log/'
+        self.call(cmd)

@@ -1,6 +1,5 @@
 import os
 from .vcf2csv import Vcf2Csv
-from .clean_up import CleanUp
 from .tools import get_temp_path
 from .template import Settings, Processor
 from .somatic_pipeline import SomaticPipeline
@@ -62,7 +61,9 @@ class Run:
             pcgr_tmb_display: str,
 
             skip_msi: bool,
-            skip_cnv: bool):
+            skip_cnv: bool,
+            ucsc_ref_flat_txt: str,
+            segmentation_threshold: float):
 
         self.config_settings(outdir=outdir, threads=int(threads), debug=debug)
 
@@ -113,7 +114,11 @@ class Run:
 
             skip_msi=skip_msi,
             skip_cnv=skip_cnv,
-        )
+            ucsc_ref_flat_txt=None if ucsc_ref_flat_txt.lower() == 'none' else ucsc_ref_flat_txt,
+            segmentation_threshold=segmentation_threshold)
+
+        if not self.settings.debug:
+            self.call(f'rm -r {self.settings.workdir}')
 
     def annotate(
             self,
@@ -144,9 +149,29 @@ class Run:
             dbnsfp_resource=None if dbnsfp_resource.lower() == 'none' else dbnsfp_resource,
             cadd_resource=None if cadd_resource.lower() == 'none' else cadd_resource,
             clinvar_vcf_gz=None if clinvar_vcf_gz.lower() == 'none' else clinvar_vcf_gz,
-            dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz
-        )
-        CleanUp(self.settings).main()
+            dbsnp_vcf_gz=None if dbsnp_vcf_gz.lower() == 'none' else dbsnp_vcf_gz)
+
+        if not self.settings.debug:
+            self.call(f'rm -r {self.settings.workdir}')
+
+    def vcf2csv(self, vcf: str, csv: str, debug: bool):
+
+        self.config_settings(outdir='', threads=1, debug=debug)
+        
+        if vcf.endswith('.gz'):
+            new = f'{self.settings.workdir}/temp.vcf'
+            self.call(f'gunzip -c {vcf} > {new}')
+            vcf = new
+
+        temp_csv = Vcf2Csv(settings=self.settings).main(
+            vcf=vcf,
+            dstdir=self.settings.workdir)
+
+        self.call(f'mv {temp_csv} {csv}')
+
+        if not self.debug:
+            for d in [self.settings.workdir, self.settings.outdir]:  # outdir not needed either
+                self.call(f'rm -r {d}')
 
     def config_settings(self, outdir: str, threads: int, debug: bool):
 
@@ -161,34 +186,6 @@ class Run:
             threads=threads,
             debug=debug,
             mock=False)
+
         for d in [self.settings.workdir, self.settings.outdir]:
             os.makedirs(d, exist_ok=True)
-
-    def vcf2csv(self, vcf: str, csv: str, debug: bool):
-        settings = Settings(
-            workdir=get_temp_path(prefix='./somatic_pipeline_workdir_'),
-            outdir='',
-            threads=1,
-            debug=debug,
-            mock=False)
-        os.makedirs(settings.workdir)
-        Vcf2CsvWorkflow(settings).main(vcf=vcf, csv=csv)
-
-
-class Vcf2CsvWorkflow(Processor):
-
-    def main(self, vcf: str, csv: str):
-
-        if vcf.endswith('.gz'):
-            new = f'{self.workdir}/temp.vcf'
-            self.call(f'gunzip -c {vcf} > {new}')
-            vcf = new
-
-        temp_csv = Vcf2Csv(settings=self.settings).main(
-            vcf=vcf,
-            dstdir=self.settings.workdir)
-
-        self.call(f'mv {temp_csv} {csv}')
-
-        if not self.debug:
-            self.call(f'rm -r {self.workdir}')

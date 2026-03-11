@@ -1,4 +1,5 @@
 import os
+from os.path import basename
 from typing import List, Optional
 from .tools import edit_fpath
 from .template import Processor
@@ -11,6 +12,7 @@ class CNV(Processor):
     normal_bam: str
     exome_target_bed: Optional[str]
     annotate_txt: Optional[str]
+    segmentation_threshold: float
 
     def main(
             self,
@@ -18,30 +20,27 @@ class CNV(Processor):
             tumor_bam: str,
             normal_bam: str,
             exome_target_bed: Optional[str],
-            annotate_txt: Optional[str]):
+            annotate_txt: Optional[str],
+            segmentation_threshold: float):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.exome_target_bed = exome_target_bed
         self.annotate_txt = annotate_txt
-
+        self.segmentation_threshold = segmentation_threshold
+        
         if self.exome_target_bed is not None:
             self.exome_target_bed = CleanUpBed(self.settings).main(
                 bed=self.exome_target_bed)
-
-        if self.exome_target_bed is not None:
-            CNVkitReportAutoBinSize(self.settings).main(
-                tumor_bam=self.tumor_bam,
-                normal_bam=self.normal_bam,
-                exome_target_bed=self.exome_target_bed)
 
         CNVkitBatch(self.settings).main(
             ref_fa=self.ref_fa,
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             exome_target_bed=self.exome_target_bed,
-            annotate_txt=self.annotate_txt)
+            annotate_txt=self.annotate_txt,
+            segmentation_threshold=self.segmentation_threshold)
 
 
 class CleanUpBed(Processor):
@@ -72,43 +71,8 @@ class CleanUpBed(Processor):
                         writer.write(line)
 
 
-class CNVkitReportAutoBinSize(Processor):
-
-    tumor_bam: str
-    normal_bam: str
-    exome_target_bed: str
-
-    def main(
-            self,
-            tumor_bam: str,
-            normal_bam: str,
-            exome_target_bed: str):
-
-        self.tumor_bam = tumor_bam
-        self.normal_bam = normal_bam
-        self.exome_target_bed = exome_target_bed
-
-        self.execute()
-
-    def execute(self):
-        log = f'{self.outdir}/cnvkit-autobin.log'
-        cmd = self.CMD_LINEBREAK.join([
-            'cnvkit.py autobin',
-            self.normal_bam,
-            self.tumor_bam,
-            '--method hybrid',
-            f'--targets {self.exome_target_bed}',
-            f'--target-output-bed {self.workdir}/cnvkit-autobin-target.bed',
-            f'--antitarget-output-bed {self.workdir}/cnvkit-autobin-antitarget.bed',
-            f'1> {log}',
-            f'2> {log}',
-        ])
-        self.call(cmd)
-
-
 class CNVkitBatch(Processor):
 
-    DSTDIR_NAME = 'cnvkit'
     SEGMENT_METHOD = 'cbs'  # depends on the R package DNAcopy
 
     ref_fa: str
@@ -116,6 +80,11 @@ class CNVkitBatch(Processor):
     normal_bam: str
     exome_target_bed: Optional[str]
     annotate_txt: Optional[str]
+    segmentation_threshold: float
+
+    dstdir: str
+    cnr_file: str  # bin-level copy number ratio
+    cns_file: str  # copy number segmentation
 
     def main(
             self,
@@ -123,27 +92,34 @@ class CNVkitBatch(Processor):
             tumor_bam: str,
             normal_bam: str,
             exome_target_bed: Optional[str],
-            annotate_txt: Optional[str]):
+            annotate_txt: Optional[str],
+            segmentation_threshold: float):
 
         self.ref_fa = ref_fa
         self.tumor_bam = tumor_bam
         self.normal_bam = normal_bam
         self.exome_target_bed = exome_target_bed
         self.annotate_txt = annotate_txt
+        self.segmentation_threshold = segmentation_threshold
+        
+        self.dstdir = f'{self.workdir}/cnvkit'
+        os.makedirs(self.dstdir, exist_ok=True)
 
-        dstdir = f'{self.outdir}/{self.DSTDIR_NAME}'
-        os.makedirs(dstdir, exist_ok=True)
+        self.cnvkit_batch()
+        self.set_cnr_cns_filepaths()
+        self.cnvkit_segment()
+        self.cnvkit_plots()
+        self.move_files_to_outdir()
 
+    def cnvkit_batch(self):
         lines = [
             'cnvkit.py batch',
             f'--normal {self.normal_bam}',
             f'--fasta {self.ref_fa}',
             f'--segment-method {self.SEGMENT_METHOD}',
             '--drop-low-coverage',
-            f'--output-dir {dstdir}',
+            f'--output-dir {self.dstdir}',
             f'--processes {self.threads}',
-            '--scatter',
-            '--diagram',
         ]
 
         if self.exome_target_bed is not None:
@@ -163,3 +139,54 @@ class CNVkitBatch(Processor):
             f'2> {self.outdir}/cnvkit-batch.log',
         ]
         self.call(self.CMD_LINEBREAK.join(lines))
+
+    def set_cnr_cns_filepaths(self):
+        fname = basename(self.tumor_bam)[:-len('.bam')]
+        self.cnr_file = f'{self.dstdir}/{fname}.cnr'
+        self.cns_file = f'{self.dstdir}/{fname}.cns'
+
+    def cnvkit_segment(self):
+        # the `batch` command already runs the `segment` command internally
+        # this is to rerun the `segment` command with a different threshold
+        # to override the original segmentation results
+        lines = [
+            'cnvkit.py segment',
+            self.cnr_file,
+            f'--method {self.SEGMENT_METHOD}',
+            f'--threshold {self.segmentation_threshold}',
+            '--drop-low-coverage',
+            f'--output {self.cns_file}',
+            f'1> {self.outdir}/cnvkit-segment.log',
+            f'2> {self.outdir}/cnvkit-segment.log',
+        ]
+        self.call(self.CMD_LINEBREAK.join(lines))
+    
+    def cnvkit_plots(self):
+        lines = [
+            'cnvkit.py scatter',
+            self.cnr_file,
+            f'--segment {self.cns_file}',
+            f'--output {self.dstdir}/scatter.pdf',
+            f'1> {self.outdir}/cnvkit-scatter.log',
+            f'2> {self.outdir}/cnvkit-scatter.log',
+        ]
+        self.call(self.CMD_LINEBREAK.join(lines))
+
+        lines = [
+            'cnvkit.py diagram',
+            self.cns_file,
+            f'--output {self.dstdir}/diagram.pdf',
+            f'1> {self.outdir}/cnvkit-diagram.log',
+            f'2> {self.outdir}/cnvkit-diagram.log',
+        ]
+        self.call(self.CMD_LINEBREAK.join(lines))
+    
+    def move_files_to_outdir(self):
+        os.makedirs(f'{self.outdir}/cnvkit', exist_ok=True)
+        for f in [
+            self.cnr_file,
+            self.cns_file,
+            f'{self.dstdir}/scatter.pdf',
+            f'{self.dstdir}/diagram.pdf',
+        ]:
+            self.call(f'mv {f} {self.outdir}/cnvkit/')
