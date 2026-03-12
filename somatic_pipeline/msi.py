@@ -69,6 +69,16 @@ class MANTIS(Processor):
         ]
         self.call(self.CMD_LINEBREAK.join(lines))
 
+        # non-canonical chromsome names (not starting with 'chr') causes error in MANTIS,
+        # because RepeatFinder stupidly adds 'chr' prefix to the chromsome name
+        # so we need to remove those lines
+        with open(f'{self.workdir}/RepeatFinder-microsatellites.bed') as reader:
+            with open(f'{self.workdir}/RepeatFinder-microsatellites-canonical.bed', 'w') as writer:
+                for line in reader:
+                    items = line.strip().split('\t')
+                    if items[0].startswith('chr'):
+                        writer.write(line)
+
         for bam in [self.tumor_bam, self.normal_bam]:
             if not os.path.exists(f'{bam}.bai'):
                 SamtoolsIndexBam(self.settings).main(bam=bam)
@@ -77,7 +87,7 @@ class MANTIS(Processor):
 
         lines = [
             f'mantis.py',
-            f'--bedfile {self.workdir}/RepeatFinder-microsatellites.bed',
+            f'--bedfile {self.workdir}/RepeatFinder-microsatellites-canonical.bed',
             f'--genome {self.ref_fa}',
             f'-n {self.normal_bam}',
             f'-t {self.tumor_bam}',
