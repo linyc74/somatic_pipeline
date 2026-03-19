@@ -3,12 +3,12 @@ from os.path import exists
 from typing import Optional, List
 from .cnv import CNV
 from .pcgr import PCGR
+from .msi import MSIsensor
 from .mapping import Mapping
 from .vcf2csv import Vcf2Csv
 from .vcf2maf import Vcf2Maf
 from .trimming import Trimming
 from .template import Processor
-from .msi import MSIsensor, MANTIS
 from .copy_ref_fa import CopyRefFa
 from .index_files import BgzipIndex
 from .variant_calling import VariantCalling
@@ -293,11 +293,6 @@ class SomaticPipeline(Processor):
             tumor_bam=self.tumor_bam,
             normal_bam=self.normal_bam,
             bed_file=self.call_region_bed)
-
-        MANTIS(self.settings).main(
-            ref_fa=self.ref_fa,
-            tumor_bam=self.tumor_bam,
-            normal_bam=self.normal_bam)
     
     def cnv(self):
         if self.skip_cnv:

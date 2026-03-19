@@ -80,14 +80,6 @@ mv msisensor.linux msisensor
 export PATH=$PATH:$HOME/opt  # in .bashrc
 ```
 
-Install my bug fixed MANTIS fork.
-
-```bash
-git clone https://github.com/linyc74/MANTIS.git
-
-export PATH=$PATH:$HOME/opt/MANTIS  # in .bashrc
-```
-
 Install CNVkit.
 
 ```bash
