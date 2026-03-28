@@ -9,17 +9,27 @@ conda create --name pcgr --file ${PCGR_REPO}/pcgr-${PLATFORM}-64.lock
 conda create --name pcgrr --file ${PCGR_REPO}/pcgrr-${PLATFORM}-64.lock
 ```
 
-PCGR by default includes the following: `samtools`, `bcftools`, `vcf2maf`, `bedtools`. Install the remaining.
+PCGR by default includes the following: `samtools`, `bcftools`, `vcf2maf`, `bedtools`.
+Install the remaining. These versions have been tested thoroughly.
+In particular, `muse=1.0` and `snpsift=5.2` are not the latest versions as their later versions cause bugs or dependency issues.
 
 ```bash
-conda install -c bioconda bwa bowtie2 gatk4 lofreq varscan somatic-sniper
-conda install -c bioconda muse=1.0  # needs to be 1.0, the new 2.1.2 is buggy
+conda install -c bioconda \
+  bwa=0.7.18 \
+  bowtie2=2.5.4 \
+  gatk4=4.3.0 \
+  lofreq=2.1.5 \
+  varscan=2.4.6 \
+  somatic-sniper \
+  muse=1.0 \
+  snpsift=5.2
 ```
 
 Re-install latest version of `bcftools` to avoid segmentation fault.
 
 ```bash
-conda remove bcftools
+# only remove bcftools v1.21 without also removing lofreq
+conda remove --force-remove bcftools
 
 # https://www.htslib.org/download/
 cd ~/opt
@@ -37,8 +47,8 @@ export PATH=$PATH:$HOME/opt/bcftools-1.23  # in .bashrc
 Trim-Galore cannot be installed directly in the PCGR environment. Directly download from source.
 
 ```bash
-pip install cutadapt
-conda install -c bioconda fastqc
+pip install cutadapt==5.2
+conda install -c bioconda fastqc=0.12.1
 
 cd ~/opt
 curl -fsSL https://github.com/FelixKrueger/TrimGalore/archive/0.6.10.tar.gz -o trim_galore.tar.gz
@@ -83,7 +93,7 @@ export PATH=$PATH:$HOME/opt  # in .bashrc
 Install CNVkit.
 
 ```bash
-pip install cnvkit
+pip install cnvkit==0.9.13
 
 conda install -n pcgrr -c bioconda bioconductor-dnacopy
 

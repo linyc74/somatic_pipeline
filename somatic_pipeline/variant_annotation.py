@@ -52,7 +52,7 @@ class VariantAnnotation(Processor):
 
         for vcf_gz in [self.clinvar_vcf_gz, self.dbsnp_vcf_gz]:
             if vcf_gz is not None:
-                self.logger.info(f'Annotating with {vcf_gz} by snpsift annotate')
+                self.logger.info(f'Annotating with {vcf_gz} by SnpSift annotate')
                 self.vcf = SnpSiftAnnotate(self.settings).main(vcf=self.vcf, resource_vcf_gz=vcf_gz)
         
         return self.vcf
@@ -220,7 +220,7 @@ class SnpSiftAnnotate(Processor):
     def execute(self):
         stderr = f'{self.outdir}/snpsift-annotate.log'
         cmd = self.CMD_LINEBREAK.join([
-            'snpsift annotate',
+            'SnpSift annotate',
             self.resource_vcf_gz,
             self.vcf,
             f'> {self.output_vcf}',
